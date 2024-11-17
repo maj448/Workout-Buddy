@@ -15,9 +15,9 @@ export default function WorkoutListItem({ task }) {
             <Text style= {styles.text}>
                 {task.title}
             </Text>
-            <Text style={styles.time}>Start: {displayStartTime}</Text>
-            <Text style={styles.time}>End: {displayEndTime}</Text>
-            <AntDesign name="close" size={24} color="gray" />
+            {/* <Text style={styles.time}>Start: {displayStartTime}</Text>
+            <Text style={styles.time}>End: {displayEndTime}</Text> */}
+            <Text style={styles.time}>{displayStartTime} to {displayEndTime}</Text>
         </View>
 
     )
@@ -25,7 +25,7 @@ export default function WorkoutListItem({ task }) {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: 'black',
+        backgroundColor: 'green',
         padding: 15,
         borderRadius: 5,
         flexDirection: 'row',
@@ -37,6 +37,6 @@ const styles = StyleSheet.create({
     },
     time: {
         fontSize: 14,
-        color: 'gray',
+        color: 'white',
       },
 })

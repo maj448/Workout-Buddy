@@ -7,12 +7,28 @@ import WorkoutList from "./WorkoutList"
 
 // import * as SQLite from 'expo-sqlite'
 import {useState, useEffect} from 'react';
+import Day from 'react-native-calendars/src/calendar/day';
+
+enum WorkoutStatus {
+  Upcoming = 'upcoming',
+  Pending = 'pending',
+  Complete = 'complete',
+  Missed = 'missed',
+}
+
+const workoutStatuses = {
+  [WorkoutStatus.Upcoming]: { key: 'upcoming', color: 'orange' },
+  [WorkoutStatus.Pending]: { key: 'pending', color: 'blue' },
+  [WorkoutStatus.Complete]: { key: 'complete', color: 'green' },
+  [WorkoutStatus.Missed]: { key: 'missed', color: 'red' },
+};
 
 type Task = {
   id: number;
   title: string;
   notes: string;
   workout_date: string;
+  status: WorkoutStatus;
   start_time: string;
   end_time: string;
 };
@@ -63,7 +79,8 @@ export default function Index() {
       notes: 'A 5km run around the park.', 
       workout_date: '2024-11-17T07:00:00Z', 
       start_time: '2024-11-17T07:00:00Z',
-      end_time: '2024-11-17T08:00:00Z' 
+      end_time: '2024-11-17T08:00:00Z',
+      status: WorkoutStatus.Upcoming
     },
     { 
       id: 2,
@@ -71,7 +88,8 @@ export default function Index() {
       notes: 'Morning yoga for flexibility.', 
       workout_date: '2024-11-18T08:00:00Z',  
       start_time: '2024-11-18T08:00:00Z',
-      end_time: '2024-11-18T09:00:00Z'
+      end_time: '2024-11-18T09:00:00Z',
+      status: WorkoutStatus.Pending,
     },
     { 
       id: 3, 
@@ -79,7 +97,8 @@ export default function Index() {
       notes: 'A scenic cycling route around the lake.', 
       workout_date: '2024-11-17T18:00:00Z',
       start_time: '2024-11-17T18:00:00Z',
-      end_time: '2024-11-17T19:30:00Z'
+      end_time: '2024-11-17T19:30:00Z',
+      status: WorkoutStatus.Complete,
     }
   ]);
 
@@ -90,21 +109,22 @@ export default function Index() {
       inviter_id: 1, 
       invitee_id: 2, 
       status: 'pending' 
-    },  // Alice invites Bob to her workout
+    },  
+
     { 
       id: 2, 
       workout_id: 1, 
       inviter_id: 1, 
       invitee_id: 3, 
       status: 'accepted' 
-    },  // Alice invites Charlie to her workout, Charlie accepts
+    },  
     { 
       id: 3, 
       workout_id: 2, 
       inviter_id: 2, 
       invitee_id: 3, 
       status: 'pending' 
-    },  // Bob invites Charlie to his workout
+    },  
     { 
       id: 4, 
       workout_id: 3, 
@@ -118,7 +138,7 @@ export default function Index() {
       inviter_id: 3, 
       invitee_id: 5, 
       status: 'accepted' 
-    }   // Charlie invites Eve to his workout, Eve accepts
+    }   
   ]);
 
   const [buddies, setBuddies] = useState([
@@ -126,27 +146,56 @@ export default function Index() {
       id: 1, 
       user_id: 1, 
       friend_id: 2, 
-      status: 'accepted' },  // Alice and Bob are friends
+      status: 'accepted' },  
     { 
       id: 2, 
       user_id: 1, 
       friend_id: 3, 
-      status: 'accepted' },  // Alice and Charlie are friends
+      status: 'accepted' },  
     { 
       id: 3, 
       user_id: 2, 
       friend_id: 3, 
-      status: 'pending' },   // Bob sent a friend request to Charlie (pending)
+      status: 'pending' },   
     { 
       id: 4, 
       user_id: 4, 
       friend_id: 5, 
-      status: 'pending' }   // David and Eve's friend request was rejected
+      status: 'pending' }   
   ]);
+
+
+
+  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////
+  const [modalVisible, setModalVisible] = useState(false);
 
   const today = format(new Date(), 'yyyy-MM-dd');
   //const [rows, setRows] = useState([]);
   const [selected, setSelected] = useState(today);
+
+  const markedDates: { [key: string]: { dots: { key: string, color: string }[] } } = {};
+
+  tasks.forEach((task) => {
+  const taskDate = task.workout_date.split('T')[0]; // Extract date (YYYY-MM-DD)
+
+  // Initialize the date entry if it doesn't exist yet
+  if (!markedDates[taskDate]) {
+    markedDates[taskDate] = { dots: [] };
+  }
+
+  // Add a dot for the task based on its status
+  markedDates[taskDate].dots.push({
+    key: workoutStatuses[task.status].key,
+    color: workoutStatuses[task.status].color,
+  });
+});
+
+const createWorkout = (day) => {
+  alert('got here');
+  setSelected(day.dateString);
+
+};
 
   const filteredTasks = tasks.filter(task => {
     const taskDate = task.workout_date.split('T')[0];
@@ -154,70 +203,28 @@ export default function Index() {
   });
   
   const displayDate = format(parseISO(selected), 'MMM dd');
-    // useEffect(() => {
-    //   // Create an async function to handle the database logic
-    //   const initDatabase = async () => {
-    //     try {
-    //       // Open the database
-    //       const db = await SQLite.openDatabaseAsync('WorkoutBuddyDB');
-  
-    //       // Set up the database schema and insert some initial data
-    //       await db.execAsync(`
-    //         PRAGMA journal_mode = WAL;
-    //         CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY NOT NULL, value TEXT NOT NULL, intValue INTEGER);
-    //         INSERT INTO test (value, intValue) VALUES ('test1', 123);
-    //         INSERT INTO test (value, intValue) VALUES ('test2', 456);
-    //         INSERT INTO test (value, intValue) VALUES ('test3', 789);
-    //       `);
-  
-    //       // Insert new record
-    //       const result = await db.runAsync('INSERT INTO test (value, intValue) VALUES (?, ?)', ['aaa', 100]);
-    //       console.log(result.lastInsertRowId, result.changes);
-  
-    //       // Update a record
-    //       await db.runAsync('UPDATE test SET intValue = ? WHERE value = ?', [999, 'aaa']);
-          
-    //       // Delete a record
-    //       await db.runAsync('DELETE FROM test WHERE value = $value', { $value: 'aaa' });
-  
-    //       // Fetch all rows from the table
-    //       const allRows = await db.getAllAsync('SELECT * FROM test');
-    //       setRows(allRows);  // Update the state with fetched rows
-  
-    //     } catch (error) {
-    //       console.error('Database error: ', error);
-    //     }
-    //   };
-  
-    //   // Call the async function
-    //   initDatabase();
-    // }, []); // Empty dependency array to run this only on component mount
-  
+ 
     return (
-      <SafeAreaView>
-        {/* <Text>Database Rows:</Text>
-        <ScrollView>
-          {rows.map((row) => (
-            <View key={row.id}>
-              <Text>{`ID: ${row.id}, Value: ${row.value}, intValue: ${row.intValue}`}</Text>
-            </View>
-          ))}
-        </ScrollView> */}
-        <Calendar
-      onDayPress={day => {
-        setSelected(day.dateString);
-      }}
-      markedDates={{
-        [selected]: {
-          selected: true, 
-          disableTouchEvent: true, 
-          selectedDotColor: 'orange'}
-      }}
-      enableSwipeMonths={true}
+      <SafeAreaView style= {{flex:1}}>
 
-    />
-    <Text>{displayDate}</Text>
-    <WorkoutList tasks={filteredTasks}/>
+        <Calendar
+          onDayPress={day => {
+            setSelected(day.dateString);
+          }}
+          onDayLongPress={createWorkout}
+          markingType="multi-dot"
+          markedDates={{
+            ...markedDates,
+            [selected]: {
+              selected: true, 
+              disableTouchEvent: true, 
+              selectedColor: 'green'}
+          }}
+          enableSwipeMonths={true}
+
+        />
+
+    <WorkoutList tasks={filteredTasks} displayDate ={displayDate}/>
 
     </SafeAreaView>
     );
