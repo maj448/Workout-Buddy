@@ -1,9 +1,10 @@
 
 import {SafeAreaView} from 'react-native-safe-area-context';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Button } from 'react-native';
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 import { format, parseISO} from 'date-fns';
 import WorkoutList from "./WorkoutList"
+import { useNavigation } from '@react-navigation/native';
 
 // import * as SQLite from 'expo-sqlite'
 import {useState, useEffect} from 'react';
@@ -38,7 +39,10 @@ type Props = {
 };
 
 export default function Index() {
+  
+  const navigation = useNavigation();
 
+  
   const [users, setUsers] = useState([
     { 
       id: 1, 
@@ -203,6 +207,11 @@ const createWorkout = (day) => {
   });
   
   const displayDate = format(parseISO(selected), 'MMM dd');
+
+  const gotoTestStackScreen = () => {
+		navigation.navigate('New Workout', {selected});
+	};
+
  
     return (
       <SafeAreaView style= {{flex:1}}>
@@ -225,7 +234,7 @@ const createWorkout = (day) => {
         />
 
     <WorkoutList tasks={filteredTasks} displayDate ={displayDate}/>
-
+    <Button title="Go to test stack screen" onPress={gotoTestStackScreen} />
     </SafeAreaView>
     );
   }

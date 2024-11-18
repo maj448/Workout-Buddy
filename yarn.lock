@@ -2638,22 +2638,22 @@
     use-latest-callback "^0.2.1"
     use-sync-external-store "^1.2.2"
 
-"@react-navigation/elements@^2.0.2", "@react-navigation/elements@^2.0.3":
+"@react-navigation/elements@^2.0.3":
   version "2.0.3"
   resolved "https://registry.npmjs.org/@react-navigation/elements/-/elements-2.0.3.tgz"
   integrity sha512-vrfEmXnYNv1qTUTEAup5ycsd2rQirvZx/5620qeWHMSykqblo0imtk0LoLNsuimrUfDSsrjCckux3/atX2jAMg==
   dependencies:
     color "^4.2.3"
 
-"@react-navigation/native-stack@^7.0.0":
-  version "7.0.2"
-  resolved "https://registry.npmjs.org/@react-navigation/native-stack/-/native-stack-7.0.2.tgz"
-  integrity sha512-d7jJdDhZdBWYP+rQJQ4JRQkotM+0Vqkb7Hc16ARhetoBH/IzVtzC5g7VTZg1ognzNRrZ34NlT4+IB3KH34/2/g==
+"@react-navigation/native-stack@^7.0.0", "@react-navigation/native-stack@^7.0.3":
+  version "7.0.3"
+  resolved "https://registry.npmjs.org/@react-navigation/native-stack/-/native-stack-7.0.3.tgz"
+  integrity sha512-375n9YQ+9DzwlAsW5Jb1PBiT3maXVb8ux/y4tpGikfBM/Vh19OQ2oGNSu0wl8rujiM/MZVkWS9ZIc8IEKd0kWg==
   dependencies:
-    "@react-navigation/elements" "^2.0.2"
+    "@react-navigation/elements" "^2.0.3"
     warn-once "^0.1.1"
 
-"@react-navigation/native@^7.0.0", "@react-navigation/native@^7.0.2", "@react-navigation/native@^7.0.3":
+"@react-navigation/native@^7.0.0", "@react-navigation/native@^7.0.3":
   version "7.0.3"
   resolved "https://registry.npmjs.org/@react-navigation/native/-/native-7.0.3.tgz"
   integrity sha512-GzHvM8HgCjLW+314+gFv2ElN6di4q4KUI7TxQ62lpZc2moi9p8Z78/mTHJ7DZeYjit0Z5ISF9Le+kFhH68avMw==
@@ -2670,6 +2670,14 @@
   integrity sha512-b2ehNmgAfDziTd0EERm0C9JI9JH1kdRS4SNBWbKQOVPv23WG+5ExovwWet26sGtMabLJ5lxSE8Z2/fByfggjNQ==
   dependencies:
     nanoid "3.3.7"
+
+"@react-navigation/stack@^7.0.3":
+  version "7.0.3"
+  resolved "https://registry.npmjs.org/@react-navigation/stack/-/stack-7.0.3.tgz"
+  integrity sha512-NO0urYXfMdcM5O9lnsNMCJBIdYktGaSQIoIKq10x0avQGNeh6yxo3qC2QxUhN2ycdgAya2F4/zRjA3wBcWFUyA==
+  dependencies:
+    "@react-navigation/elements" "^2.0.3"
+    color "^4.2.3"
 
 "@realm/fetch@^0.1.1":
   version "0.1.1"
@@ -7721,7 +7729,7 @@ react-native-calendars@^1.1307.0:
   optionalDependencies:
     moment "^2.29.4"
 
-react-native-gesture-handler@~2.20.2:
+"react-native-gesture-handler@>= 2.0.0", react-native-gesture-handler@~2.20.2:
   version "2.20.2"
   resolved "https://registry.npmjs.org/react-native-gesture-handler/-/react-native-gesture-handler-2.20.2.tgz"
   integrity sha512-HqzFpFczV4qCnwKlvSAvpzEXisL+Z9fsR08YV5LfJDkzuArMhBu2sOoSPUF/K62PCoAb+ObGlTC83TKHfUd0vg==

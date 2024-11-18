@@ -1,18 +1,20 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, NavigationIndependentTree } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import index from './index'; 
 import Profile from './Profile'; 
 import Buddies from './Buddies'; 
+import NewWorkoutScreen from './newWorkout';
 import Entypo from '@expo/vector-icons/Entypo';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import AntDesign from '@expo/vector-icons/AntDesign';
 
 const Tab = createBottomTabNavigator();
 
-export default function RootLayout() {
-  return (
-      <Tab.Navigator>
+function MyTabs() {
+	return (
+		<Tab.Navigator>
         <Tab.Screen 
         name="Home" 
         component={index} 
@@ -47,5 +49,24 @@ export default function RootLayout() {
           }}
         />
       </Tab.Navigator>
+	);
+}
+
+const Stack = createStackNavigator ();
+
+export default function RootLayout() {
+  return (
+    <NavigationIndependentTree>
+    <NavigationContainer>
+    <Stack.Navigator initialRouteName="Tabs">
+      <Stack.Screen 
+          name="Tabs" 
+          component={MyTabs} 
+          options={{ headerShown: false }} 
+      />
+      <Stack.Screen name="New Workout" component={NewWorkoutScreen} />
+    </Stack.Navigator>
+  </NavigationContainer>
+  </NavigationIndependentTree>
   );
 }
