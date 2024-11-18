@@ -10,6 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 import {useState, useEffect} from 'react';
 import Day from 'react-native-calendars/src/calendar/day';
 
+
 enum WorkoutStatus {
   Upcoming = 'upcoming',
   Pending = 'pending',
