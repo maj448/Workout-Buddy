@@ -9,6 +9,10 @@ import NewWorkoutScreen from './newWorkout';
 import Entypo from '@expo/vector-icons/Entypo';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import Realms from './providers/Realm';
+import { RealmProvider } from '@realm/react';
+import {ProfileTest} from './models/ProfileTest';
+
 
 const Tab = createBottomTabNavigator();
 
@@ -48,6 +52,7 @@ function MyTabs() {
             tabBarLabel: 'Profile',
           }}
         />
+        
       </Tab.Navigator>
 	);
 }
@@ -56,8 +61,9 @@ const Stack = createStackNavigator ();
 
 export default function RootLayout() {
   return (
+    <RealmProvider schema={[ProfileTest]}>
     <NavigationIndependentTree>
-    <NavigationContainer>
+    <NavigationContainer> 
     <Stack.Navigator initialRouteName="Tabs">
       <Stack.Screen 
           name="Tabs" 
@@ -68,5 +74,7 @@ export default function RootLayout() {
     </Stack.Navigator>
   </NavigationContainer>
   </NavigationIndependentTree>
+  </RealmProvider>
+  
   );
 }
