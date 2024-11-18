@@ -5,8 +5,8 @@
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
     "lint": "expo lint"
@@ -17,14 +17,17 @@
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
     "@nozbe/watermelondb": "^0.27.1",
+    "@react-native-async-storage/async-storage": "^1.23.1",
     "@react-native-firebase/app": "^21.4.1",
     "@react-navigation/bottom-tabs": "^7.0.4",
     "@react-navigation/native": "^7.0.3",
     "@react-navigation/native-stack": "^7.0.3",
     "@react-navigation/stack": "^7.0.3",
+    "@supabase/supabase-js": "^2.46.1",
     "date-fns": "^4.1.0",
     "expo": "~52.0.7",
     "expo-blur": "~14.0.1",
+    "expo-build-properties": "^0.13.1",
     "expo-constants": "~17.0.3",
     "expo-font": "~13.0.1",
     "expo-haptics": "~14.0.0",
