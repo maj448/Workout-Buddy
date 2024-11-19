@@ -10,11 +10,17 @@ import Entypo from '@expo/vector-icons/Entypo';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { supabase } from './utils/supabase'
+import Ionicons from '@expo/vector-icons/Ionicons';
 
-//import { createClient } from '@supabase/supabase-js'
+// import Auth from './Auth'
+// import SignUp from './SignUp'
+import { View } from 'react-native'
+import { Session } from '@supabase/supabase-js'
 
-// Create a single supabase client for interacting with your database
-//const supabase = createClient('https://ngebhfjgfoflnulujbsw.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nZWJoZmpnZm9mbG51bHVqYnN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzE4OTc3MjcsImV4cCI6MjA0NzQ3MzcyN30.t0IjdmFGXgXd_XcwwPT5TxODZIQPxmva7KXu3-kPJ_M')
+import Login from './auth/Login';
+import SignUp from './auth/SignUp';
+import WorkoutDetailsScreen from './Workoutdetails';
+
 
 const Tab = createBottomTabNavigator();
 
@@ -50,7 +56,7 @@ function MyTabs() {
         component={Profile} 
         options={{
           tabBarIcon: () => (
-            <AntDesign name="user" size={24} color="black" />
+            <Ionicons name="person" size={24} color="black" />
             ),
             tabBarLabel: 'Profile',
           }}
@@ -62,49 +68,48 @@ function MyTabs() {
 const Stack = createStackNavigator ();
 
 export default function RootLayout() {
-  const [userCount, setUserCount] = useState(0)
-
   
+  const [session, setSession] = useState<Session | null>(null)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+    })
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    })
+  }, [])
+
   return (
     
     <NavigationIndependentTree>
     <NavigationContainer>
-    <Stack.Navigator initialRouteName="Tabs">
+    {/* <Stack.Navigator initialRouteName= { session && session.user ? "Tabs": "Login"}> */}
+    <Stack.Navigator initialRouteName= {"Login"}>  
       <Stack.Screen 
           name="Tabs" 
           component={MyTabs} 
           options={{ headerShown: false }} 
       />
+      {/* <Stack.Screen 
+          name="Login" 
+          component={Auth} 
+          options={{ headerShown: false }} 
+      /> */}
+      <Stack.Screen 
+          name="Login" 
+          component={Login} 
+          options={{ headerShown: false }} 
+      />
+            <Stack.Screen 
+          name="Sign Up" 
+          component={SignUp} 
+      />
       <Stack.Screen name="New Workout" component={NewWorkoutScreen} />
+      <Stack.Screen name="Workout Details" component={WorkoutDetailsScreen} />
     </Stack.Navigator>
   </NavigationContainer>
   </NavigationIndependentTree>
   );
 }
-
-// import { useState, useEffect } from 'react'
-// import { supabase } from './utils/supabase'
-// import Auth from './Auth'
-// import Account from './Account'
-// import { View } from 'react-native'
-// import { Session } from '@supabase/supabase-js'
-
-// export default function App() {
-//   const [session, setSession] = useState<Session | null>(null)
-
-//   useEffect(() => {
-//     supabase.auth.getSession().then(({ data: { session } }) => {
-//       setSession(session)
-//     })
-
-//     supabase.auth.onAuthStateChange((_event, session) => {
-//       setSession(session)
-//     })
-//   }, [])
-
-//   return (
-//     <View>
-//       {session && session.user ? <Account key={session.user.id} session={session} /> : <Auth />}
-//     </View>
-//   )
-// }

@@ -1,0 +1,114 @@
+import {SafeAreaView} from 'react-native-safe-area-context';
+import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+
+
+
+export default function SignUp() {
+    const navigation = useNavigation();
+    const [inputFullName, setInputFullName] = useState('')
+    const [inputUsername, setInputUsername] = useState('')
+    const [inputEmail, setInputEmail] = useState('')
+    const [inputPassword, setInputPassword] = useState('')
+    const [inputConfPassword, setInputConfPassword] = useState('')
+
+    const gotoLoginScreen = () => {
+		navigation.navigate('Login');
+	};
+
+
+    return(
+        <SafeAreaView style={styles.container}>
+            
+            <View style={styles.inputArea}>
+                <Text style={styles.label}>Full name:</Text>
+                <TextInput
+                style={styles.inputBox}
+                keyboardType="default"
+                value={inputFullName}
+                onChangeText={setInputFullName}/>
+
+            </View>
+            <View style={styles.inputArea}>
+                <Text style={styles.label}>Username:</Text>
+                <TextInput
+                style={styles.inputBox}
+                keyboardType="default"
+                value={inputUsername}
+                onChangeText={setInputUsername}/>
+
+            </View>
+            <View style={styles.inputArea}>
+                <Text style={styles.label}>Email:</Text>
+                <TextInput
+                style={styles.inputBox}
+                keyboardType="default"
+                value={inputEmail}
+                onChangeText={setInputEmail}/>
+
+            </View>
+            <View style={styles.inputArea}>
+                <Text style={styles.label}>Password:</Text>
+                <TextInput
+                style={styles.inputBox}
+                keyboardType="default"
+                value={inputPassword}
+                onChangeText={setInputPassword}/>
+
+            </View>
+            <View style={styles.inputArea}>
+                <Text style={styles.label}>Confirm Pwd:</Text>
+                <TextInput
+                style={styles.inputBox}
+                keyboardType="default"
+                value={inputConfPassword}
+                onChangeText={setInputConfPassword}/>
+
+            </View>
+
+            <Button title='Create Account' onPress={gotoLoginScreen}/>
+
+
+        </SafeAreaView>
+    )
+
+}
+
+
+
+const styles = StyleSheet.create({
+    container: {
+        backgroundColor: '#6EEB92',
+        justifyContent: 'center',
+        alignContent: 'center',
+        flex: 1,
+    },
+    header: {
+        color: 'blue',
+        fontSize: 36,
+    },
+    label: {
+        fontSize: 20,
+        color: '#3D3D3D',
+        fontFamily: 'fantasy'
+      },
+    inputArea:{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: 20,
+    },
+    inputBox: {
+        width: 200,
+        height: 40,
+        borderColor: 'lightgray',
+        backgroundColor: 'white',
+        borderWidth: 2,
+        marginBottom: 15,
+        paddingHorizontal: 10,
+      },
+
+    
+
+})
