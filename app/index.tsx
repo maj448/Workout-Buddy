@@ -5,10 +5,10 @@ import {Calendar, LocaleConfig} from 'react-native-calendars';
 import { format, parseISO} from 'date-fns';
 import WorkoutList from "./WorkoutList"
 import { useNavigation } from '@react-navigation/native';
-
-// import * as SQLite from 'expo-sqlite'
-import {useState, useEffect} from 'react';
+import { useState, useEffect } from 'react'
+import { supabase } from './utils/supabase';
 import Day from 'react-native-calendars/src/calendar/day';
+import { Session } from '@supabase/supabase-js'
 
 enum WorkoutStatus {
   Upcoming = 'upcoming',
@@ -196,8 +196,8 @@ export default function Index() {
 });
 
 const createWorkout = (day) => {
-  alert('got here');
   setSelected(day.dateString);
+  navigation.navigate('New Workout', {selected})
 
 };
 
@@ -227,14 +227,14 @@ const createWorkout = (day) => {
             [selected]: {
               selected: true, 
               disableTouchEvent: true, 
-              selectedColor: 'green'}
+              selectedColor: '#6EEB92'}
           }}
           enableSwipeMonths={true}
 
         />
 
-    <WorkoutList tasks={filteredTasks} displayDate ={displayDate}/>
-    <Button title="Go to test stack screen" onPress={gotoTestStackScreen} />
+    <WorkoutList workouts={filteredTasks} displayDate ={displayDate} selected={selected}/>
+    {/* <Button title="Go to test stack screen" onPress={gotoTestStackScreen} /> */}
     </SafeAreaView>
     );
   }

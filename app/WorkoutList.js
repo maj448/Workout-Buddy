@@ -2,32 +2,34 @@ import { View, Text, FlatList, TextInput, Button, Pressable } from "react-native
 import WorkoutListItem from "./WorkoutListItem";
 import React, {useState} from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { useNavigation } from '@react-navigation/native';
 
 
 
-export default function WorkoutList({tasks, displayDate}){
+export default function WorkoutList({workouts, displayDate, selected}){
 
+  const navigation = useNavigation();
 
-    const [newTask, setNewTask] = useState('')
+    const [newWorkout, setNewWorkout] = useState('')
 
-    const createTask = () => {
-      alert('got here');
+    const createWorkout = () => {
+      navigation.navigate('New Workout', {selected});
 
     };
     return(
-    <View style={{backgroundColor: 'lime', padding: 10, gap: 10, flex: 1}}>
-      <View style ={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+    <View style={{backgroundColor: '#6EEB92', padding: 10, gap: 10, flex: 1}}>
+      <View style ={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 10}}>
         <Text style={{color: 'white', fontWeight: 'bold', fontSize: 24}}>{displayDate}</Text>
-        <Pressable onPress={createTask}>
-          <Ionicons name="add-circle-outline" size={24} color="black" />
+        <Pressable onPress={createWorkout}>
+          <Ionicons name="add-circle-outline" size={24} color="white" />
         </Pressable>
       </View>
 
         <FlatList
-        data={tasks}
+        data={workouts}
         contentContainerStyle={{ gap: 5 }}
         renderItem={({ item }) => (
-          <WorkoutListItem task={item} />
+          <WorkoutListItem workout={item} />
         )}
       />
 
