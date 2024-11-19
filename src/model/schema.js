@@ -14,6 +14,7 @@ export default mySchema = appSchema({
           { name: 'duration', type: 'number', isOptional: true },
           { name: 'activity', type: 'string', isOptional: true },
           { name: 'workout_status', type: 'string' },
+          { name: 'checked_in', type: 'boolean' },
         ]
       }),
 

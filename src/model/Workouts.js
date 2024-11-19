@@ -15,6 +15,7 @@ export default class Workout extends Model {
   @field('duration') duration
   @field('activity') activity
   @field('workout_status') workoutStatus
+  @field('checked_in') checkedIn
 
   @children('invitations') comments
 }

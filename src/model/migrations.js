@@ -8,10 +8,17 @@ export default schemaMigrations({
         steps: [
           // See "Migrations API" for more details
           createTable({
-            name: 'comments',
+            name: 'workouts',
             columns: [
-              { name: 'post_id', type: 'string', isIndexed: true },
-              { name: 'body', type: 'string' },
+              { name: 'title', type: 'string' },
+              { name: 'notes', type: 'string', isOptional: true },
+              { name: 'workout_date', type: 'number' },
+              { name: 'start_time', type: 'number' },
+              { name: 'end_time', type: 'number' },
+              { name: 'duration', type: 'number', isOptional: true },
+              { name: 'activity', type: 'string', isOptional: true },
+              { name: 'workout_status', type: 'string' },
+              { name: 'checked_in', type: 'boolean' },
             ],
           }),
         ],

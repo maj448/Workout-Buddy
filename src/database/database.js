@@ -2,8 +2,8 @@ import { Platform } from 'react-native'
 import { Database } from '@nozbe/watermelondb'
 import SQLiteAdapter from '@nozbe/watermelondb/adapters/sqlite'
 
-import mySchema from './model/schema'
-import migrations from './model/migrations'
+import mySchema from '../model/schema'
+import migrations from '../model/migrations'
 
 import Invitation from '../model/Invitations'
 import Buddy from '../model/Buddies'
@@ -21,7 +21,7 @@ const adapter = new SQLiteAdapter({
   //jsi: true, /* Platform.OS === 'ios' */
   // (optional, but you should implement this method)
   onSetUpError: error => {
-    // Database failed to load -- offer the user to reload the app or log out
+    console.error('Database setup error:', error)
   }
 })
 

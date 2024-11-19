@@ -2200,6 +2200,11 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
+"@morrowdigital/watermelondb-expo-plugin@^2.3.3":
+  version "2.3.3"
+  resolved "https://registry.npmjs.org/@morrowdigital/watermelondb-expo-plugin/-/watermelondb-expo-plugin-2.3.3.tgz"
+  integrity sha512-380NyK5fPEqBfWorqREc1zQkAuxITSN8cdf15TaOwAdbvIwjeF1TjvztUNC8eqJum0AHdU2xQLHMph3rndQtNQ==
+
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.npmjs.org/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz"
@@ -4792,7 +4797,7 @@ expo-blur@~14.0.1:
   resolved "https://registry.npmjs.org/expo-blur/-/expo-blur-14.0.1.tgz"
   integrity sha512-3Q6jFBLbY8n2vwk28ycUC+eIlVhnlqwkXUKk/Lfaj+SGV3AZMQyrixe7OYwJdUfwqETBrnYYMB6uNrJzOSbG+g==
 
-expo-build-properties@^0.13.1:
+expo-build-properties@~0.13.1:
   version "0.13.1"
   resolved "https://registry.npmjs.org/expo-build-properties/-/expo-build-properties-0.13.1.tgz"
   integrity sha512-7tDlAM0PPkXC0B00C6/FG19sMzwxZNyiDfn22AWVbBxWxZE1/3RqxPgT3MlPVNfvy+wJw7jt/qbAb0S06wFYVg==

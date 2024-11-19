@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer, NavigationIndependentTree } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -9,8 +9,9 @@ import NewWorkoutScreen from './newWorkout';
 import Entypo from '@expo/vector-icons/Entypo';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import AntDesign from '@expo/vector-icons/AntDesign';
-
+import {database} from '../src/database/database';
 const Tab = createBottomTabNavigator();
+
 
 function MyTabs() {
 	return (
@@ -55,7 +56,21 @@ function MyTabs() {
 const Stack = createStackNavigator ();
 
 export default function RootLayout() {
+  const [userCount, setUserCount] = useState(0)
+
+  // Fetch data from the database when the app loads
+  useEffect(() => {
+    const fetchData = async () => {
+      const usersCollection = database.collections.get('workouts')  // Access the 'users' collection
+      const count = await usersCollection.query().fetchCount()  // Get the count of users in the collection
+      setUserCount(count)
+    }
+
+    fetchData()  // Call the function to fetch data
+  }, [])
+  
   return (
+    
     <NavigationIndependentTree>
     <NavigationContainer>
     <Stack.Navigator initialRouteName="Tabs">
