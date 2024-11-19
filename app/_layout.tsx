@@ -5,7 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import index from './index'; 
 import Profile from './Profile'; 
 import Buddies from './Buddies'; 
-import NewWorkoutScreen from './newWorkout';
+import NewWorkoutScreen from './NewWorkout';
 import Entypo from '@expo/vector-icons/Entypo';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -20,13 +20,21 @@ import { Session } from '@supabase/supabase-js'
 import Login from './auth/Login';
 import SignUp from './auth/SignUp';
 import WorkoutDetailsScreen from './Workoutdetails';
+import AuthProvider from './providers/AuthProvider';
+import { useAuth } from './providers/AuthProvider';
 
 
 const Tab = createBottomTabNavigator();
 
 
 function MyTabs() {
+  const { session } = useAuth();
+  if (!session) {
+    return <Login />;
+  }
+
 	return (
+
 		<Tab.Navigator>
         <Tab.Screen 
         name="Home" 
@@ -68,35 +76,30 @@ function MyTabs() {
 const Stack = createStackNavigator ();
 
 export default function RootLayout() {
-  
-  const [session, setSession] = useState<Session | null>(null)
+  const { session } = useAuth();
+
+  const [initialRoute, setInitialRoute] = useState('Login'); // Default to Login screen
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-    })
-
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-    })
-  }, [])
+    if (session) {
+      setInitialRoute('Tabs'); // Change to Tabs if the session exists
+    } else {
+      setInitialRoute('Login'); // Stay on Login if no session
+    }
+  }, [session]); // Trigger re-render when session changes
 
   return (
     
+    <AuthProvider>
     <NavigationIndependentTree>
     <NavigationContainer>
-    {/* <Stack.Navigator initialRouteName= { session && session.user ? "Tabs": "Login"}> */}
-    <Stack.Navigator initialRouteName= {"Login"}>  
+    {/* <Stack.Navigator initialRouteName= {"Tabs"}> */}
+    <Stack.Navigator initialRouteName= {initialRoute}>  
       <Stack.Screen 
           name="Tabs" 
           component={MyTabs} 
           options={{ headerShown: false }} 
       />
-      {/* <Stack.Screen 
-          name="Login" 
-          component={Auth} 
-          options={{ headerShown: false }} 
-      /> */}
       <Stack.Screen 
           name="Login" 
           component={Login} 
@@ -109,7 +112,10 @@ export default function RootLayout() {
       <Stack.Screen name="New Workout" component={NewWorkoutScreen} />
       <Stack.Screen name="Workout Details" component={WorkoutDetailsScreen} />
     </Stack.Navigator>
+    
   </NavigationContainer>
   </NavigationIndependentTree>
+  </AuthProvider>
+
   );
 }

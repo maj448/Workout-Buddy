@@ -11,7 +11,7 @@ const WorkoutDetailsScreen = ({route}) => {
     const { workout} = route.params;
     const displayStartTime = format(parseISO(workout.start_time), 'h:mm a')
     const displayEndTime = format(parseISO(workout.end_time), 'h:mm a')
-    const displayDate = format(parseISO(workout.workout_date), 'mm-dd-yyyy')
+    const displayDate = format(parseISO(workout.workout_date), 'yyyy-mm-dd')
     const navigation = useNavigation()
 
   return (

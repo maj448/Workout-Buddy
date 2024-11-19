@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from './utils/supabase';
 import Day from 'react-native-calendars/src/calendar/day';
 import { Session } from '@supabase/supabase-js'
+import { useAuth } from './providers/AuthProvider';
 
 enum WorkoutStatus {
   Upcoming = 'upcoming',
@@ -39,8 +40,15 @@ type Props = {
 };
 
 export default function Index() {
-  
   const navigation = useNavigation();
+  // const {session} = useAuth();
+
+  // useEffect(() => {
+  //   if(!session){
+  //     navigation.navigate('Login')
+  //   }
+  // }, [session]);
+
 
   
   const [users, setUsers] = useState([
@@ -197,7 +205,7 @@ export default function Index() {
 
 const createWorkout = (day) => {
   setSelected(day.dateString);
-  navigation.navigate('New Workout', {selected})
+  navigation.navigate('New Workout', {selected: selected})
 
 };
 
@@ -209,7 +217,7 @@ const createWorkout = (day) => {
   const displayDate = format(parseISO(selected), 'MMM dd');
 
   const gotoTestStackScreen = () => {
-		navigation.navigate('New Workout', {selected});
+		navigation.navigate('New Workout', {selected: selected});
 	};
 
  

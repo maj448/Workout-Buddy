@@ -1,10 +1,13 @@
 import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, Button} from 'react-native';
 import {useState, useEffect} from 'react';
 
-const NewWorkoutScreen = ({selected}) => {
+const NewWorkoutScreen = ({route}) => {
+
+  const { selected} = route.params;
+
   const [inputTitle, setInputTitle] = useState('');
   const [inputNotes, setInputNotes] = useState('');
-  const [inputDate, setInputDate] = useState({selected});
+  const [inputDate, setInputDate] = useState(selected);
   const [inputStartTime, setInputStartTime] = useState('');
   const [inputEndTime, setInputEndTime] = useState('');
 
@@ -59,6 +62,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  inputBox: {
+    width: 200,
+    height: 40,
+    borderColor: 'lightgray',
+    backgroundColor: 'white',
+    borderWidth: 2,
+    marginBottom: 15,
+    paddingHorizontal: 10,
   },
 });
 

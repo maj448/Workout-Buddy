@@ -1,7 +1,9 @@
 import {SafeAreaView} from 'react-native-safe-area-context';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import { supabase } from '../utils/supabase';
+import { useAuth } from '../providers/AuthProvider';
 
 
 
@@ -10,14 +12,29 @@ export default function Login() {
     const navigation = useNavigation();
     const [inputEmail, setInputEmail] = useState('');
     const [inputPassword, setInputPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const {session} = useAuth();
+
+  
 
     const gotoSignUpScreen = () => {
 		navigation.navigate('Sign Up');
 	};
 
-    const gotoTabsScreen = () => {
-		navigation.navigate('Tabs');
-	};
+
+
+    async function signInWithEmail()
+    {
+        setLoading(true);
+       const {error} = await supabase.auth.signInWithPassword({ email: inputEmail, password : inputPassword});
+
+       if (error) Alert.alert(error.message)
+        else navigation.navigate('Tabs');
+        setLoading(false);
+
+
+    }
 
 
     return (
@@ -42,6 +59,7 @@ export default function Login() {
                 <Text style={styles.label}>Password:</Text>
                 <TextInput
                 style={styles.inputBox}
+                secureTextEntry
                 keyboardType="default"
                 value={inputPassword}
                 onChangeText={setInputPassword}/>
@@ -49,7 +67,7 @@ export default function Login() {
             </View>
             </View>
 
-            <Button title='Login'  onPress={gotoTabsScreen}/>
+            <Button title={loading ? 'Logging in...' : 'Login'} disabled={loading} onPress={signInWithEmail}/>
             <Button title='Sign Up'  onPress={gotoSignUpScreen}/>
             
 
