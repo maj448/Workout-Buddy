@@ -16,7 +16,6 @@ import AuthProvider from './providers/AuthProvider';
 import { useAuth } from './providers/AuthProvider';
 import QueryProvider from './providers/QueryProvider';
 import InWorkout from './InWorkout';
-import Example from './Example';
 
 const Tab = createBottomTabNavigator();
 
@@ -107,7 +106,6 @@ export default function RootLayout() {
                 options={{ headerShown: false }} 
             />
             <Stack.Screen name="Sign Up" component={SignUp} />
-            <Stack.Screen name="Example" component={Example} />
             <Stack.Screen name="New Workout" component={NewWorkoutScreen} />
             <Stack.Screen name="Workout Details" component={WorkoutDetailsScreen} />
           </Stack.Navigator>

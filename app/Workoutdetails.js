@@ -20,7 +20,7 @@ const WorkoutDetailsScreen = ({route}) => {
       navigation.navigate('In Workout');
     };
     const gotoExample = () => {
-      navigation.navigate('Example');
+      
     };
 
   return (
