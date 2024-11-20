@@ -8,6 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 
 export default function WorkoutBuddiesList({buddies}){
 
+
   const navigation = useNavigation();
 
 

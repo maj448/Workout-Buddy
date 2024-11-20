@@ -50,6 +50,7 @@ function MyTabs() {
             <FontAwesome5 name="user-friends" size={24} color="black" />
             ),
             tabBarLabel: 'Buddies',
+            headerShown: false,
           }}
         />
         <Tab.Screen 

@@ -17,7 +17,7 @@ export default function WorkoutBuddyListItem({ buddie }) {
 
         <View style= {styles.container}>
             <Text style= {styles.text}>
-                username
+               {buddie.username}
             </Text>
             <Text>invite status</Text>
         </View>

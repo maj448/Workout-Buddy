@@ -1,14 +1,25 @@
 import { View, Text, StyleSheet, Button } from 'react-native';
 import { supabase } from './utils/supabase';
 import { useNavigation } from '@react-navigation/native';
-import { useQuery } from '@tanstack/react-query';
 import { useAuth } from './providers/AuthProvider';
 import { useEffect, useState } from 'react';
+import { userProfileDetails } from './api/profile';
 
 const ProfileScreen = () => {
   const { session } = useAuth();
+
+
   const navigation = useNavigation();
   const [userProfile, setUserProfile] = useState()
+  const [userProfileFullName, setUserProfileFullName] = useState()
+  const [userProfileUserame, setUserProfileUserame] = useState()
+  const [userProfileAvatar, setUserProfileAvatar] = useState()
+
+  if(!session){
+    navigation.navigate("Login");
+  }
+
+
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -16,25 +27,16 @@ const ProfileScreen = () => {
     
   };
 
-  const { data: profile } = useQuery({
-    queryKey: ['profiles', session?.user.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', session?.user.id)
-        .single(); 
+  const { data: profile } =  userProfileDetails(session?.user.id)
 
-      if (error) throw new Error(error.message);
-      return data;
-    },
-    enabled: !!session?.user.id, 
-  });
 
  
   useEffect(() => {
     if (profile) {
-      setUserProfile(profile); 
+      setUserProfile(profile.id); 
+      setUserProfileFullName(profile.full_name)
+      setUserProfileUserame(profile.username)
+      setUserProfileAvatar(profile.avatar_url)
     }
   }, [profile]);
   
@@ -42,9 +44,9 @@ const ProfileScreen = () => {
   return (
     <View style={styles.container}>
       <Text>Profile Screen</Text>
-      <Text>{userProfile.full_name}</Text>
-      <Text>{userProfile.username}</Text>
-      <Text>{userProfile.avatar_url}</Text>
+      <Text>Full name: {userProfileFullName}</Text>
+      <Text>Username: {userProfileUserame}</Text>
+      <Text>Avatar: {userProfileAvatar}</Text>
       <Button title="Log Out" onPress={handleSignOut}/>
     </View>
     

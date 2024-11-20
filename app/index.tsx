@@ -9,6 +9,8 @@ import { useState, useEffect } from 'react'
 import { supabase } from './utils/supabase';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from './providers/AuthProvider';
+import { participantWorkouts, participantWorkoutsDetails } from './api/workouts';
+import { ActivityIndicator } from 'react-native';
 
 
 
@@ -28,42 +30,10 @@ export default function Index() {
   const [filteredWorkouts, setFilteredWorkouts] = useState([])
   const [markedDates, setMarkedDates] = useState({});
 
-  const { data: participants} 
-  = useQuery({
-    queryKey : ['participants'], 
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('participants')
-        .select('workout_id')
-        .eq('user_id', session?.user.id); 
+  const { data: participants, isLoading: isParticipantsLoading, error: participantsError } = participantWorkouts(session?.user.id)
 
-      if (error) 
-        throw new Error(error.message);
-      return data;
-    }
-    });
+  const { data: workouts, isLoading: isWorkoutsLoading, error: workoutsError} = participantWorkoutsDetails(participants)
 
-
-    const { data: workouts} 
-    = useQuery({
-      queryKey : ['workouts', { workoutIds: participants?.map((p) => p.workout_id) }],
-      queryFn: async () => {
-        if (!participants || participants.length === 0) return []; 
-  
-        const { data, error } = await supabase
-          .from('workouts')
-          .select('*')
-          .in('id', participants.map((p) => p.workout_id)); 
-  
-        if (error) throw new Error(error.message);
-        return data;
-      },
-      enabled: !!participants, 
-
-    });
-
- 
- 
 
   useEffect(() => {
     if (workouts) {
@@ -95,6 +65,18 @@ export default function Index() {
     
   }
 }, [workouts, selected]);
+
+  if (isParticipantsLoading || isWorkoutsLoading) {
+    return <ActivityIndicator />;
+  }
+
+  if (participantsError || workoutsError) {
+    return console.error(participantsError || workoutsError);
+    
+  }
+
+
+
 
 const createWorkout = (day) => {
   setSelected(day.dateString);
