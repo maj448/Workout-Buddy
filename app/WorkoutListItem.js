@@ -3,10 +3,19 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { format, parseISO} from 'date-fns';
 import { useNavigation } from '@react-navigation/native';
 
+
+
+  const workoutStatuses = {
+    pending: { backgroundColor: 'blue', },
+    completed: { backgroundColor: 'green', },
+    upcoming: { backgroundColor: 'orange', },
+    missed: { backgroundColor: 'red', },
+  };
+
 export default function WorkoutListItem({ workout }) {
     if (!workout) {
         console.error("workout is undefined", workout);
-        return null;  // Return null or an error message if workout is undefined
+        return null;  
       }
 
     const displayStartTime = format(parseISO(workout.start_time), 'h:mm a')
@@ -21,9 +30,11 @@ export default function WorkoutListItem({ workout }) {
         }
 	};
 
+    const backgroundColorOnStatus = workoutStatuses[workout.workout_status]
+
     return(
         <Pressable onPress={gotoDetailsScreen}>
-        <View style= {styles.container}>
+        <View style= {[styles.container, backgroundColorOnStatus]}>
             <Text style= {styles.text}>
                 {workout.title}
             </Text>
@@ -38,7 +49,6 @@ export default function WorkoutListItem({ workout }) {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: 'green',
         padding: 15,
         borderRadius: 5,
         flexDirection: 'row',

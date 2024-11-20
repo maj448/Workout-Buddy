@@ -1,16 +1,27 @@
 import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, Button} from 'react-native';
 import {useState, useEffect} from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useAuth } from './providers/AuthProvider';
 
-const NewWorkoutScreen = ({selected}) => {
+const NewWorkoutScreen = ({route}) => {
+  const { session } = useAuth();
+
+  const {selected} = route.params;
+
   const [inputTitle, setInputTitle] = useState('');
   const [inputNotes, setInputNotes] = useState('');
-  const [inputDate, setInputDate] = useState({selected});
+  const [inputDate, setInputDate] = useState(selected);
   const [inputStartTime, setInputStartTime] = useState('');
   const [inputEndTime, setInputEndTime] = useState('');
 
+  useEffect(() => {
+
+    
+  }, [workouts, selected]);
+
 
   return (
-    <KeyboardAvoidingView  style={styles.modalContainer}>
+    <KeyboardAvoidingView >
       <Text >Title:</Text>
       <TextInput
           style={styles.inputBox}
@@ -59,6 +70,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  inputBox: {
+    width: 200,
+    height: 40,
+    borderColor: 'lightgray',
+    backgroundColor: 'white',
+    borderWidth: 2,
+    marginBottom: 15,
+    paddingHorizontal: 10,
   },
 });
 

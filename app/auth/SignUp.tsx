@@ -1,7 +1,8 @@
 import {SafeAreaView} from 'react-native-safe-area-context';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import { supabase } from '../utils/supabase';
 
 
 
@@ -12,11 +13,53 @@ export default function SignUp() {
     const [inputEmail, setInputEmail] = useState('')
     const [inputPassword, setInputPassword] = useState('')
     const [inputConfPassword, setInputConfPassword] = useState('')
+    const [loading, setLoading] = useState(false);
 
     const gotoLoginScreen = () => {
 		navigation.navigate('Login');
 	};
 
+    async function signUpWithEmail()
+    {
+
+        if (inputPassword !== inputConfPassword) {
+            Alert.alert("Passwords don't match");
+            return;
+          }
+
+        setLoading(true);
+        const {data, error} = await supabase.auth.signUp({ email: inputEmail, password : inputPassword});
+
+        if (error) {
+            Alert.alert(error.message);
+            setLoading(false);
+            return;
+        }
+
+        if (data.user) {
+            const { error } = await supabase
+              .from('profiles')
+              .upsert([
+                {
+                  id: data.user.id,
+                  full_name: inputFullName,
+                  username: inputUsername,
+                },
+              ], { });
+      
+            if (error) {
+              Alert.alert('Error creating profile', error.message);
+              setLoading(false);
+              return;
+            }
+      
+            Alert.alert('Account Created', 'Your account has been successfully created!');
+      
+            navigation.navigate('Login');
+          }
+      
+          setLoading(false);
+    }
 
     return(
         <SafeAreaView style={styles.container}>
@@ -52,22 +95,25 @@ export default function SignUp() {
                 <Text style={styles.label}>Password:</Text>
                 <TextInput
                 style={styles.inputBox}
+                secureTextEntry
                 keyboardType="default"
                 value={inputPassword}
                 onChangeText={setInputPassword}/>
+                
 
             </View>
             <View style={styles.inputArea}>
                 <Text style={styles.label}>Confirm Pwd:</Text>
                 <TextInput
                 style={styles.inputBox}
+                secureTextEntry
                 keyboardType="default"
                 value={inputConfPassword}
                 onChangeText={setInputConfPassword}/>
 
             </View>
 
-            <Button title='Create Account' onPress={gotoLoginScreen}/>
+            <Button title={loading ? 'Creating account...' : 'Create Account'} disabled={loading} onPress={signUpWithEmail}/>
 
 
         </SafeAreaView>
@@ -112,3 +158,5 @@ const styles = StyleSheet.create({
     
 
 })
+
+// (( SELECT auth.uid() AS uid) = id)
