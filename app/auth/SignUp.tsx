@@ -22,9 +22,12 @@ export default function SignUp() {
     async function signUpWithEmail()
     {
         setLoading(true);
-       const {error} = await supabase.auth.signUp({ email: inputEmail, password : inputPassword});
+        const {error} = await supabase.auth.signUp({ email: inputEmail, password : inputPassword});
 
-       if (error) Alert.alert(error.message);
+
+        if (error) Alert.alert(error.message);
+        
+
         setLoading(false);
     }
 

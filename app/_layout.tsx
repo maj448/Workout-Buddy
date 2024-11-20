@@ -8,20 +8,13 @@ import Buddies from './Buddies';
 import NewWorkoutScreen from './NewWorkout';
 import Entypo from '@expo/vector-icons/Entypo';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import { supabase } from './utils/supabase'
 import Ionicons from '@expo/vector-icons/Ionicons';
-
-// import Auth from './Auth'
-// import SignUp from './SignUp'
-import { View } from 'react-native'
-import { Session } from '@supabase/supabase-js'
-
 import Login from './auth/Login';
 import SignUp from './auth/SignUp';
 import WorkoutDetailsScreen from './Workoutdetails';
 import AuthProvider from './providers/AuthProvider';
 import { useAuth } from './providers/AuthProvider';
+import QueryProvider from './providers/QueryProvider';
 
 
 const Tab = createBottomTabNavigator();
@@ -78,43 +71,42 @@ const Stack = createStackNavigator ();
 export default function RootLayout() {
   const { session } = useAuth();
 
-  const [initialRoute, setInitialRoute] = useState('Login'); // Default to Login screen
+  const [initialRoute, setInitialRoute] = useState('Login'); 
 
   useEffect(() => {
     if (session) {
-      setInitialRoute('Tabs'); // Change to Tabs if the session exists
+      setInitialRoute('Tabs'); 
     } else {
-      setInitialRoute('Login'); // Stay on Login if no session
+      setInitialRoute('Login'); 
+
     }
-  }, [session]); // Trigger re-render when session changes
+  }, [session]); 
 
   return (
     
     <AuthProvider>
-    <NavigationIndependentTree>
-    <NavigationContainer>
-    {/* <Stack.Navigator initialRouteName= {"Tabs"}> */}
-    <Stack.Navigator initialRouteName= {initialRoute}>  
-      <Stack.Screen 
-          name="Tabs" 
-          component={MyTabs} 
-          options={{ headerShown: false }} 
-      />
-      <Stack.Screen 
-          name="Login" 
-          component={Login} 
-          options={{ headerShown: false }} 
-      />
+      <QueryProvider>
+        <NavigationIndependentTree>
+          <NavigationContainer>
+          <Stack.Navigator initialRouteName= {initialRoute}>  
             <Stack.Screen 
-          name="Sign Up" 
-          component={SignUp} 
-      />
-      <Stack.Screen name="New Workout" component={NewWorkoutScreen} />
-      <Stack.Screen name="Workout Details" component={WorkoutDetailsScreen} />
-    </Stack.Navigator>
-    
-  </NavigationContainer>
-  </NavigationIndependentTree>
+                name="Tabs" 
+                component={MyTabs} 
+                options={{ headerShown: false }} 
+            />
+            <Stack.Screen 
+                name="Login" 
+                component={Login} 
+                options={{ headerShown: false }} 
+            />
+            <Stack.Screen name="Sign Up" component={SignUp} />
+            <Stack.Screen name="New Workout" component={NewWorkoutScreen} />
+            <Stack.Screen name="Workout Details" component={WorkoutDetailsScreen} />
+          </Stack.Navigator>
+          
+        </NavigationContainer>
+      </NavigationIndependentTree>
+    </QueryProvider>
   </AuthProvider>
 
   );

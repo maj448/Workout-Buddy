@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { supabase } from '../utils/supabase';
 import { useAuth } from '../providers/AuthProvider';
+import { useQuery } from '@tanstack/react-query';
 
 
 
@@ -35,6 +36,8 @@ export default function Login() {
 
 
     }
+
+
 
 
     return (
