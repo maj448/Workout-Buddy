@@ -1,9 +1,12 @@
 import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, Button} from 'react-native';
 import {useState, useEffect} from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useAuth } from './providers/AuthProvider';
 
 const NewWorkoutScreen = ({route}) => {
+  const { session } = useAuth();
 
-  const { selected} = route.params;
+  const {selected} = route.params;
 
   const [inputTitle, setInputTitle] = useState('');
   const [inputNotes, setInputNotes] = useState('');
@@ -11,9 +14,14 @@ const NewWorkoutScreen = ({route}) => {
   const [inputStartTime, setInputStartTime] = useState('');
   const [inputEndTime, setInputEndTime] = useState('');
 
+  useEffect(() => {
+
+    
+  }, [workouts, selected]);
+
 
   return (
-    <KeyboardAvoidingView  style={styles.modalContainer}>
+    <KeyboardAvoidingView >
       <Text >Title:</Text>
       <TextInput
           style={styles.inputBox}

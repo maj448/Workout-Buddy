@@ -8,92 +8,93 @@ import { useNavigation } from '@react-navigation/native';
 import { useState, useEffect } from 'react'
 import { supabase } from './utils/supabase';
 import { useQuery } from '@tanstack/react-query';
+import { useAuth } from './providers/AuthProvider';
 
-// enum WorkoutStatus {
-//   Upcoming = 'upcoming',
-//   Pending = 'pending',
-//   Complete = 'complete',
-//   Missed = 'missed',
-// }
 
-// const workoutStatuses = {
-//   [WorkoutStatus.Upcoming]: { key: 'upcoming', color: 'orange' },
-//   [WorkoutStatus.Pending]: { key: 'pending', color: 'blue' },
-//   [WorkoutStatus.Complete]: { key: 'complete', color: 'green' },
-//   [WorkoutStatus.Missed]: { key: 'missed', color: 'red' },
-// };
 
 const workoutStatuses = {
-  pending: {
-    key: 'pending', color: 'blue' , 
-  },
-  completed: {
-    key: 'complete', color: 'green', 
-  },
-  upcoming: {
-    key: 'upcoming', color: 'orange', 
-  },
-  missed: {
-    key: 'missed', color: 'red', 
-  },
+  pending: { key: 'pending', color: 'blue' },
+  completed: { key: 'complete', color: 'green' },
+  upcoming: { key: 'upcoming', color: 'orange' },
+  missed: { key: 'missed', color: 'red' },
 };
 
 
 export default function Index() {
-
-  const {data : tasks, error, isLoading} = useQuery({
-    queryKey : ['workouts'],
-    queryFn: async () => {
-      const {data, error} = 
-      await supabase.from('workouts').select('*');
-
-
-      if(error){
-        throw new Error(error.message)
-      };
-      return data;
-    },
-  })
+  const { session } = useAuth();
   const navigation = useNavigation();
-
-
   const today = format(new Date(), 'yyyy-MM-dd');
-  //const [rows, setRows] = useState([]);
   const [selected, setSelected] = useState(today);
-
-  //const markedDates: { [key: string]: { dots: { key: string, color: string }[] } } = {};
-  const [filteredTasks, setFilteredTasks] = useState([])
+  const [filteredWorkouts, setFilteredWorkouts] = useState([])
   const [markedDates, setMarkedDates] = useState({});
 
+  const { data: participants} 
+  = useQuery({
+    queryKey : ['participants'], 
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('participants')
+        .select('workout_id')
+        .eq('user_id', session?.user.id); 
+
+      if (error) 
+        throw new Error(error.message);
+      return data;
+    }
+    });
+
+
+    const { data: workouts} 
+    = useQuery({
+      queryKey : ['workouts', { workoutIds: participants?.map((p) => p.workout_id) }],
+      queryFn: async () => {
+        if (!participants || participants.length === 0) return []; 
+  
+        const { data, error } = await supabase
+          .from('workouts')
+          .select('*')
+          .in('id', participants.map((p) => p.workout_id)); 
+  
+        if (error) throw new Error(error.message);
+        return data;
+      },
+      enabled: !!participants, 
+
+    });
+
+ 
+ 
+
   useEffect(() => {
-    if (tasks) {
+    if (workouts) {
       const newMarkedDates = {};
-      tasks.forEach((task) => {
-        const taskDate = task.workout_date.split('T')[0]; // Extract date (YYYY-MM-DD)
+      workouts.forEach((workout) => {
+        const workoutDate = workout.workout_date.split('T')[0]; // Extract date (YYYY-MM-DD)
 
         // Initialize the date entry if it doesn't exist yet
-        if (!newMarkedDates[taskDate]) {
-          newMarkedDates[taskDate] = { dots: [] };
+        if (!newMarkedDates[workoutDate]) {
+          newMarkedDates[workoutDate] = { dots: [] };
         }
 
-        // Add a dot for the task based on its status
-        newMarkedDates[taskDate].dots.push({
-          key: workoutStatuses[task.workout_status]?.key,
-          color: workoutStatuses[task.workout_status]?.color,
+        const dotKey = `${workout.id}-${workout.workout_status}`;
+        // Add a dot for the workout based on its status
+        newMarkedDates[workoutDate].dots.push({
+          key: dotKey, 
+          color: workoutStatuses[workout.workout_status]?.color,
         });
       });
 
       setMarkedDates(newMarkedDates);
 
-      const filtered = tasks.filter((task) => {
-        const taskDate = task.workout_date.split('T')[0];
-        return taskDate === selected;
+      const filtered = workouts.filter((workout) => {
+        const workoutDate = workout.workout_date.split('T')[0];
+        return workoutDate === selected;
       });
 
-      setFilteredTasks(filtered);
+      setFilteredWorkouts(filtered);
     
   }
-}, [tasks, selected]);
+}, [workouts, selected]);
 
 const createWorkout = (day) => {
   setSelected(day.dateString);
@@ -125,7 +126,7 @@ const createWorkout = (day) => {
 
         />
 
-    <WorkoutList workouts={filteredTasks} displayDate ={displayDate} selected={selected}/>
+    <WorkoutList workouts={filteredWorkouts} displayDate ={displayDate} selected={selected}/>
 
     </SafeAreaView>
     );

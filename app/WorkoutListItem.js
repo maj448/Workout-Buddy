@@ -6,24 +6,16 @@ import { useNavigation } from '@react-navigation/native';
 
 
   const workoutStatuses = {
-    pending: {
-      backgroundColor: 'orange', 
-    },
-    completed: {
-      backgroundColor: 'green', 
-    },
-    upcoming: {
-      backgroundColor: 'blue', 
-    },
-    missed: {
-      backgroundColor: 'red', 
-    },
+    pending: { backgroundColor: 'blue', },
+    completed: { backgroundColor: 'green', },
+    upcoming: { backgroundColor: 'orange', },
+    missed: { backgroundColor: 'red', },
   };
 
 export default function WorkoutListItem({ workout }) {
     if (!workout) {
         console.error("workout is undefined", workout);
-        return null;  // Return null or an error message if workout is undefined
+        return null;  
       }
 
     const displayStartTime = format(parseISO(workout.start_time), 'h:mm a')
