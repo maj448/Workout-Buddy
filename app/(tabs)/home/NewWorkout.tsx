@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, Button} from 'react-native';
 import {useState, useEffect} from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useAuth } from './providers/AuthProvider';
+import { useAuth } from '../../providers/AuthProvider';
 
 const NewWorkoutScreen = ({route}) => {
   const { session } = useAuth();
@@ -17,7 +17,7 @@ const NewWorkoutScreen = ({route}) => {
   useEffect(() => {
 
     
-  }, [workouts, selected]);
+  }, [, selected]);
 
 
   return (

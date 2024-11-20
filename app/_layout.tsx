@@ -1,118 +1,70 @@
 import React, { useEffect, useState } from 'react';
-import { NavigationContainer, NavigationIndependentTree } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import index from './index'; 
-import Profile from './Profile'; 
-import Buddies from './Buddies'; 
-import NewWorkoutScreen from './NewWorkout';
-import Entypo from '@expo/vector-icons/Entypo';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import Login from './auth/Login';
-import SignUp from './auth/SignUp';
-import WorkoutDetailsScreen from './Workoutdetails';
+
 import AuthProvider from './providers/AuthProvider';
 import { useAuth } from './providers/AuthProvider';
 import QueryProvider from './providers/QueryProvider';
-import InWorkout from './InWorkout';
 import Example from './Example';
+import { SplashScreen, Stack } from 'expo-router';
+import { useFonts } from 'expo-font';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 
-const Tab = createBottomTabNavigator();
 
 
-function MyTabs() {
-  const { session } = useAuth();
-  if (!session) {
-    return <Login />;
-  }
 
-	return (
+export {
+  // Catch any errors thrown by the Layout component.
+  ErrorBoundary,
+} from 'expo-router';
 
-		<Tab.Navigator>
-        <Tab.Screen 
-        name="Home" 
-        component={index} 
-        options={{
-        tabBarIcon: () => (
-          <Entypo name="home" size={24} color="black" />
-          ),
-          tabBarLabel: 'Home',
-          headerShown: false,
-        }}
-        />
+export const unstable_settings = {
+  // Ensure that reloading on `/modal` keeps a back button present.
+  initialRouteName: '(tabs)',
+};
 
-        <Tab.Screen 
-        name="Buddies" 
-        component={Buddies} 
-        options={{
-          tabBarIcon: () => (
-            <FontAwesome5 name="user-friends" size={24} color="black" />
-            ),
-            tabBarLabel: 'Buddies',
-          }}
-        />
-        <Tab.Screen 
-        
-        name="Profile" 
-        component={Profile} 
-        options={{
-          tabBarIcon: () => (
-            <Ionicons name="person" size={24} color="black" />
-            ),
-            tabBarLabel: 'Profile',
-          }}
-        />
-      </Tab.Navigator>
-	);
-}
+// Prevent the splash screen from auto-hiding before asset loading is complete.
+SplashScreen.preventAutoHideAsync();
 
-const Stack = createStackNavigator ();
+// export default function RootLayout() {
+//   // const [loaded, error] = useFonts({
+//   //   SpaceMono: require('../../assets/fonts/SpaceMono-Regular.ttf'),
+//   //   ...FontAwesome.font,
+//   // });
 
-export default function RootLayout() {
-  const { session } = useAuth();
+//   // // Expo Router uses Error Boundaries to catch errors in the navigation tree.
+//   // useEffect(() => {
+//   //   if (error) throw error;
+//   // }, [error]);
 
-  const [initialRoute, setInitialRoute] = useState('Tabs'); 
+//   // useEffect(() => {
+//   //   if (loaded) {
+//   //     SplashScreen.hideAsync();
+//   //   }
+//   // }, [loaded]);
 
-  useEffect(() => {
-    if (session) {
-      setInitialRoute('Tabs'); 
-    } else {
-      setInitialRoute('Login'); 
+//   // if (!loaded) {
+//   //   return null;
+//   // }
 
-    }
-  }, [session]); 
+//   return <RootLayoutNav />;
+// }
+
+export default function RootLayoutNav() {
+
 
   return (
     
     <AuthProvider>
       <QueryProvider>
-        <NavigationIndependentTree>
-          <NavigationContainer>
-          <Stack.Navigator initialRouteName= {initialRoute}>  
+          <Stack >  
             <Stack.Screen 
-                name="Tabs" 
-                component={MyTabs} 
+                name="(tabs)" 
                 options={{ headerShown: false }} 
             />
             <Stack.Screen 
-                name="Login" 
-                component={Login} 
+                name="(auth)" 
                 options={{ headerShown: false }} 
             />
-            <Stack.Screen 
-                name="In Workout" 
-                component={InWorkout} 
-                options={{ headerShown: false }} 
-            />
-            <Stack.Screen name="Sign Up" component={SignUp} />
-            <Stack.Screen name="Example" component={Example} />
-            <Stack.Screen name="New Workout" component={NewWorkoutScreen} />
-            <Stack.Screen name="Workout Details" component={WorkoutDetailsScreen} />
-          </Stack.Navigator>
-          
-        </NavigationContainer>
-      </NavigationIndependentTree>
+          </Stack>
     </QueryProvider>
   </AuthProvider>
 

@@ -1,6 +1,6 @@
 import {View, Text, StyleSheet, Pressable} from 'react-native'
 import { format, parseISO} from 'date-fns';
-import { useNavigation } from '@react-navigation/native';
+//import { useNavigation } from '@react-navigation/native';
 
 
 

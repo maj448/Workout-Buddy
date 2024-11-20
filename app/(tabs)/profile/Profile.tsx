@@ -1,18 +1,20 @@
 import { View, Text, StyleSheet, Button } from 'react-native';
-import { supabase } from './utils/supabase';
-import { useNavigation } from '@react-navigation/native';
+import { supabase } from '../../utils/supabase';
+//import { useNavigation } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
-import { useAuth } from './providers/AuthProvider';
+import { useAuth } from '../../providers/AuthProvider';
 import { useEffect, useState } from 'react';
+import { Redirect } from 'expo-router';
 
 const ProfileScreen = () => {
   const { session } = useAuth();
-  const navigation = useNavigation();
+  //const navigation = useNavigation();
   const [userProfile, setUserProfile] = useState()
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    navigation.navigate("Login");
+    //navigation.navigate("Login");
+    return <Redirect href={'../Login/'} />
     
   };
 

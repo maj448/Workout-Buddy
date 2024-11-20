@@ -1,13 +1,14 @@
 import {SafeAreaView} from 'react-native-safe-area-context';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import { useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
+//import { useNavigation } from '@react-navigation/native';
 import { supabase } from '../utils/supabase';
+import { Redirect} from 'expo-router';
 
 
 
 export default function SignUp() {
-    const navigation = useNavigation();
+    //const navigation = useNavigation();
     const [inputFullName, setInputFullName] = useState('')
     const [inputUsername, setInputUsername] = useState('')
     const [inputEmail, setInputEmail] = useState('')
@@ -15,9 +16,9 @@ export default function SignUp() {
     const [inputConfPassword, setInputConfPassword] = useState('')
     const [loading, setLoading] = useState(false);
 
-    const gotoLoginScreen = () => {
-		navigation.navigate('Login');
-	};
+    // const gotoLoginScreen = () => {
+	// 	navigation.navigate('Login');
+	// };
 
     async function signUpWithEmail()
     {
@@ -55,10 +56,11 @@ export default function SignUp() {
       
             Alert.alert('Account Created', 'Your account has been successfully created!');
       
-            navigation.navigate('Login');
+            //navigation.navigate('Login');
           }
       
           setLoading(false);
+          return <Redirect href={'/Login'} />;
     }
 
     return(

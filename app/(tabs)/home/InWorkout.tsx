@@ -4,13 +4,15 @@ import { TouchableHighlight } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {Stopwatch} from 'react-native-stopwatch-timer';
 import { useNavigation } from '@react-navigation/native';
-
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 
 export default function InWorkout() {
-  const navigation = useNavigation()
+  //const navigation = useNavigation()
+  const router = useRouter();
 
   const gotoDetails = () => {
-    navigation.navigate('Workout Details');
+    //navigation.navigate('Workout Details');
+    router.back();
   };
   const [isStopwatchStart, setIsStopwatchStart] = useState(false);
 
@@ -37,7 +39,7 @@ export default function InWorkout() {
           <TouchableHighlight
             onPress={() => {
               //setIsStopwatchStart(false);gotoDetails
-              navigation.goBack()}}>
+              router.back()}}>
             <Text style={styles.buttonText}>End</Text>
           </TouchableHighlight>
         </View>

@@ -1,27 +1,34 @@
 import { View, Text, StyleSheet, Button } from 'react-native';
 import { format, parseISO} from 'date-fns';
-import { useNavigation } from '@react-navigation/native';
+//import { useNavigation } from '@react-navigation/native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import WorkoutBuddiesList from './WorkoutBuddiesList'
+//import WorkoutBuddiesList from '../WorkoutBuddiesList'
+import WorkoutBuddiesList from '../../components/WorkoutBuddiesList'
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 
-const WorkoutDetailsScreen = ({route}) => {
+const WorkoutDetailsScreen = ({passed_items}) => {
     // if (!workout) {
     //     console.error("workout is undefined", workout);
     //     return null;  
     //   }
+    const { id: idString } = useLocalSearchParams();
+    const id = parseFloat(typeof idString === 'string' ? idString : idString[0]);
 
-    const { workout} = route.params;
+    const { workout} = passed_items.params;
     const displayStartTime = format(parseISO(workout.start_time), 'h:mm a')
     const displayEndTime = format(parseISO(workout.end_time), 'h:mm a')
     const displayDate = format(parseISO(workout.workout_date), 'yyyy-mm-dd')
-    const navigation = useNavigation()
+    //const navigation = useNavigation()
+
+    const router = useRouter();
 
     const gotoInWorkout = () => {
-      navigation.navigate('In Workout');
+      //navigation.navigate('In Workout');
+      //router.push('/InWorkout');
     };
-    const gotoExample = () => {
-      navigation.navigate('Example');
-    };
+    // const gotoExample = () => {
+    //   navigation.navigate('Example');
+    // };
 
   return (
     <View style={styles.container}>
@@ -36,7 +43,7 @@ const WorkoutDetailsScreen = ({route}) => {
 
       <WorkoutBuddiesList/>
       <View>
-        <Button title= 'Check In' onPress={gotoExample}/>
+        <Button title= 'Check In'/>
         <Button title= 'leave'/>
       </View>
       <Button title= 'Start' onPress={gotoInWorkout}/>

@@ -1,7 +1,8 @@
 import {View, Text, StyleSheet, Pressable} from 'react-native'
-import AntDesign from '@expo/vector-icons/AntDesign';
+//import AntDesign from '@expo/vector-icons/AntDesign';
 import { format, parseISO} from 'date-fns';
-import { useNavigation } from '@react-navigation/native';
+import { Link } from 'expo-router';
+//import { useNavigation } from '@react-navigation/native';
 
 
 
@@ -20,11 +21,12 @@ export default function WorkoutListItem({ workout }) {
 
     const displayStartTime = format(parseISO(workout.start_time), 'h:mm a')
     const displayEndTime = format(parseISO(workout.end_time), 'h:mm a')
-    const navigation = useNavigation()
+    //const navigation = useNavigation()
 
     const gotoDetailsScreen = () => {
         if (workout) {
-            navigation.navigate('Workout Details', {workout: workout });
+        //navigation.navigate('Workout Details', {workout: workout });
+
         } else {
             alert('No workout data available');
         }
@@ -33,6 +35,7 @@ export default function WorkoutListItem({ workout }) {
     const backgroundColorOnStatus = workoutStatuses[workout.workout_status]
 
     return(
+        <Link href={`/(tabs)/(home)/${workout.title}`} asChild>
         <Pressable onPress={gotoDetailsScreen}>
         <View style= {[styles.container, backgroundColorOnStatus]}>
             <Text style= {styles.text}>
@@ -43,6 +46,7 @@ export default function WorkoutListItem({ workout }) {
             <Text style={styles.time}>{displayStartTime} to {displayEndTime}</Text>
         </View>
         </Pressable>
+        </Link>
 
     )
 }

@@ -1,27 +1,28 @@
 import {SafeAreaView} from 'react-native-safe-area-context';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import { useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
+// import { useNavigation } from '@react-navigation/native';
 import { supabase } from '../utils/supabase';
-import { useAuth } from '../providers/AuthProvider';
-import { useQuery } from '@tanstack/react-query';
+//import { useAuth } from '../providers/AuthProvider';
+//import { useQuery } from '@tanstack/react-query';
+import { Link, Stack } from 'expo-router';
 
 
 
 export default function Login() {
 
-    const navigation = useNavigation();
+    // const navigation = useNavigation();
     const [inputEmail, setInputEmail] = useState('');
     const [inputPassword, setInputPassword] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const {session} = useAuth();
+    //const {session} = useAuth();
 
   
 
-    const gotoSignUpScreen = () => {
-		navigation.navigate('Sign Up');
-	};
+    // const gotoSignUpScreen = () => {
+	// 	// navigation.navigate('Sign Up');
+	// };
 
 
 
@@ -31,16 +32,18 @@ export default function Login() {
        const {error} = await supabase.auth.signInWithPassword({ email: inputEmail, password : inputPassword});
 
        if (error) Alert.alert(error.message)
-        else navigation.navigate('Tabs');
+        // else navigation.navigate('Tabs');
         setLoading(false);
 
 
     }
-
+    console.log('Login Screen')
+    
 
 
 
     return (
+       
 
         <SafeAreaView style={styles.container}>
             <View style={{flex: 4 }}>
@@ -71,7 +74,10 @@ export default function Login() {
             </View>
 
             <Button title={loading ? 'Logging in...' : 'Login'} disabled={loading} onPress={signInWithEmail}/>
-            <Button title='Sign Up'  onPress={gotoSignUpScreen}/>
+            {/* <Button title='Sign Up'  onPress={gotoSignUpScreen}/> */}
+            <Link href="/(auth)/SignUp" >
+                Create an account
+            </Link>
             
 
 
