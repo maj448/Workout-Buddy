@@ -9,20 +9,34 @@ import { useState, useEffect } from 'react'
 import { supabase } from './utils/supabase';
 import { useQuery } from '@tanstack/react-query';
 
-enum WorkoutStatus {
-  Upcoming = 'upcoming',
-  Pending = 'pending',
-  Complete = 'complete',
-  Missed = 'missed',
-}
+// enum WorkoutStatus {
+//   Upcoming = 'upcoming',
+//   Pending = 'pending',
+//   Complete = 'complete',
+//   Missed = 'missed',
+// }
+
+// const workoutStatuses = {
+//   [WorkoutStatus.Upcoming]: { key: 'upcoming', color: 'orange' },
+//   [WorkoutStatus.Pending]: { key: 'pending', color: 'blue' },
+//   [WorkoutStatus.Complete]: { key: 'complete', color: 'green' },
+//   [WorkoutStatus.Missed]: { key: 'missed', color: 'red' },
+// };
 
 const workoutStatuses = {
-  [WorkoutStatus.Upcoming]: { key: 'upcoming', color: 'orange' },
-  [WorkoutStatus.Pending]: { key: 'pending', color: 'blue' },
-  [WorkoutStatus.Complete]: { key: 'complete', color: 'green' },
-  [WorkoutStatus.Missed]: { key: 'missed', color: 'red' },
+  pending: {
+    key: 'pending', color: 'blue' , 
+  },
+  completed: {
+    key: 'complete', color: 'green', 
+  },
+  upcoming: {
+    key: 'upcoming', color: 'orange', 
+  },
+  missed: {
+    key: 'missed', color: 'red', 
+  },
 };
-
 
 
 export default function Index() {
@@ -30,9 +44,10 @@ export default function Index() {
   const {data : tasks, error, isLoading} = useQuery({
     queryKey : ['workouts'],
     queryFn: async () => {
-      const {data, error} = await supabase.from('workouts').select('*');
-      console.log(error)
-      console.log(data)
+      const {data, error} = 
+      await supabase.from('workouts').select('*');
+
+
       if(error){
         throw new Error(error.message)
       };
@@ -63,8 +78,8 @@ export default function Index() {
 
         // Add a dot for the task based on its status
         newMarkedDates[taskDate].dots.push({
-          key: workoutStatuses[task.workout_status].key,
-          color: workoutStatuses[task.workout_status].color,
+          key: workoutStatuses[task.workout_status]?.key,
+          color: workoutStatuses[task.workout_status]?.color,
         });
       });
 

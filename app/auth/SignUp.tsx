@@ -21,14 +21,44 @@ export default function SignUp() {
 
     async function signUpWithEmail()
     {
+
+        if (inputPassword !== inputConfPassword) {
+            Alert.alert("Passwords don't match");
+            return;
+          }
+
         setLoading(true);
-        const {error} = await supabase.auth.signUp({ email: inputEmail, password : inputPassword});
+        const {data, error} = await supabase.auth.signUp({ email: inputEmail, password : inputPassword});
 
+        if (error) {
+            Alert.alert(error.message);
+            setLoading(false);
+            return;
+        }
 
-        if (error) Alert.alert(error.message);
-        
-
-        setLoading(false);
+        if (data.user) {
+            const { error } = await supabase
+              .from('profiles')
+              .upsert([
+                {
+                  id: data.user.id,
+                  full_name: inputFullName,
+                  username: inputUsername,
+                },
+              ], { });
+      
+            if (error) {
+              Alert.alert('Error creating profile', error.message);
+              setLoading(false);
+              return;
+            }
+      
+            Alert.alert('Account Created', 'Your account has been successfully created!');
+      
+            navigation.navigate('Login');
+          }
+      
+          setLoading(false);
     }
 
     return(
@@ -128,3 +158,5 @@ const styles = StyleSheet.create({
     
 
 })
+
+// (( SELECT auth.uid() AS uid) = id)
