@@ -11,7 +11,7 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Login from './auth/Login';
 import SignUp from './auth/SignUp';
-import WorkoutDetailsScreen from './Workoutdetails';
+import WorkoutDetailsScreen from './WorkoutDetails';
 import AuthProvider from './providers/AuthProvider';
 import { useAuth } from './providers/AuthProvider';
 import QueryProvider from './providers/QueryProvider';

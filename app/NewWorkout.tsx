@@ -22,7 +22,6 @@ const NewWorkoutScreen = ({route}) => {
   const [open, setOpen] = useState(false)
   const [openStart, setOpenStart] = useState(false)
   const [openEnd, setOpenEnd] = useState(false)
-  //const [displayStart, setDisplayStart]
 
 
 
