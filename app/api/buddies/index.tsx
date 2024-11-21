@@ -3,7 +3,7 @@ import { supabase } from '@/app/utils/supabase';
 
 
 
-export const userBuddies = (user_id) => {
+export const userBuddies = (user_id : string) => {
 
     return useQuery({
         queryKey : ['buddies', user_id], 
