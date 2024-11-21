@@ -40,6 +40,27 @@ export const participantWorkoutsDetails = (participants) => {
       });
 }
 
+
+export const participantWorkoutInfo = (user_id, workout_id ) => {
+
+  return useQuery({
+      queryKey : ['participants', user_id, workout_id], 
+      queryFn: async () => {
+        const { data, error } = await supabase
+          .from('participants')
+          .select('*')
+          .eq('user_id', user_id)
+          .eq('workout_id', workout_id); 
+  
+        if (error) 
+          throw new Error(error.message);
+        return data;
+      },
+      });
+      
+  
+}
+
 export const useInsertWorkout = () => {
 
   const queryClient = useQueryClient();
@@ -78,8 +99,8 @@ export const useInsertWorkout = () => {
 
     },
     async onSuccess() {
-      queryClient.invalidateQueries(['participants', data.user_id]);
-      queryClient.invalidateQueries(['workouts', { workoutIds: data.workout_id }]);
+      await queryClient.invalidateQueries(['participants', data.user_id]);
+      await queryClient.invalidateQueries(['workouts', { workoutIds: data.workout_id }]);
     },
     onError(error) {
       //console.log(error);

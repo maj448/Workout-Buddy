@@ -4,10 +4,10 @@ import { View, Text, TouchableOpacity, ScrollView, Button } from 'react-native';
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 import { format, parseISO} from 'date-fns';
 import WorkoutList from "./WorkoutList"
-import { useNavigation } from '@react-navigation/native';
-import { useState, useEffect } from 'react'
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useState, useEffect, useCallback } from 'react'
 import { supabase } from './utils/supabase';
-import { useQuery } from '@tanstack/react-query';
+import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from './providers/AuthProvider';
 import { participantWorkouts, participantWorkoutsDetails } from './api/workouts';
 import { ActivityIndicator } from 'react-native';
@@ -25,17 +25,29 @@ const workoutStatuses = {
 export default function Index() {
   const { session } = useAuth();
   const navigation = useNavigation();
+  const queryClient = useQueryClient();
   const today = format(new Date(), 'yyyy-MM-dd');
   const [selected, setSelected] = useState(today);
   const [filteredWorkouts, setFilteredWorkouts] = useState([])
   const [markedDates, setMarkedDates] = useState({});
+  const [participantWorkoutsIds, setParticipantWorkoutsIds] = useState<any>()
 
   const { data: participants, isLoading: isParticipantsLoading, error: participantsError } = participantWorkouts(session?.user.id)
-
   const { data: workouts, isLoading: isWorkoutsLoading, error: workoutsError} = participantWorkoutsDetails(participants)
 
 
+  useFocusEffect(
+    useCallback(() => {
+
+      queryClient.invalidateQueries(['participants', session?.user.id]);
+      queryClient.invalidateQueries(['workouts', { workoutIds: participantWorkoutsIds?.map((p) => p.workout_id) }]);
+
+    }, [session?.user.id]) 
+  );
+
+
   useEffect(() => {
+    setParticipantWorkoutsIds(participants)
     if (workouts) {
       const newMarkedDates = {};
       workouts.forEach((workout) => {
@@ -64,7 +76,7 @@ export default function Index() {
       setFilteredWorkouts(filtered);
     
   }
-}, [workouts, selected]);
+}, [participants, selected]);
 
   if (isParticipantsLoading || isWorkoutsLoading) {
     return <ActivityIndicator />;

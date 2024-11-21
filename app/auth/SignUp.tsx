@@ -21,44 +21,95 @@ export default function SignUp() {
 
     async function signUpWithEmail()
     {
-
         if (inputPassword !== inputConfPassword) {
             Alert.alert("Passwords don't match");
             return;
-          }
-
+        }
+        
         setLoading(true);
-        const {data, error} = await supabase.auth.signUp({ email: inputEmail, password : inputPassword});
-
-        if (error) {
-            Alert.alert(error.message);
+        
+        // Sign up the user
+        const { data, error: signUpError } = await supabase.auth.signUp({
+            email: inputEmail,
+            password: inputPassword
+        });
+        
+        if (signUpError) {
+            console.error(signUpError);
+            Alert.alert(signUpError.message);
             setLoading(false);
             return;
         }
-
+        
         if (data.user) {
-            const { error } = await supabase
-              .from('profiles')
-              .upsert([
-                {
-                  id: data.user.id,
-                  full_name: inputFullName,
-                  username: inputUsername,
-                },
-              ], { });
-      
-            if (error) {
-              Alert.alert('Error creating profile', error.message);
-              setLoading(false);
-              return;
+            // Ensure username is valid
+            if (!inputUsername || inputUsername.trim() === '') {
+                Alert.alert("Username is required.");
+                setLoading(false);
+                return;
             }
-      
+        
+            // Insert profile
+            const { error: profileError } = await supabase
+                .from('profiles')
+                .upsert([
+                    {
+                        id: data.user.id,
+                        full_name: inputFullName,
+                        username: inputUsername,
+                    }
+                ], { onConflict: ['id'] }); // Explicitly handle conflict
+        
+            if (profileError) {
+                console.error('Error creating profile:', profileError);
+                Alert.alert('Error creating profile', profileError.message);
+                setLoading(false);
+                return;
+            }
+        
             Alert.alert('Account Created', 'Your account has been successfully created!');
-      
             navigation.navigate('Login');
-          }
+        }
+        
+        setLoading(false);
+
+        // if (inputPassword !== inputConfPassword) {
+        //     Alert.alert("Passwords don't match");
+        //     return;
+        //   }
+
+        // setLoading(true);
+        // const {data, error} = await supabase.auth.signUp({ email: inputEmail, password : inputPassword});
+
+        // if (error) {
+        //     Alert.alert(error.message);
+        //     setLoading(false);
+        //     return;
+        // }
+
+        // if (data.user) {
+        //     const { error } = await supabase
+        //       .from('profiles')
+        //       .upsert([
+        //         {
+        //           id: data.user.id,
+        //           full_name: inputFullName,
+        //           username: inputUsername,
+        //         },
+        //       ], { });
       
-          setLoading(false);
+        //     if (error) {
+        //       Alert.alert('Error creating profile', error.message);
+        //       setLoading(false);
+        //       return;
+        //     }
+      
+        //     Alert.alert('Account Created', 'Your account has been successfully created!');
+      
+        //     navigation.navigate('Login');
+        //   }
+      
+        //   setLoading(false);
     }
 
     return(
