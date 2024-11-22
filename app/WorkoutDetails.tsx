@@ -2,14 +2,16 @@ import { View, Text, StyleSheet, Button, Alert, Pressable } from 'react-native';
 import { format, parseISO} from 'date-fns';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import WorkoutBuddiesList from './WorkoutBuddiesList'
+import InternalWorkoutBuddiesList from './InternalWorkoutBuddiesList'
 import { ScrollView } from "react-native-web";
 import React, {useEffect, useState} from 'react';
 import { participantWorkoutInfo, useUpdateParticipantStatus } from './api/workouts';
 import { useAuth } from './providers/AuthProvider';
 import { workoutBuddies } from './api/buddies';
 
+
 const WorkoutDetailsScreen = ({route}) => {
+
   const { session } = useAuth();
     const { workout} = route.params;
 
@@ -32,11 +34,16 @@ const WorkoutDetailsScreen = ({route}) => {
     const { data: BuddiesInfo, isLoading: isBuddiesLoading, error: BuddiesError } = workoutBuddies(session?.user.id, workout.id)
 
     const {mutate: updateParticipantStatus} = useUpdateParticipantStatus();
-    console.log(participationInfo)
-    //console.log(BuddiesInfo)
+
     const onStart = () => {
-      updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'complete'})
-      navigation.navigate('In Workout')
+      updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'complete'},
+        {
+          onSuccess: () => {
+            navigation.navigate('In Workout');
+          },
+        }
+      )
+      
     }
 
     console.log('og state', participantState)
@@ -46,13 +53,11 @@ const WorkoutDetailsScreen = ({route}) => {
       {
         
         updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'waiting'})
-        console.log('after c ', participantState)
       
       }
       if(participantState == 'waiting')
       {
         updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'checkedIn'})
-        console.log('after w ', participantState)
       }
 
     }
@@ -96,7 +101,7 @@ const WorkoutDetailsScreen = ({route}) => {
 
       </View>
 
-      <WorkoutBuddiesList/>
+      <InternalWorkoutBuddiesList/>
 
       <View style={styles.buttonContainer}>
       {!completed &&
@@ -159,7 +164,8 @@ const styles = StyleSheet.create({
     flex:1, 
     alignItems: 'center',
     justifyContent: 'flex-start',
-  }
+  }, 
+
 
 });
 
