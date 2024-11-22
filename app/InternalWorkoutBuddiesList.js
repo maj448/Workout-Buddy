@@ -75,7 +75,7 @@ export default function InternalWorkoutBuddiesList({buddies}){
             />
           )}
         />
-        <Pressable onPress={inviteFriend} style= {{}}>
+        <Pressable onPress={inviteFriend} >
           <Ionicons name="add-circle-outline" size={24} color="white" />
         </Pressable>
       </View>

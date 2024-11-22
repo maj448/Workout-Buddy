@@ -82,6 +82,7 @@ export default function SignUp() {
                 style={styles.inputBox}
                 keyboardType="default"
                 value={inputFullName}
+                placeholder="John Smith"
                 onChangeText={setInputFullName}/>
 
             </View>
@@ -91,6 +92,7 @@ export default function SignUp() {
                 style={styles.inputBox}
                 keyboardType="default"
                 value={inputUsername}
+                placeholder="John123 (must be unique)"
                 onChangeText={setInputUsername}/>
 
             </View>
@@ -100,6 +102,7 @@ export default function SignUp() {
                 style={styles.inputBox}
                 keyboardType="default"
                 value={inputEmail}
+                placeholder="abc123@email.com"
                 onChangeText={setInputEmail}/>
 
             </View>

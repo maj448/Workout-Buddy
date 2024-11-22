@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, Button, Pressable, ActivityIndicator} from 'react-native';
+import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, Button, Pressable, ActivityIndicator, ScrollView} from 'react-native';
 import {useState, useEffect} from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from './providers/AuthProvider';
@@ -6,7 +6,9 @@ import { useInsertWorkout} from './api/workouts';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { format, parseISO, startOfSecond} from 'date-fns';
 import { useNavigation } from '@react-navigation/native';
-import moment from 'moment';
+import InternalWorkoutBuddiesList from './InternalWorkoutBuddiesList';
+import { userBuddies } from './api/buddies';
+
 
 
 const NewWorkoutScreen = ({route}) => {
@@ -25,6 +27,8 @@ const NewWorkoutScreen = ({route}) => {
   const [openStart, setOpenStart] = useState(false)
   const [openEnd, setOpenEnd] = useState(false)
   const [loading, setLoading] = useState(false)
+
+  const {data: buddies, isLoading : isLoadingBuddies} = userBuddies(session?.user.id);
 
   const {mutate: insertWorkout} = useInsertWorkout();
 
@@ -102,96 +106,107 @@ const NewWorkoutScreen = ({route}) => {
 
 
   return (
-    <KeyboardAvoidingView >
-      <Text >Title:</Text>
-      <TextInput
-          style={styles.inputBox}
-          keyboardType="default"
-          value={inputTitle}
-          onChangeText={setInputTitle}
-      />
-      <Text >Date:</Text>
-      <Pressable onPress={showDatepicker}>
-        <Text>{inputDate.toLocaleDateString()}</Text>
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
+    <KeyboardAvoidingView style={styles.container}>
 
-      </Pressable>
+        <View style={styles.inputArea}>
+          <Text style={styles.label}>Title:</Text>
+          <TextInput
+              style={styles.inputBox}
+              keyboardType="default"
+              value={inputTitle}
+              onChangeText={setInputTitle}
+          />
+        </View>
+        <View style={styles.inputArea}>
+          <Text style={styles.label}>Date:</Text>
+        <Pressable onPress={showDatepicker} style={styles.inputBox}>
+          <Text >{inputDate.toLocaleDateString()}</Text>
+        </Pressable>
 
-      {open && (
-        <DateTimePicker
-          testID="dateTimePicker"
-          value={inputDate}
-          mode="date"
-          display="default"
-          onChange={onChangeDate}
-          minimumDate={today}
+        {open && (
+          <DateTimePicker
+            testID="dateTimePicker"
+            value={inputDate}
+            mode="date"
+            display="default"
+            onChange={onChangeDate}
+            minimumDate={today}
+          />
+        )}
+        </View>
+ 
+        <View style={styles.inputArea}>
+          <Text style={styles.labelSmall}>Start:</Text>
+        <Pressable onPress={showStartpicker} style={styles.inputBoxSmall}>
+          <Text >{formatTime(inputStartTime)}</Text>
+
+        </Pressable>
+
+        {openStart && (
+          <DateTimePicker
+            testID="dateTimePicker"
+            value={inputStartTime}
+            mode="time"
+            display="spinner"
+            onChange={onChangeStart}
+          />
+        )}
+
+        <Text style={styles.labelSmall}>End:</Text>
+        <Pressable onPress={showEndpicker} style={styles.inputBoxSmall}>
+          <Text >{formatTime(inputEndTime)}</Text>
+
+        </Pressable>
+        {openEnd && (
+          <DateTimePicker
+            testID="dateTimePicker"
+            value={inputEndTime}
+            mode="time"
+            display="spinner"
+            onChange={onChangeEnd}
+          />
+        )}
+
+        </View>
+
+        <View style={styles.inputArea}>
+        <Text style={styles.label}>Notes:</Text>
+        <TextInput
+            style={styles.inputBoxBig}
+            keyboardType="default"
+            value={inputNotes}
+            onChangeText={setInputNotes}
         />
-      )}
-
-      <Text >Start:</Text>
-      <Pressable onPress={showStartpicker}>
-        <Text>{formatTime(inputStartTime)}</Text>
-
-      </Pressable>
-
-      {openStart && (
-        <DateTimePicker
-          testID="dateTimePicker"
-          value={inputStartTime}
-          mode="time"
-          display="spinner"
-          onChange={onChangeStart}
-        />
-      )}
-
-      <Text >End:</Text>
-      <Pressable onPress={showEndpicker}>
-        <Text>{formatTime(inputEndTime)}</Text>
-
-      </Pressable>
-      {openEnd && (
-        <DateTimePicker
-          testID="dateTimePicker"
-          value={inputEndTime}
-          mode="time"
-          display="spinner"
-          onChange={onChangeEnd}
-        />
-      )}
-
-      <Text >Notes:</Text>
-      <TextInput
-          style={styles.inputBox}
-          keyboardType="default"
-          value={inputNotes}
-          onChangeText={setInputNotes}
-      />
-      {/* <View style={styles.buttonContainer}>
-          <Button title="Submit"  onPress={onSubmitHandler}/>
-      </View> */}
+        </View>
+      </KeyboardAvoidingView>
+      <InternalWorkoutBuddiesList buddies={buddies}/>
       <View style={styles.buttonContainer}>
             <Pressable onPress={onSubmitHandler} disabled={loading} style={styles.button}>
                 <Text style={styles.buttonText}>{loading ? 'Creating workout...' : 'Create Workout'} </Text>
             </Pressable>
             </View>
-  </KeyboardAvoidingView>
+  
+  </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  scrollContainer: {
+    flexGrow: 1,
+    padding: 10,
+    backgroundColor: '#6EEB92', 
+    gap: 10, 
+  },
   container: {
-    flex: 1,
+    //flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#6EEB92',
+    padding: 10, 
+    gap: 10, 
   },
-  inputBox: {
-    width: 200,
-    height: 40,
-    borderColor: 'lightgray',
-    backgroundColor: 'white',
-    borderWidth: 2,
-    marginBottom: 15,
-    paddingHorizontal: 10,
-  },
+  
   button: {
     width: 200,
     height: 40,
@@ -210,10 +225,79 @@ const styles = StyleSheet.create({
     fontFamily: 'fantasy'
   },
   buttonContainer : {
-    flex:3, 
+    //flex:3, 
     alignItems: 'center',
     justifyContent: 'flex-start',
-  }
+  },
+  label: {
+    fontSize: 20,
+    color: '#3D3D3D',
+    fontFamily: 'fantasy',
+    flex: 2
+  },
+inputArea:{
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    
+    //padding: 20,
+    gap: 10,
+    flex: 1
+
+},
+inputAreaBig:{
+  //flexDirection: 'row',
+  //justifyContent: 'space-evenly',
+  //alignItems: 'center',
+  //padding: 20,
+  gap: 10,
+  //flex: 1
+
+},
+inputBoxBig: {
+  //width: 200,
+  height: 100,
+  borderColor: 'lightgray',
+  backgroundColor: 'white',
+  borderWidth: 2,
+  marginBottom: 15,
+  paddingHorizontal: 10,
+  flex: 6,
+},
+inputBox: {
+  //width: 200,
+  height: 40,
+  borderColor: 'lightgray',
+  backgroundColor: 'white',
+  borderWidth: 2,
+  justifyContent: 'center',
+  alignItems: 'center',
+  //marginBottom: 15,
+  paddingHorizontal: 10,
+  //marginBottom: 15,
+  //paddingHorizontal: 10,
+  flex: 6,
+},
+labelSmall: {
+  fontSize: 20,
+  color: '#3D3D3D',
+  fontFamily: 'fantasy',
+  flex: 3
+},
+inputBoxSmall: {
+  //width: 200,
+  height: 40,
+  borderColor: 'lightgray',
+  backgroundColor: 'white',
+  borderWidth: 2,
+  justifyContent: 'center',
+  alignItems: 'center',
+  //marginBottom: 15,
+  paddingHorizontal: 10,
+  flex: 3,
+},
+
+
 });
 
 export default NewWorkoutScreen;
