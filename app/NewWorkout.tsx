@@ -8,6 +8,7 @@ import { format, parseISO, startOfSecond} from 'date-fns';
 import { useNavigation } from '@react-navigation/native';
 import InternalWorkoutBuddiesList from './InternalWorkoutBuddiesList';
 import { userBuddies } from './api/buddies';
+import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
 
 
 
@@ -111,8 +112,9 @@ const NewWorkoutScreen = ({route}) => {
 
         <View style={styles.inputArea}>
           <Text style={styles.label}>Title:</Text>
-          <TextInput
+          <AutoGrowingTextInput
               style={styles.inputBox}
+              placeholder={'(Required) Add a title ex. Walk'}
               keyboardType="default"
               value={inputTitle}
               onChangeText={setInputTitle}
@@ -149,6 +151,7 @@ const NewWorkoutScreen = ({route}) => {
             value={inputStartTime}
             mode="time"
             display="spinner"
+            minuteInterval={15}
             onChange={onChangeStart}
           />
         )}
@@ -164,6 +167,7 @@ const NewWorkoutScreen = ({route}) => {
             value={inputEndTime}
             mode="time"
             display="spinner"
+            minuteInterval={15}
             onChange={onChangeEnd}
           />
         )}
@@ -172,12 +176,23 @@ const NewWorkoutScreen = ({route}) => {
 
         <View style={styles.inputArea}>
         <Text style={styles.label}>Notes:</Text>
-        <TextInput
-            style={styles.inputBoxBig}
+        <AutoGrowingTextInput 
+        style={styles.inputBox} 
+        placeholder={'(Optional) Add Notes'}
+        keyboardType="default"
+        value={inputNotes}
+        multiline = {true}
+        numberOfLines={10}
+        onChangeText={setInputNotes}
+         />
+        {/* <TextInput
+            style={styles.inputBox}
             keyboardType="default"
             value={inputNotes}
+            multiline = {true}
+            numberOfLines={10}
             onChangeText={setInputNotes}
-        />
+        /> */}
         </View>
       </KeyboardAvoidingView>
       <InternalWorkoutBuddiesList buddies={buddies}/>
@@ -245,20 +260,14 @@ inputArea:{
     flex: 1
 
 },
-inputAreaBig:{
-  //flexDirection: 'row',
-  //justifyContent: 'space-evenly',
-  //alignItems: 'center',
-  //padding: 20,
-  gap: 10,
-  //flex: 1
 
-},
 inputBoxBig: {
   //width: 200,
   height: 100,
   borderColor: 'lightgray',
   backgroundColor: 'white',
+  //justifyContent: 'flex-start',
+  //alignItems: 'flex-start',
   borderWidth: 2,
   marginBottom: 15,
   paddingHorizontal: 10,
@@ -293,8 +302,8 @@ inputBoxSmall: {
   justifyContent: 'center',
   alignItems: 'center',
   //marginBottom: 15,
-  paddingHorizontal: 10,
-  flex: 3,
+  //paddingHorizontal: 5,
+  flex: 5,
 },
 
 
