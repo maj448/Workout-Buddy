@@ -1,5 +1,5 @@
 import {SafeAreaView} from 'react-native-safe-area-context';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert, Pressable, KeyboardAvoidingView } from 'react-native';
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { supabase } from '../utils/supabase';
@@ -47,7 +47,8 @@ export default function Login() {
             <Text style={styles.header}>Workout Buddy</Text>
             </View>
 
-            <View style={{flex: 5}}>
+            {/* <KeyboardAvoidingView style={{flex: 6 }}> */}
+            <View style={{flex: 3}}>
             <View style={styles.inputArea}>
                 <Text style={styles.label}>Email:</Text>
                 <TextInput
@@ -70,8 +71,15 @@ export default function Login() {
             </View>
             </View>
 
-            <Button title={loading ? 'Logging in...' : 'Login'} disabled={loading} onPress={signInWithEmail}/>
-            <Button title='Sign Up'  onPress={gotoSignUpScreen}/>
+            <View style={styles.buttonContainer}>
+            <Pressable onPress={signInWithEmail} disabled={loading} style={styles.button}>
+                <Text style={styles.buttonText}>{loading ? 'Logging in...' : 'Login'} </Text>
+            </Pressable>
+            <Pressable onPress={gotoSignUpScreen} style={styles.button}>
+                <Text style={styles.buttonText}>Sign Up</Text> 
+            </Pressable>
+            </View>
+            {/* </KeyboardAvoidingView> */}
             
 
 
@@ -118,6 +126,28 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         paddingHorizontal: 10,
       },
+      button: {
+        width: 100,
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 2,
+        backgroundColor: 'lightgray',
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: 10,
+        borderRadius: 10,
+
+      },
+      buttonText : {
+        fontSize: 16,
+        color: '#3D3D3D',
+        fontFamily: 'fantasy'
+      },
+      buttonContainer : {
+        flex:3, 
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+      }
 
 
     

@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Button } from 'react-native';
+import { View, Text, StyleSheet, Button, Pressable } from 'react-native';
 import { supabase } from './utils/supabase';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from './providers/AuthProvider';
@@ -14,6 +14,7 @@ const ProfileScreen = () => {
   const [userProfileFullName, setUserProfileFullName] = useState()
   const [userProfileUserame, setUserProfileUserame] = useState()
   const [userProfileAvatar, setUserProfileAvatar] = useState()
+  const [loading, setLoading] = useState(false)
 
   if(!session){
     navigation.navigate("Login");
@@ -22,7 +23,9 @@ const ProfileScreen = () => {
 
 
   const handleSignOut = async () => {
+    setLoading(true)
     await supabase.auth.signOut();
+    setLoading(false)
     navigation.navigate("Login");
     
   };
@@ -43,11 +46,17 @@ const ProfileScreen = () => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.infoContainer}>
       <Text>Profile Screen</Text>
       <Text>Full name: {userProfileFullName}</Text>
       <Text>Username: {userProfileUserame}</Text>
       <Text>Avatar: {userProfileAvatar}</Text>
-      <Button title="Log Out" onPress={handleSignOut}/>
+      </View>
+      <View style={styles.buttonContainer}>
+        <Pressable onPress={handleSignOut} disabled={loading} style={styles.button}>
+            <Text style={styles.buttonText}>{loading ? 'Logging Out...' : 'Log Out'} </Text>
+        </Pressable>
+      </View>
     </View>
     
   );
@@ -59,6 +68,33 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  button: {
+    width: 100,
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 2,
+    backgroundColor: 'lightgray',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 10,
+    borderRadius: 10,
+
+  },
+  buttonText : {
+    fontSize: 16,
+    color: '#3D3D3D',
+    fontFamily: 'fantasy'
+  },
+  buttonContainer : {
+    flex:2, 
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
+  infoContainer : {
+    flex:6, 
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  }
 });
 
 export default ProfileScreen;

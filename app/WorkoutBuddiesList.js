@@ -13,7 +13,7 @@ export default function WorkoutBuddiesList({buddies}){
 
 
     const inviteFriend = () => {
-      //make a module to pop up
+      navigation.navigate("Add Buddy")
 
     };
     return(

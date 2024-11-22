@@ -20,16 +20,12 @@ export const participantWorkoutsTest = (user_id ) => {
 
       if (!participants || participants.length === 0) return [];
 
-      console.log('part', participants)
-
       const { data : workouts, error } = await supabase
           .from('workouts')
           .select('*')
           .in('id', participants.map((p) => p.workout_id)); 
   
         if (error) throw new Error(error.message);
-
-        console.log('tworkout', workouts)
 
 
       return workouts;

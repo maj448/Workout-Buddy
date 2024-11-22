@@ -12,6 +12,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import Login from './auth/Login';
 import SignUp from './auth/SignUp';
 import WorkoutDetailsScreen from './WorkoutDetails';
+import AddBuddy from './AddBuddies'
 import AuthProvider from './providers/AuthProvider';
 import { useAuth } from './providers/AuthProvider';
 import QueryProvider from './providers/QueryProvider';
@@ -108,6 +109,7 @@ export default function RootLayout() {
             <Stack.Screen name="Sign Up" component={SignUp} />
             <Stack.Screen name="New Workout" component={NewWorkoutScreen} />
             <Stack.Screen name="Workout Details" component={WorkoutDetailsScreen} />
+            <Stack.Screen name="Add Buddy" component={AddBuddy} />
           </Stack.Navigator>
           
         </NavigationContainer>

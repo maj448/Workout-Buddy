@@ -9,7 +9,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { supabase } from './utils/supabase';
 import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from './providers/AuthProvider';
-import { participantWorkouts, participantWorkoutsDetails, participantWorkoutsTest } from './api/workouts';
+import { participantWorkoutsTest } from './api/workouts';
 import { ActivityIndicator } from 'react-native';
 
 
@@ -36,7 +36,7 @@ export default function Index() {
   // const { data: workouts, isLoading: isWorkoutsLoading, error: workoutsError} = participantWorkoutsDetails(participants)
 
   const { data: workouts, isLoading: isWorkoutsLoading, error: workoutsError} = participantWorkoutsTest(session?.user.id)
-  console.log('workouts', workouts)
+
   // useFocusEffect(
   //   useCallback(() => {
 
@@ -48,7 +48,7 @@ export default function Index() {
 
 
   useEffect(() => {
-    if (workouts || workouts.length != 0) {
+    if (workouts || workouts == '') {
       const newMarkedDates = {};
       workouts.forEach((workout) => {
         const workoutDate = workout.workout_date.split('T')[0]; // Extract date (YYYY-MM-DD)
