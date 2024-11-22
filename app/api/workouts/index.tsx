@@ -4,7 +4,7 @@ import { supabase } from '@/app/utils/supabase';
 
 
 export const participantWorkouts = (user_id ) => {
-
+    
     return useQuery({
         queryKey : ['participants', user_id], 
         queryFn: async () => {
@@ -15,6 +15,7 @@ export const participantWorkouts = (user_id ) => {
     
           if (error) 
             throw new Error(error.message);
+
           return data;
         },
         });
@@ -34,6 +35,7 @@ export const participantWorkoutsDetails = (participants) => {
             .in('id', participants.map((p) => p.workout_id)); 
     
           if (error) throw new Error(error.message);
+
           return data;
         },
     
@@ -93,14 +95,16 @@ export const useInsertWorkout = () => {
         console.log(participantError)
         throw participantError;
       }
+
+      return { workout_id: workoutData[0].id, old_workouts: data.old_workouts };
+
     }
-
-
-
     },
-    async onSuccess() {
+    async onSuccess(returnedData) {
+      console.log('Mutation successful:', returnedData);
       await queryClient.invalidateQueries(['participants', data.user_id]);
-      await queryClient.invalidateQueries(['workouts', { workoutIds: data.workout_id }]);
+      await queryClient.invalidateQueries(['workouts', {participants: [...returnedData.old_workouts, { workout_id: returnedData.workout_id } ]}]);
+      console.log('Queries invalidated successfully');
     },
     onError(error) {
       //console.log(error);

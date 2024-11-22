@@ -34,16 +34,14 @@ export default function Index() {
 
   const { data: participants, isLoading: isParticipantsLoading, error: participantsError } = participantWorkouts(session?.user.id)
   const { data: workouts, isLoading: isWorkoutsLoading, error: workoutsError} = participantWorkoutsDetails(participants)
+  // useFocusEffect(
+  //   useCallback(() => {
 
+  //     queryClient.invalidateQueries(['participants', session?.user.id]);
+  //     queryClient.invalidateQueries(['workouts', { workoutIds: participantWorkoutsIds?.map((p) => p.workout_id) }]);
 
-  useFocusEffect(
-    useCallback(() => {
-
-      queryClient.invalidateQueries(['participants', session?.user.id]);
-      queryClient.invalidateQueries(['workouts', { workoutIds: participantWorkoutsIds?.map((p) => p.workout_id) }]);
-
-    }, [session?.user.id]) 
-  );
+  //   }, [session?.user.id]) 
+  // );
 
 
   useEffect(() => {
@@ -91,8 +89,9 @@ export default function Index() {
 
 
 const createWorkout = (day) => {
-  setSelected(day.dateString);
-  navigation.navigate('New Workout', {selected: selected})
+  //setSelected(day);
+  //console.log('create', selected)
+  navigation.navigate('New Workout', {selected: day, old_workouts: participants})
 
 };
 
@@ -107,7 +106,15 @@ const createWorkout = (day) => {
           onDayPress={day => {
             setSelected(day.dateString);
           }}
-          onDayLongPress={createWorkout}
+          onDayLongPress={day => {
+            //console.log('on', day);
+            setSelected(day.dateString);
+            //console.log('on', day.dateString);
+            //console.log('on', selected);
+            //setTimeout(() => {
+              createWorkout(day.dateString);
+            //}, 0);
+            }}
           markingType="multi-dot"
           markedDates={{
             ...markedDates,
@@ -120,7 +127,7 @@ const createWorkout = (day) => {
 
         />
 
-    <WorkoutList workouts={filteredWorkouts} displayDate ={displayDate} selected={selected}/>
+    <WorkoutList workouts={filteredWorkouts} displayDate ={displayDate} selected={selected} oldWorkouts={participants}/>
 
     </SafeAreaView>
     );

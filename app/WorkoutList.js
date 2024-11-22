@@ -6,14 +6,14 @@ import { useNavigation } from '@react-navigation/native';
 
 
 
-export default function WorkoutList({workouts, displayDate, selected}){
+export default function WorkoutList({workouts, displayDate, selected, oldWorkouts}){
 
   const navigation = useNavigation();
 
     const [newWorkout, setNewWorkout] = useState('')
 
     const createWorkout = () => {
-      navigation.navigate('New Workout', {selected});
+      navigation.navigate('New Workout', {selected,  old_workouts: oldWorkouts});
 
     };
     return(
@@ -29,7 +29,7 @@ export default function WorkoutList({workouts, displayDate, selected}){
         data={workouts}
         contentContainerStyle={{ gap: 5 }}
         renderItem={({ item }) => (
-          <WorkoutListItem workout={item} />
+          <WorkoutListItem workout={item}/>
         )}
       />
 
