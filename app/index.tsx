@@ -32,34 +32,20 @@ export default function Index() {
   const [markedDates, setMarkedDates] = useState({});
   const [participantWorkoutsIds, setParticipantWorkoutsIds] = useState<any>()
 
-  // const { data: participants, isLoading: isParticipantsLoading, error: participantsError } = participantWorkouts(session?.user.id)
-  // const { data: workouts, isLoading: isWorkoutsLoading, error: workoutsError} = participantWorkoutsDetails(participants)
-
   const { data: workouts, isLoading: isWorkoutsLoading, error: workoutsError} = participantWorkoutsTest(session?.user.id)
-
-  // useFocusEffect(
-  //   useCallback(() => {
-
-  //     queryClient.invalidateQueries(['participants', session?.user.id]);
-  //     queryClient.invalidateQueries(['workouts', { workoutIds: participantWorkoutsIds?.map((p) => p.workout_id) }]);
-
-  //   }, [session?.user.id]) 
-  // );
 
 
   useEffect(() => {
     if (workouts || workouts == '') {
       const newMarkedDates = {};
       workouts.forEach((workout) => {
-        const workoutDate = workout.workout_date.split('T')[0]; // Extract date (YYYY-MM-DD)
+        const workoutDate = workout.workout_date.split('T')[0];
 
-        // Initialize the date entry if it doesn't exist yet
         if (!newMarkedDates[workoutDate]) {
           newMarkedDates[workoutDate] = { dots: [] };
         }
 
         const dotKey = `${workout.id}-${workout.workout_status}`;
-        // Add a dot for the workout based on its status
         newMarkedDates[workoutDate].dots.push({
           key: dotKey, 
           color: workoutStatuses[workout.workout_status]?.color,
@@ -92,7 +78,14 @@ export default function Index() {
 
   const createWorkout = (day) => {
 
-    navigation.navigate('New Workout', {selected: day})
+    if(day >= today){
+      navigation.navigate('New Workout', {selected: day})
+    }
+    else
+    {
+      return [];
+    }
+    
 
   };
 
@@ -108,13 +101,9 @@ export default function Index() {
             setSelected(day.dateString);
           }}
           onDayLongPress={day => {
-            //console.log('on', day);
             setSelected(day.dateString);
-            //console.log('on', day.dateString);
-            //console.log('on', selected);
-            //setTimeout(() => {
-              createWorkout(day.dateString);
-            //}, 0);
+
+            createWorkout(day.dateString);
             }}
           markingType="multi-dot"
           markedDates={{
