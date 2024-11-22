@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Button, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
 import { supabase } from './utils/supabase';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from './providers/AuthProvider';
@@ -32,7 +32,8 @@ const ProfileScreen = () => {
 
   const { data: profile } =  userProfileDetails(session?.user.id)
 
-
+  console.log(userProfileAvatar)
+  console.log(userProfileAvatar)
  
   useEffect(() => {
     if (profile) {
@@ -47,10 +48,13 @@ const ProfileScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.infoContainer}>
-      <Text>Profile Screen</Text>
+      <Image
+        source={{ uri: userProfileAvatar || 'https://img.icons8.com/nolan/64/user-default.png' }}
+        style={styles.image}
+        resizeMode="contain"
+      />
       <Text>Full name: {userProfileFullName}</Text>
       <Text>Username: {userProfileUserame}</Text>
-      <Text>Avatar: {userProfileAvatar}</Text>
       </View>
       <View style={styles.buttonContainer}>
         <Pressable onPress={handleSignOut} disabled={loading} style={styles.button}>
@@ -94,7 +98,12 @@ const styles = StyleSheet.create({
     flex:6, 
     alignItems: 'center',
     justifyContent: 'flex-start',
-  }
+  },
+  image: {
+    width: '100%',
+    aspectRatio: 1,
+    alignSelf: 'center',
+  },
 });
 
 export default ProfileScreen;
