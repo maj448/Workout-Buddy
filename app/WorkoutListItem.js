@@ -24,9 +24,17 @@ export default function WorkoutListItem({ workout }) {
     const {session} = useAuth();
 
     const { mutate: removeWorkout } = useRemoveWorkout();
-    const displayStartTime = format(parseISO(workout.start_time), 'h:mm a')
-    const displayEndTime = format(parseISO(workout.end_time), 'h:mm a')
+
     const navigation = useNavigation()
+
+    const formatTime = (date) => {
+
+      date = `${date}Z`
+      date = new Date(date);
+      return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: true});
+
+
+    };
 
     const gotoDetailsScreen = () => {
         if (workout) {
@@ -66,7 +74,7 @@ export default function WorkoutListItem({ workout }) {
             </Text>
             {/* <Text style={styles.time}>Start: {displayStartTime}</Text>
             <Text style={styles.time}>End: {displayEndTime}</Text> */}
-            <Text style={styles.time}>{displayStartTime} to {displayEndTime}</Text>
+            <Text style={styles.time}>{formatTime(workout.start_time)} to {formatTime(workout.end_time)}</Text>
         </View>
         </Pressable>
 

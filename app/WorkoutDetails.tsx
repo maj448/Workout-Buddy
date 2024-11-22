@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Button, Alert, Pressable } from 'react-native';
-import { format, parseISO} from 'date-fns';
+import { format, formatDate, parseISO} from 'date-fns';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import InternalWorkoutBuddiesList from './InternalWorkoutBuddiesList'
@@ -21,9 +21,9 @@ const WorkoutDetailsScreen = ({route}) => {
     }
     //console.log(workout)
 
-    const displayStartTime = format(parseISO(workout.start_time), 'h:mm a')
-    const displayEndTime = format(parseISO(workout.end_time), 'h:mm a')
-    const displayDate = format(parseISO(workout.workout_date), 'yyyy-mm-dd')
+    //const displayStartTime = format(parseISO(workout.start_time), 'h:mm a')
+    //const displayEndTime = format(parseISO(workout.end_time), 'h:mm a')
+    const displayDate = workout.workout_date.split('T')[0]
     const [newWorkout, setNewWorkout] = useState('')
     const [participantState, setParticipantState] = useState('waiting')
     const [canStart, setCanStart] = useState(false)
@@ -46,7 +46,18 @@ const WorkoutDetailsScreen = ({route}) => {
       
     }
 
-    console.log('og state', participantState)
+    const formatTime = (date) => {
+
+      date = `${date}Z`
+      date = new Date(date);
+      return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: true});
+
+
+    };
+    //console.log(workout.end_time)
+    //console.log(displayEndTime)
+
+    //console.log('og state', participantState)
     const onCheckIn = () => {
       
       if(participantState == 'checkedIn')
@@ -87,8 +98,8 @@ const WorkoutDetailsScreen = ({route}) => {
       <View style ={styles.staticInfo}>
         <Text style= {styles.text}>Title: {workout.title}</Text>
         <Text style= {styles.text}>Date: {displayDate}</Text>
-        <Text style= {styles.text}>Start: {displayStartTime}</Text>
-        <Text style= {styles.text}>End: {displayEndTime}</Text>
+        <Text style= {styles.text}>Start: {formatTime(workout.start_time)}</Text>
+        <Text style= {styles.text}>End: {formatTime(workout.end_time)}</Text>
         { participantState == 'complete' &&
           <Text style= {styles.text}>Activity: {participationInfo.activity}</Text>
           // <Text style= {styles.text}>Duration: {workout.duration}</Text>

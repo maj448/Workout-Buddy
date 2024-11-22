@@ -1,11 +1,12 @@
-import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, Button, Pressable} from 'react-native';
+import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, Button, Pressable, ActivityIndicator} from 'react-native';
 import {useState, useEffect} from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from './providers/AuthProvider';
 import { useInsertWorkout} from './api/workouts';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { format, parseISO} from 'date-fns';
+import { format, parseISO, startOfSecond} from 'date-fns';
 import { useNavigation } from '@react-navigation/native';
+import moment from 'moment';
 
 
 const NewWorkoutScreen = ({route}) => {
@@ -43,13 +44,16 @@ const NewWorkoutScreen = ({route}) => {
   };
 
   const onChangeStart = (event, selectedStart) => {
-    const start = selectedStart || inputStartTime;
+
+    const start = new Date(selectedStart) || inputStartTime;
     setInputStartTime(start);
     setOpenStart(false)
+    
   };
 
+
   const onChangeEnd = (event, selectedEnd) => {
-    const end = selectedEnd || inputEndTime;
+    const end = new Date(selectedEnd) || inputEndTime;
     setInputEndTime(end);
     setOpenEnd(false)
   };
@@ -66,6 +70,16 @@ const NewWorkoutScreen = ({route}) => {
     setOpenEnd(true);
   };
 
+  console.log(inputStartTime, inputEndTime)
+  const formatTime = (date) => {
+
+    if (!(date instanceof Date)) {
+        date = new Date(date);
+      }
+    return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: true});
+
+
+  };
 
   const onSubmitHandler = () => {
     setLoading(true)
@@ -81,6 +95,9 @@ const NewWorkoutScreen = ({route}) => {
     )
     setLoading(false)
     
+  }
+  if (loading) {
+    return <ActivityIndicator />;
   }
 
 
@@ -112,14 +129,14 @@ const NewWorkoutScreen = ({route}) => {
 
       <Text >Start:</Text>
       <Pressable onPress={showStartpicker}>
-        <Text>{inputStartTime.toLocaleDateString()}</Text>
+        <Text>{formatTime(inputStartTime)}</Text>
 
       </Pressable>
 
       {openStart && (
         <DateTimePicker
           testID="dateTimePicker"
-          value={inputDate}
+          value={inputStartTime}
           mode="time"
           display="spinner"
           onChange={onChangeStart}
@@ -128,13 +145,13 @@ const NewWorkoutScreen = ({route}) => {
 
       <Text >End:</Text>
       <Pressable onPress={showEndpicker}>
-        <Text>{inputEndTime.toLocaleDateString()}</Text>
+        <Text>{formatTime(inputEndTime)}</Text>
 
       </Pressable>
       {openEnd && (
         <DateTimePicker
           testID="dateTimePicker"
-          value={inputDate}
+          value={inputEndTime}
           mode="time"
           display="spinner"
           onChange={onChangeEnd}
