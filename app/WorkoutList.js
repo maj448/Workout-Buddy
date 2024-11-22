@@ -29,7 +29,7 @@ export default function WorkoutList({workouts, displayDate, selected}){
         data={workouts}
         contentContainerStyle={{ gap: 5 }}
         renderItem={({ item }) => (
-          <WorkoutListItem workout={item} />
+          <WorkoutListItem workout={item}/>
         )}
       />
 

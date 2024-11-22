@@ -1,7 +1,10 @@
-import {View, Text, StyleSheet, Pressable} from 'react-native'
+import {View, Text, StyleSheet, Pressable, Alert} from 'react-native'
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { format, parseISO} from 'date-fns';
 import { useNavigation } from '@react-navigation/native';
+import { useRemoveWorkout } from './api/workouts';
+import { useAuth } from './providers/AuthProvider';
+
 
 
 
@@ -18,6 +21,9 @@ export default function WorkoutListItem({ workout }) {
         return null;  
       }
 
+    const {session} = useAuth();
+
+    const { mutate: removeWorkout } = useRemoveWorkout();
     const displayStartTime = format(parseISO(workout.start_time), 'h:mm a')
     const displayEndTime = format(parseISO(workout.end_time), 'h:mm a')
     const navigation = useNavigation()
@@ -30,10 +36,30 @@ export default function WorkoutListItem({ workout }) {
         }
 	};
 
+    const onRemove = () => {
+        //const data = [{user_id : session.user.id}, {workout_id : workout.id}]
+        removeWorkout({user_id : session.user.id, workout_id : workout.id});
+
+    
+      };
+
+    const confirmRemove = () => {
+    Alert.alert('Confirm', 'Are you sure you want to remove this workout?', [
+        {
+        text: 'Cancel',
+        },
+        {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: onRemove,
+        },
+    ]);
+    };
+
     const backgroundColorOnStatus = workoutStatuses[workout.workout_status]
 
     return(
-        <Pressable onPress={gotoDetailsScreen}>
+        <Pressable onPress={gotoDetailsScreen} onLongPress={confirmRemove}>
         <View style= {[styles.container, backgroundColorOnStatus]}>
             <Text style= {styles.text}>
                 {workout.title}

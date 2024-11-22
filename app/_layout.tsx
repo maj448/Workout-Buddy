@@ -11,12 +11,12 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Login from './auth/Login';
 import SignUp from './auth/SignUp';
-import WorkoutDetailsScreen from './Workoutdetails';
+import WorkoutDetailsScreen from './WorkoutDetails';
+import AddBuddy from './AddBuddies'
 import AuthProvider from './providers/AuthProvider';
 import { useAuth } from './providers/AuthProvider';
 import QueryProvider from './providers/QueryProvider';
 import InWorkout from './InWorkout';
-import Example from './Example';
 
 const Tab = createBottomTabNavigator();
 
@@ -50,6 +50,7 @@ function MyTabs() {
             <FontAwesome5 name="user-friends" size={24} color="black" />
             ),
             tabBarLabel: 'Buddies',
+            headerShown: false,
           }}
         />
         <Tab.Screen 
@@ -106,9 +107,9 @@ export default function RootLayout() {
                 options={{ headerShown: false }} 
             />
             <Stack.Screen name="Sign Up" component={SignUp} />
-            <Stack.Screen name="Example" component={Example} />
             <Stack.Screen name="New Workout" component={NewWorkoutScreen} />
             <Stack.Screen name="Workout Details" component={WorkoutDetailsScreen} />
+            <Stack.Screen name="Add Buddy" component={AddBuddy} />
           </Stack.Navigator>
           
         </NavigationContainer>

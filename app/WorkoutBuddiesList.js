@@ -8,11 +8,12 @@ import { useNavigation } from '@react-navigation/native';
 
 export default function WorkoutBuddiesList({buddies}){
 
+
   const navigation = useNavigation();
 
 
     const inviteFriend = () => {
-      //make a module to pop up
+      navigation.navigate("Add Buddy")
 
     };
     return(

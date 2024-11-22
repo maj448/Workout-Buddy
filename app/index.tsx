@@ -4,11 +4,13 @@ import { View, Text, TouchableOpacity, ScrollView, Button } from 'react-native';
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 import { format, parseISO} from 'date-fns';
 import WorkoutList from "./WorkoutList"
-import { useNavigation } from '@react-navigation/native';
-import { useState, useEffect } from 'react'
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useState, useEffect, useCallback } from 'react'
 import { supabase } from './utils/supabase';
-import { useQuery } from '@tanstack/react-query';
+import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from './providers/AuthProvider';
+import { participantWorkoutsTest } from './api/workouts';
+import { ActivityIndicator } from 'react-native';
 
 
 
@@ -23,50 +25,30 @@ const workoutStatuses = {
 export default function Index() {
   const { session } = useAuth();
   const navigation = useNavigation();
+  const queryClient = useQueryClient();
   const today = format(new Date(), 'yyyy-MM-dd');
   const [selected, setSelected] = useState(today);
   const [filteredWorkouts, setFilteredWorkouts] = useState([])
   const [markedDates, setMarkedDates] = useState({});
+  const [participantWorkoutsIds, setParticipantWorkoutsIds] = useState<any>()
 
-  const { data: participants} 
-  = useQuery({
-    queryKey : ['participants'], 
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('participants')
-        .select('workout_id')
-        .eq('user_id', session?.user.id); 
+  // const { data: participants, isLoading: isParticipantsLoading, error: participantsError } = participantWorkouts(session?.user.id)
+  // const { data: workouts, isLoading: isWorkoutsLoading, error: workoutsError} = participantWorkoutsDetails(participants)
 
-      if (error) 
-        throw new Error(error.message);
-      return data;
-    }
-    });
+  const { data: workouts, isLoading: isWorkoutsLoading, error: workoutsError} = participantWorkoutsTest(session?.user.id)
 
+  // useFocusEffect(
+  //   useCallback(() => {
 
-    const { data: workouts} 
-    = useQuery({
-      queryKey : ['workouts', { workoutIds: participants?.map((p) => p.workout_id) }],
-      queryFn: async () => {
-        if (!participants || participants.length === 0) return []; 
-  
-        const { data, error } = await supabase
-          .from('workouts')
-          .select('*')
-          .in('id', participants.map((p) => p.workout_id)); 
-  
-        if (error) throw new Error(error.message);
-        return data;
-      },
-      enabled: !!participants, 
+  //     queryClient.invalidateQueries(['participants', session?.user.id]);
+  //     queryClient.invalidateQueries(['workouts', { workoutIds: participantWorkoutsIds?.map((p) => p.workout_id) }]);
 
-    });
+  //   }, [session?.user.id]) 
+  // );
 
- 
- 
 
   useEffect(() => {
-    if (workouts) {
+    if (workouts || workouts == '') {
       const newMarkedDates = {};
       workouts.forEach((workout) => {
         const workoutDate = workout.workout_date.split('T')[0]; // Extract date (YYYY-MM-DD)
@@ -96,11 +78,23 @@ export default function Index() {
   }
 }, [workouts, selected]);
 
-const createWorkout = (day) => {
-  setSelected(day.dateString);
-  navigation.navigate('New Workout', {selected: selected})
+  if ( isWorkoutsLoading) {
+    return <ActivityIndicator />;
+  }
 
-};
+  if ( workoutsError) {
+    return console.error(workoutsError);
+    
+  }
+
+
+
+
+  const createWorkout = (day) => {
+
+    navigation.navigate('New Workout', {selected: day})
+
+  };
 
 
   
@@ -113,7 +107,15 @@ const createWorkout = (day) => {
           onDayPress={day => {
             setSelected(day.dateString);
           }}
-          onDayLongPress={createWorkout}
+          onDayLongPress={day => {
+            //console.log('on', day);
+            setSelected(day.dateString);
+            //console.log('on', day.dateString);
+            //console.log('on', selected);
+            //setTimeout(() => {
+              createWorkout(day.dateString);
+            //}, 0);
+            }}
           markingType="multi-dot"
           markedDates={{
             ...markedDates,

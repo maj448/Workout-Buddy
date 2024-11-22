@@ -1,5 +1,5 @@
 import {SafeAreaView} from 'react-native-safe-area-context';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert, Pressable } from 'react-native';
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { supabase } from '../utils/supabase';
@@ -21,44 +21,56 @@ export default function SignUp() {
 
     async function signUpWithEmail()
     {
-
         if (inputPassword !== inputConfPassword) {
             Alert.alert("Passwords don't match");
             return;
-          }
-
+        }
+        
         setLoading(true);
-        const {data, error} = await supabase.auth.signUp({ email: inputEmail, password : inputPassword});
-
-        if (error) {
-            Alert.alert(error.message);
+        
+        const { data, error: signUpError } = await supabase.auth.signUp({
+            email: inputEmail,
+            password: inputPassword
+        });
+        
+        if (signUpError) {
+            console.error(signUpError);
+            Alert.alert(signUpError.message);
             setLoading(false);
             return;
         }
-
+        
         if (data.user) {
-            const { error } = await supabase
-              .from('profiles')
-              .upsert([
-                {
-                  id: data.user.id,
-                  full_name: inputFullName,
-                  username: inputUsername,
-                },
-              ], { });
-      
-            if (error) {
-              Alert.alert('Error creating profile', error.message);
-              setLoading(false);
-              return;
+            if (!inputUsername || inputUsername.trim() === '') {
+                Alert.alert("Username is required.");
+                setLoading(false);
+                return;
             }
-      
+        
+            // Insert profile
+            const { error: profileError } = await supabase
+                .from('profiles')
+                .upsert([
+                    {
+                        id: data.user.id,
+                        full_name: inputFullName,
+                        username: inputUsername,
+                    }
+                ], { onConflict: ['id'] }); 
+        
+            if (profileError) {
+                console.error('Error creating profile:', profileError);
+                Alert.alert('Error creating profile', profileError.message);
+                setLoading(false);
+                return;
+            }
+        
             Alert.alert('Account Created', 'Your account has been successfully created!');
-      
             navigation.navigate('Login');
-          }
-      
-          setLoading(false);
+        }
+        
+        setLoading(false);
+
     }
 
     return(
@@ -113,7 +125,11 @@ export default function SignUp() {
 
             </View>
 
-            <Button title={loading ? 'Creating account...' : 'Create Account'} disabled={loading} onPress={signUpWithEmail}/>
+            <View style={styles.buttonContainer}>
+            <Pressable onPress={signUpWithEmail} disabled={loading} style={styles.button}>
+                <Text style={styles.buttonText}>{loading ? 'Creating account...' : 'Create Account'} </Text>
+            </Pressable>
+            </View>
 
 
         </SafeAreaView>
@@ -154,6 +170,28 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         paddingHorizontal: 10,
       },
+      button: {
+        width: 200,
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 2,
+        backgroundColor: 'lightgray',
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: 10,
+        borderRadius: 10,
+
+      },
+      buttonText : {
+        fontSize: 16,
+        color: '#3D3D3D',
+        fontFamily: 'fantasy'
+      },
+      buttonContainer : {
+        flex:3, 
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+      }
 
     
 
