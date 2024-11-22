@@ -3,7 +3,7 @@ import { format, parseISO} from 'date-fns';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import InternalWorkoutBuddiesList from './InternalWorkoutBuddiesList'
-import { ScrollView } from "react-native-web";
+import { ScrollView } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import { participantWorkoutInfo, useUpdateParticipantStatus } from './api/workouts';
 import { useAuth } from './providers/AuthProvider';
@@ -82,8 +82,8 @@ const WorkoutDetailsScreen = ({route}) => {
   }, [participantState, participationInfo ]);
 
   return (
-
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
+    {/* <View style={styles.container}> */}
       <View style ={styles.staticInfo}>
         <Text style= {styles.text}>Title: {workout.title}</Text>
         <Text style= {styles.text}>Date: {displayDate}</Text>
@@ -101,7 +101,7 @@ const WorkoutDetailsScreen = ({route}) => {
 
       </View>
 
-      <InternalWorkoutBuddiesList/>
+      <InternalWorkoutBuddiesList buddies={BuddiesInfo}/>
 
       <View style={styles.buttonContainer}>
       {!completed &&
@@ -121,13 +121,20 @@ const WorkoutDetailsScreen = ({route}) => {
             </Pressable>
         }
         </View>
-      </View>
+      {/* </View> */}
+      </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  scrollContainer: {
+    flexGrow: 1,
+    padding: 10,
+    backgroundColor: '#6EEB92', 
+    gap: 10, 
+  },
   container: {
-    flex: 1,
+    // flex: 1,
     // justifyContent: 'center',
     // alignItems: 'center',
     backgroundColor: '#6EEB92',
@@ -135,7 +142,7 @@ const styles = StyleSheet.create({
     gap: 10, 
   },
   staticInfo: {
-    flex: 2,
+    // flex: 2,
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
   },
@@ -161,7 +168,7 @@ const styles = StyleSheet.create({
     fontFamily: 'fantasy'
   },
   buttonContainer : {
-    flex:1, 
+    // flex:1, 
     alignItems: 'center',
     justifyContent: 'flex-start',
   }, 

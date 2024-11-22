@@ -42,7 +42,7 @@ export default function InternalWorkoutBuddiesList({buddies}){
 
     };
     return(
-    <View style={{backgroundColor: '#6EEB92', padding: 10, gap: 10, flex: 2}}>
+    <View style={{backgroundColor: '#6EEB92', padding: 10, gap: 10}}>
       <Text style={{color: 'white', fontWeight: 'bold', fontSize: 24, }}>Buddies</Text>
       <View style ={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 10}}>
         
@@ -75,20 +75,21 @@ export default function InternalWorkoutBuddiesList({buddies}){
             />
           )}
         />
-        <Pressable onPress={inviteFriend} style= {{flex: 1}}>
+        <Pressable onPress={inviteFriend} style= {{}}>
           <Ionicons name="add-circle-outline" size={24} color="white" />
         </Pressable>
       </View>
 
-        <FlatList
-        data={buddies}
-        contentContainerStyle={{ gap: 5 }}
-        renderItem={({ item }) => (
-          <InternalWorkoutBuddyListItem buddie={item} />
-        )}
-      />
+      <View>
 
-       
+        {buddies && buddies.map((buddie) => (
+          <InternalWorkoutBuddyListItem key={buddie.buddie_id} buddie={buddie} />
+        ))}
+
+      </View>
+
+
+
         
     </View>
     );
