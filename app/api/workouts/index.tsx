@@ -107,3 +107,48 @@ export const useInsertWorkout = () => {
 
 };
 
+export const useRemoveWorkout = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    async mutationFn(data :any) {
+      const { error } = await supabase.from('participants').delete()
+      .eq('user_id', data.user_id)
+      .eq('workout_id', data.workout_id);
+
+      if (error) {
+        console.log(error)
+        throw new Error(error.message);
+        
+      }
+
+      console.log('data', data)
+      const { data : anyParticipants, error: anyError } = await supabase.from('participants').select('*')
+      .eq('workout_id', data.workout_id);
+
+
+      console.log('anyprt', anyParticipants)
+      if (anyError) {
+        throw new Error(anyError.message);
+      }
+
+      if (!anyParticipants || anyParticipants.length === 0)
+      {
+        console.log('got to workout delete')
+        const { error : workoutError } = await supabase.from('workouts').delete()
+        .eq('id', data.workout_id);
+
+        if (workoutError) {
+          console.log(workoutError)
+          throw new Error(workoutError.message);
+        }
+      }
+
+      return { user_id : data.user_id };
+    },
+    async onSuccess(returnedData) {
+      await queryClient.invalidateQueries(['participants', returnedData?.user_id]);
+    },
+  });
+};
+

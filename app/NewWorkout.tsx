@@ -23,8 +23,18 @@ const NewWorkoutScreen = ({route}) => {
   const [open, setOpen] = useState(false)
   const [openStart, setOpenStart] = useState(false)
   const [openEnd, setOpenEnd] = useState(false)
+  const [loading, setLoading] = useState(false)
 
+  const {mutate: insertWorkout} = useInsertWorkout();
 
+  const resetFields = () => {
+    setInputTitle('');
+    setInputNotes('');
+    setInputDate(new Date(parseISO(selected)));
+    setInputStartTime(new Date());
+    setInputEndTime(new Date());
+
+  };
 
   const onChangeDate = (event, selectedDate) => {
     const currentDate = selectedDate || inputDate;
@@ -56,13 +66,21 @@ const NewWorkoutScreen = ({route}) => {
     setOpenEnd(true);
   };
 
-  const {mutate : insertWorkout} = useInsertWorkout();
 
   const onSubmitHandler = () => {
+    setLoading(true)
     console.log('submitting')
-    insertWorkout({inputTitle, inputNotes, inputDate, inputStartTime, inputEndTime, user_id})
+    insertWorkout({inputTitle, inputNotes, inputDate, inputStartTime, inputEndTime, user_id},
+      {
+        onSuccess: () => {
+          resetFields();
+          navigation.navigate('Tabs');
+        },
+      }
+
+    )
+    setLoading(false)
     
-    navigation.navigate('Tabs');
   }
 
 
@@ -130,9 +148,14 @@ const NewWorkoutScreen = ({route}) => {
           value={inputNotes}
           onChangeText={setInputNotes}
       />
-      <View style={styles.buttonContainer}>
+      {/* <View style={styles.buttonContainer}>
           <Button title="Submit"  onPress={onSubmitHandler}/>
-      </View>
+      </View> */}
+      <View style={styles.buttonContainer}>
+            <Pressable onPress={onSubmitHandler} disabled={loading} style={styles.button}>
+                <Text style={styles.buttonText}>{loading ? 'Creating workout...' : 'Create Workout'} </Text>
+            </Pressable>
+            </View>
   </KeyboardAvoidingView>
   );
 };
@@ -152,6 +175,28 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     paddingHorizontal: 10,
   },
+  button: {
+    width: 200,
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 2,
+    backgroundColor: 'lightgray',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 10,
+    borderRadius: 10,
+
+  },
+  buttonText : {
+    fontSize: 16,
+    color: '#3D3D3D',
+    fontFamily: 'fantasy'
+  },
+  buttonContainer : {
+    flex:3, 
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  }
 });
 
 export default NewWorkoutScreen;

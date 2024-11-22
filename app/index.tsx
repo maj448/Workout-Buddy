@@ -90,12 +90,11 @@ export default function Index() {
 
 
 
-const createWorkout = (day) => {
-  //setSelected(day);
-  //console.log('create', selected)
-  navigation.navigate('New Workout', {selected: day})
+  const createWorkout = (day) => {
 
-};
+    navigation.navigate('New Workout', {selected: day})
+
+  };
 
 
   
