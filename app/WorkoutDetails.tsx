@@ -7,6 +7,7 @@ import { ScrollView } from "react-native-web";
 import React, {useEffect, useState} from 'react';
 import { participantWorkoutInfo } from './api/workouts';
 import { useAuth } from './providers/AuthProvider';
+import { workoutBuddies } from './api/buddies';
 
 const WorkoutDetailsScreen = ({route}) => {
   const { session } = useAuth();
@@ -29,9 +30,10 @@ const WorkoutDetailsScreen = ({route}) => {
 
     
     const { data: participationInfo, isLoading: isParticipationLoading, error: participationError } = participantWorkoutInfo(session?.user.id, workout.id)
-
+    const { data: BuddiesInfo, isLoading: isBuddiesLoading, error: BuddiesError } = workoutBuddies(session?.user.id, workout.id)
 
     console.log(participationInfo)
+    console.log(BuddiesInfo)
     const onStart = () => {
       //update participant status to complete
       navigation.navigate('In Workout')

@@ -3,43 +3,41 @@ import { supabase } from '@/app/utils/supabase';
 
 
 
-export const participantWorkouts = (user_id ) => {
-    
-    return useQuery({
-        queryKey : ['participants', user_id], 
-        queryFn: async () => {
-          const { data, error } = await supabase
-            .from('participants')
-            .select('workout_id')
-            .eq('user_id', user_id); 
-    
-          if (error) 
-            throw new Error(error.message);
 
-          return data;
-        },
-        });
-        
-    
-}
 
-export const participantWorkoutsDetails = (participants) => {
-    return useQuery({
-        queryKey : ['workouts', { workoutIds: participants?.map((p) => p.workout_id) }],
-        queryFn: async () => {
-          if (!participants || participants.length === 0) return []; 
+export const participantWorkoutsTest = (user_id ) => {
     
-          const { data, error } = await supabase
-            .from('workouts')
-            .select('*')
-            .in('id', participants.map((p) => p.workout_id)); 
-    
-          if (error) throw new Error(error.message);
+  return useQuery({
+    queryKey : ['participants', user_id], 
+    queryFn: async () => {
+      const { data : participants, error : participantsError } = await supabase
+        .from('participants')
+        .select('workout_id')
+        .eq('user_id', user_id); 
 
-          return data;
-        },
+      if (participantsError) 
+        throw new Error(participantsError.message);
+
+      if (!participants || participants.length === 0) return [];
+
+      console.log('part', participants)
+
+      const { data : workouts, error } = await supabase
+          .from('workouts')
+          .select('*')
+          .in('id', participants.map((p) => p.workout_id)); 
+  
+        if (error) throw new Error(error.message);
+
+        console.log('tworkout', workouts)
+
+
+      return workouts;
+    },
+    });
     
-      });
+      
+  
 }
 
 
@@ -61,7 +59,7 @@ export const participantWorkoutInfo = (user_id, workout_id ) => {
       });
       
   
-}
+};
 
 export const useInsertWorkout = () => {
 
@@ -96,14 +94,14 @@ export const useInsertWorkout = () => {
         throw participantError;
       }
 
-      return { workout_id: workoutData[0].id, old_workouts: data.old_workouts };
+      return { user_id : data.user_id };
 
     }
     },
     async onSuccess(returnedData) {
       console.log('Mutation successful:', returnedData);
-      await queryClient.invalidateQueries(['participants', data.user_id]);
-      await queryClient.invalidateQueries(['workouts', {participants: [...returnedData.old_workouts, { workout_id: returnedData.workout_id } ]}]);
+      await queryClient.invalidateQueries(['participants', returnedData?.user_id]);
+      //await queryClient.invalidateQueries(['workouts', {participants: [...returnedData.old_workouts, { workout_id: returnedData.workout_id } ]}]);
       console.log('Queries invalidated successfully');
     },
     onError(error) {
@@ -112,3 +110,4 @@ export const useInsertWorkout = () => {
   });
 
 };
+

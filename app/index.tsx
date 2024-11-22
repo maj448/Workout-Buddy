@@ -9,7 +9,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { supabase } from './utils/supabase';
 import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from './providers/AuthProvider';
-import { participantWorkouts, participantWorkoutsDetails } from './api/workouts';
+import { participantWorkouts, participantWorkoutsDetails, participantWorkoutsTest } from './api/workouts';
 import { ActivityIndicator } from 'react-native';
 
 
@@ -32,8 +32,11 @@ export default function Index() {
   const [markedDates, setMarkedDates] = useState({});
   const [participantWorkoutsIds, setParticipantWorkoutsIds] = useState<any>()
 
-  const { data: participants, isLoading: isParticipantsLoading, error: participantsError } = participantWorkouts(session?.user.id)
-  const { data: workouts, isLoading: isWorkoutsLoading, error: workoutsError} = participantWorkoutsDetails(participants)
+  // const { data: participants, isLoading: isParticipantsLoading, error: participantsError } = participantWorkouts(session?.user.id)
+  // const { data: workouts, isLoading: isWorkoutsLoading, error: workoutsError} = participantWorkoutsDetails(participants)
+
+  const { data: workouts, isLoading: isWorkoutsLoading, error: workoutsError} = participantWorkoutsTest(session?.user.id)
+  console.log('workouts', workouts)
   // useFocusEffect(
   //   useCallback(() => {
 
@@ -45,8 +48,7 @@ export default function Index() {
 
 
   useEffect(() => {
-    setParticipantWorkoutsIds(participants)
-    if (workouts) {
+    if (workouts || workouts.length != 0) {
       const newMarkedDates = {};
       workouts.forEach((workout) => {
         const workoutDate = workout.workout_date.split('T')[0]; // Extract date (YYYY-MM-DD)
@@ -74,14 +76,14 @@ export default function Index() {
       setFilteredWorkouts(filtered);
     
   }
-}, [participants, selected]);
+}, [workouts, selected]);
 
-  if (isParticipantsLoading || isWorkoutsLoading) {
+  if ( isWorkoutsLoading) {
     return <ActivityIndicator />;
   }
 
-  if (participantsError || workoutsError) {
-    return console.error(participantsError || workoutsError);
+  if ( workoutsError) {
+    return console.error(workoutsError);
     
   }
 
@@ -91,7 +93,7 @@ export default function Index() {
 const createWorkout = (day) => {
   //setSelected(day);
   //console.log('create', selected)
-  navigation.navigate('New Workout', {selected: day, old_workouts: participants})
+  navigation.navigate('New Workout', {selected: day})
 
 };
 
@@ -127,7 +129,7 @@ const createWorkout = (day) => {
 
         />
 
-    <WorkoutList workouts={filteredWorkouts} displayDate ={displayDate} selected={selected} oldWorkouts={participants}/>
+    <WorkoutList workouts={filteredWorkouts} displayDate ={displayDate} selected={selected}/>
 
     </SafeAreaView>
     );

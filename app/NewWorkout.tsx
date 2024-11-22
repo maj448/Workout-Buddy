@@ -12,7 +12,7 @@ const NewWorkoutScreen = ({route}) => {
   const { session } = useAuth();
   const user_id = session?.user.id;
   const navigation = useNavigation();
-  const {selected, old_workouts} = route.params;
+  const {selected} = route.params;
 
   const [inputTitle, setInputTitle] = useState('');
   const [inputNotes, setInputNotes] = useState('');
@@ -60,7 +60,7 @@ const NewWorkoutScreen = ({route}) => {
 
   const onSubmitHandler = () => {
     console.log('submitting')
-    insertWorkout({inputTitle, inputNotes, inputDate, inputStartTime, inputEndTime, user_id, old_workouts})
+    insertWorkout({inputTitle, inputNotes, inputDate, inputStartTime, inputEndTime, user_id})
     
     navigation.navigate('Tabs');
   }
