@@ -46,7 +46,7 @@ export const participantWorkoutInfo = (user_id, workout_id ) => {
           .from('participants')
           .select('*')
           .eq('user_id', user_id)
-          .eq('workout_id', workout_id); 
+          .eq('workout_id', workout_id).single(); 
   
         if (error) 
           throw new Error(error.message);
@@ -152,3 +152,33 @@ export const useRemoveWorkout = () => {
   });
 };
 
+
+export const useUpdateParticipantStatus = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    async mutationFn(data: any) {
+      console.log(data)
+      const { error, data: updatedStatus } = await supabase
+        .from('participants')
+        .update({
+          status : data.status
+        })
+        .eq('user_id', data.user_id)
+        .eq('workout_id', data.workout_id)
+        .select()
+        .single();
+
+      if (error) {
+        console.log(error)
+        throw new Error(error.message);
+      }
+      console.log(updatedStatus)
+      return updatedStatus;
+    },
+    async onSuccess(returnedData) {
+      console.log('on suc', returnedData)
+      await queryClient.invalidateQueries(['participants', returnedData.user_id, returnedData.workout_id]);
+    },
+  });
+};
