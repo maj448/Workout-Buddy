@@ -11,8 +11,8 @@ import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from './providers/AuthProvider';
 import { participantWorkoutsTest } from './api/workouts';
 import { ActivityIndicator } from 'react-native';
-
-
+import {  Gesture, GestureDetector, Directions, GestureHandlerRootView } from 'react-native-gesture-handler';
+import moment from 'moment'
 
 const workoutStatuses = {
   pending: { key: 'pending', color: 'blue' },
@@ -33,6 +33,30 @@ export default function Index() {
   const [participantWorkoutsIds, setParticipantWorkoutsIds] = useState<any>()
 
   const { data: workouts, isLoading: isWorkoutsLoading, error: workoutsError} = participantWorkoutsTest(session?.user.id)
+  
+  const subtractDay = () => {
+    const subDay = moment(selected).add(-1, 'day').toISOString()
+    setSelected(subDay.split('T')[0])
+  };
+  
+  const flingGestureRight = Gesture.Fling()
+  .direction(Directions.RIGHT)
+  .onEnd(subtractDay)
+  .runOnJS(true)
+  ;
+
+  const addDay = () => {
+    const plusDay = moment(selected).add(1, 'day').toISOString()
+    setSelected(plusDay.split('T')[0])
+  };
+  
+  const flingGestureLeft = Gesture.Fling()
+  .direction(Directions.LEFT)
+  .onEnd(addDay)
+  .runOnJS(true)
+  ;
+
+  const combinedGesture = Gesture.Race(flingGestureLeft, flingGestureRight);
 
 
   useEffect(() => {
@@ -116,9 +140,11 @@ export default function Index() {
           enableSwipeMonths={true}
 
         />
-
+    <GestureDetector gesture={combinedGesture} >
+    {/* <View collapsable={false}> */}
     <WorkoutList workouts={filteredWorkouts} displayDate ={displayDate} selected={selected}/>
-
+    {/* </View> */}
+    </GestureDetector>
     </SafeAreaView>
     );
   }

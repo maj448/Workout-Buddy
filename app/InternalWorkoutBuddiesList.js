@@ -23,16 +23,6 @@ export default function InternalWorkoutBuddiesList({buddies}){
   const [value, setValue] = useState(null);
     const [isFocus, setIsFocus] = useState(false);
 
-    // const renderLabel = () => {
-    //   if (value || isFocus) {
-    //     return (
-    //       <Text style={[styles.label, isFocus && { color: 'blue' }]}>
-    //         Invite
-    //       </Text>
-    //     );
-    //   }
-    //   return null;
-    // };
 
   const navigation = useNavigation();
 
@@ -57,7 +47,7 @@ export default function InternalWorkoutBuddiesList({buddies}){
           maxHeight={300}
           labelField="label"
           valueField="value"
-          placeholder={!isFocus ? 'Select item' : '...'}
+          placeholder={!isFocus ? 'Select Buddies' : '...'}
           searchPlaceholder="Search..."
           value={value}
           onFocus={() => setIsFocus(true)}
@@ -66,14 +56,7 @@ export default function InternalWorkoutBuddiesList({buddies}){
             setValue(item.value);
             setIsFocus(false);
           }}
-          renderLeftIcon={() => (
-            <AntDesign
-              style={styles.icon}
-              color={isFocus ? 'blue' : 'black'}
-              name="Safety"
-              size={20}
-            />
-          )}
+
         />
         <Pressable onPress={inviteFriend} >
           <Ionicons name="add-circle-outline" size={24} color="white" />
@@ -106,6 +89,7 @@ const styles = StyleSheet.create({
     height: 50,
     width: 250,
     borderColor: 'gray',
+    backgroundColor: 'lightgray',
     borderWidth: 0.5,
     borderRadius: 8,
     paddingHorizontal: 8,

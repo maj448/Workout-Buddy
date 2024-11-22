@@ -17,7 +17,7 @@ export default function WorkoutList({workouts, displayDate, selected}){
 
     };
     return(
-    <View style={{backgroundColor: '#6EEB92', padding: 10, gap: 10, flex: 1}}>
+    <View style={{backgroundColor: '#6EEB92', padding: 10, gap: 10, flex: 1}} collapsable={false}>
       <View style ={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 10}}>
         <Text style={{color: 'white', fontWeight: 'bold', fontSize: 24}}>{displayDate}</Text>
         <Pressable onPress={createWorkout}>
