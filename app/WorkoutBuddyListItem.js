@@ -19,7 +19,6 @@ export default function WorkoutBuddyListItem({ buddie }) {
             <Text style= {styles.text}>
                {buddie.username}
             </Text>
-            <Text>invite status</Text>
         </View>
 
     )
@@ -31,10 +30,10 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        backgroundColor: 'blue'
+        backgroundColor: 'lightgray'
     },
     text: {
-        color: 'white',
+        color: 'black',
         fontSize: 16,
     },
     time: {

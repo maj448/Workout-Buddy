@@ -63,6 +63,60 @@ export const workoutBuddies = (user_id, workout_id) => {
           
 }
 
+export const useAddBuddy = () => {
+
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    async mutationFn(data : any) {
+
+
+      const { data : usernameData, error : usernameError } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('username', data.username)
+          .single()
+
+          if (usernameError) {
+            console.log(usernameError)
+            throw usernameError;
+          }
+  
+        if(!usernameData)
+          return [];
+
+
+      const { data: userData, error: userError } = await supabase.from('buddies').insert({
+        user_id: data.user_id,
+        buddy_user_id: usernameData.id,
+      })
+
+
+      if (userError) {
+        console.log(userError)
+        throw userError;
+      }
+
+      const { data: buddyData, error: buddyError } = await supabase.from('buddies').insert({
+        user_id: usernameData.id,
+        buddy_user_id: data.user_id,
+      })
+
+      return data.user_id
+
+
+    },
+    async onSuccess(returnedData) {
+      await queryClient.invalidateQueries(['buddies', returnedData.user_id]);
+
+    },
+    onError(error) {
+      //console.log(error);
+    },
+  });
+
+};
+
 export const useInviteBuddies = () => {
 
   const queryClient = useQueryClient();
