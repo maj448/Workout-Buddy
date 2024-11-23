@@ -90,7 +90,7 @@ const NewWorkoutScreen = ({route}) => {
   const onSubmitHandler = () => {
     setLoading(true)
     console.log('submitting')
-    insertWorkout({inputTitle, inputNotes, inputDate, inputStartTime, inputEndTime, user_id},
+    insertWorkout({inputTitle, inputNotes, inputDate, inputStartTime, inputEndTime, user_id, inviteBuddyList},
       {
         onSuccess: () => {
           resetFields();
@@ -197,14 +197,7 @@ const NewWorkoutScreen = ({route}) => {
         numberOfLines={10}
         onChangeText={setInputNotes}
          />
-        {/* <TextInput
-            style={styles.inputBox}
-            keyboardType="default"
-            value={inputNotes}
-            multiline = {true}
-            numberOfLines={10}
-            onChangeText={setInputNotes}
-        /> */}
+
         </View>
       </KeyboardAvoidingView>
       <InternalWorkoutBuddiesList buddies={buddies} forNew={true} OnAddBuddyToInvites ={handleBuddyInviteList}/>
