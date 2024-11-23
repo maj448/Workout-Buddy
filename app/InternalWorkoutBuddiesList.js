@@ -9,35 +9,45 @@ import { Dropdown } from 'react-native-element-dropdown';
 
 
 export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyToInvites}){
-  const data = [
-    { label: 'Item 1', value: {buddie_user_id : 1} },
-    { label: 'Item 2', value: {buddie_user_id : 2} },
-    { label: 'Item 3', value: {buddie_user_id : 3} },
-    { label: 'Item 4', value: {buddie_user_id : 4} },
-    { label: 'Item 5', value: {buddie_user_id : 5} },
-    { label: 'Item 6', value: {buddie_user_id : 6} },
-    { label: 'Item 7', value: {buddie_user_id : 7} },
-    { label: 'Item 8', value: {buddie_user_id : 8} },
-  ];
+
+  console.log(buddies)
+
 
   const [value, setValue] = useState(null);
     const [isFocus, setIsFocus] = useState(false);
     const [inviteBuddyList, setInviteBuddyList] = useState([])
+    const [dropdownData, setDropdownData] = useState([])
 
     const OnAddBuddy = (selectedValue) => {
+      
  
       setInviteBuddyList(prevList => {
-        const updatedList = [selectedValue, ...prevList];
-        return updatedList;
+
+        if(!prevList.includes(selectedValue)){
+          const updatedList = [selectedValue, ...prevList];
+          return updatedList;
+        }
+        return prevList;
       });
     };
 
     useEffect(() => {
 
+      if(buddies){
+      const newDropdownData = buddies.map(buddy => ({
+        label: buddy.username, 
+        value: buddy        
+      }));
+
+
+      setDropdownData(newDropdownData)
+      console.log('dropdown', dropdownData)
+    }
+
       if (inviteBuddyList.length > 0) {
         OnAddBuddyToInvites(inviteBuddyList)
       }
-    }, [inviteBuddyList]);
+    }, [inviteBuddyList, buddies]);
 
   const navigation = useNavigation();
 
@@ -52,7 +62,7 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
           selectedTextStyle={styles.selectedTextStyle}
           inputSearchStyle={styles.inputSearchStyle}
           iconStyle={styles.iconStyle}
-          data={data}
+          data={dropdownData}
           search
           maxHeight={300}
           labelField="label"
@@ -77,15 +87,15 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
         } */}
 
         {!forNew && 
-          <Pressable onPress={inviteBuddy} style={styles.button}>
+          <Pressable onPress={OnAddBuddy} style={styles.button}>
             <Text style={styles.buttonText}>Invite</Text> 
           </Pressable>}
       </View>
 
       <View>
 
-        {buddies && buddies.map((buddie) => (
-          <InternalWorkoutBuddyListItem key={buddie.buddie_user_id} buddie={buddie} />
+        {inviteBuddyList && inviteBuddyList.map((buddie) => (
+          <InternalWorkoutBuddyListItem key={buddie.id} buddie={buddie} forNew={forNew}/>
         ))}
 
       </View>

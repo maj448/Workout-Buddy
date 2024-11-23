@@ -7,7 +7,7 @@ import { ScrollView } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import { participantWorkoutInfo, useUpdateParticipantStatus } from './api/workouts';
 import { useAuth } from './providers/AuthProvider';
-import { workoutBuddies } from './api/buddies';
+import { userBuddies, workoutBuddies } from './api/buddies';
 
 
 const WorkoutDetailsScreen = ({route}) => {
@@ -29,10 +29,12 @@ const WorkoutDetailsScreen = ({route}) => {
     const [canStart, setCanStart] = useState(false)
     const [completed, setCompleted] = useState(false)
     const navigation = useNavigation()
+    const [inviteBuddyList, setInviteBuddyList] = useState([])
 
-    const { data: participationInfo, isLoading: isParticipationLoading, error: participationError } = participantWorkoutInfo(session?.user.id, workout.id)
-    const { data: BuddiesInfo, isLoading: isBuddiesLoading, error: BuddiesError } = workoutBuddies(session?.user.id, workout.id)
+    const { data: participationInfo, isLoading: isParticipationLoading, error: participationError } = participantWorkoutInfo(session?.user.id, workout.id);
+    const { data: BuddiesInfo, isLoading: isBuddiesLoading, error: BuddiesError } = workoutBuddies(session?.user.id, workout.id);
 
+    const {data: UserBuddies, isLoading : isLoadingUserBuddies} = userBuddies(session?.user.id);
     const {mutate: updateParticipantStatus} = useUpdateParticipantStatus();
 
     const onStart = () => {
@@ -73,6 +75,13 @@ const WorkoutDetailsScreen = ({route}) => {
 
     }
 
+    const handleBuddyInviteList = (buddy) => {
+      console.log('bud', buddy)
+      setInviteBuddyList(buddy)
+      
+    console.log('list', inviteBuddyList)
+  };
+
     useEffect(() => {
       if (participationInfo)
         setParticipantState(participationInfo.status)
@@ -112,7 +121,7 @@ const WorkoutDetailsScreen = ({route}) => {
 
       </View>
 
-      <InternalWorkoutBuddiesList buddies={BuddiesInfo}/>
+      <InternalWorkoutBuddiesList buddies={UserBuddies} forNew={false} OnAddBuddyToInvites={handleBuddyInviteList}/>
 
       <View style={styles.buttonContainer}>
       {!completed &&
