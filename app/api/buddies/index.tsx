@@ -32,25 +32,6 @@ export const userBuddies = (user_id : string) => {
 }
 
 
-// export const buddyProfiles = (buddie_ids) => {
-//     return useQuery({
-//         queryKey : ['profiles', { buddieIds: buddie_ids?.map((p) => p.buddy_user_id) }],
-//         queryFn: async () => {
-//           if (!buddie_ids || buddie_ids.length === 0) return []; 
-    
-//           const { data, error } = await supabase
-//             .from('profiles')
-//             .select('*')
-//             .in('id', buddie_ids.map((p) => p.buddy_user_id)); 
-    
-//           if (error) throw new Error(error.message);
-//           return data;
-//         },
-    
-//       });
-
-// }
-
 export const workoutBuddies = (user_id, workout_id) => {
 
   return useQuery({
@@ -81,3 +62,53 @@ export const workoutBuddies = (user_id, workout_id) => {
   });
           
 }
+
+export const useInviteBuddies = () => {
+
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    async mutationFn(data : any) {
+      const { data: workoutData, error: workoutError } = await supabase.from('workouts').insert({
+        title: data.inputTitle,
+        notes: data.inputNotes,
+        workout_date: data.inputDate.toISOString(),
+        workout_status:  'upcoming',
+        start_time: data.inputStartTime.toISOString(),
+        end_time: data.inputEndTime.toISOString(),
+      }).select('id');
+
+      if (workoutError) {
+        console.log(workoutError)
+        throw workoutError;
+      }
+      
+      //return workoutData
+
+      if(workoutData && workoutData.length > 0){
+      const { error: participantError } = await supabase.from('participants').insert({
+        user_id: data.user_id,
+        workout_id: workoutData[0].id
+      });
+
+      if (participantError) {
+        console.log(participantError)
+        throw participantError;
+      }
+
+      return { user_id : data.user_id };
+
+    }
+    },
+    async onSuccess(returnedData) {
+      console.log('Mutation successful:', returnedData);
+      await queryClient.invalidateQueries(['participants', returnedData?.user_id]);
+      //await queryClient.invalidateQueries(['workouts', {participants: [...returnedData.old_workouts, { workout_id: returnedData.workout_id } ]}]);
+      console.log('Queries invalidated successfully');
+    },
+    onError(error) {
+      //console.log(error);
+    },
+  });
+
+};

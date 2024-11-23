@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 
 
 
-export default function InternalWorkoutBuddyListItem({ buddie }) {
+export default function InternalWorkoutBuddyListItem({ buddie, forNew}) {
     if (!buddie) {
         console.error("buddie is undefined", buddie);
         return null;  // Return null or an error message if workout is undefined
@@ -19,7 +19,9 @@ export default function InternalWorkoutBuddyListItem({ buddie }) {
             <Text style= {styles.text}>
                {buddie.username}
             </Text>
+            { !forNew &&
             <Text>invite status</Text>
+            }
         </View>
 
     )

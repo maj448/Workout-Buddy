@@ -28,6 +28,7 @@ const NewWorkoutScreen = ({route}) => {
   const [openStart, setOpenStart] = useState(false)
   const [openEnd, setOpenEnd] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [inviteBuddyList, setInviteBuddyList] = useState('')
 
   const {data: buddies, isLoading : isLoadingBuddies} = userBuddies(session?.user.id);
 
@@ -104,6 +105,17 @@ const NewWorkoutScreen = ({route}) => {
   if (loading) {
     return <ActivityIndicator />;
   }
+
+  const handleBuddyInviteList = (buddy) => {
+      console.log('bud', buddy)
+      setInviteBuddyList(buddy)
+      
+    console.log('list', inviteBuddyList)
+  };
+
+  useEffect(() => {
+    console.log('Updated inviteBuddyList:', inviteBuddyList);
+  }, [inviteBuddyList]);
 
 
   return (
@@ -195,7 +207,7 @@ const NewWorkoutScreen = ({route}) => {
         /> */}
         </View>
       </KeyboardAvoidingView>
-      <InternalWorkoutBuddiesList buddies={buddies}/>
+      <InternalWorkoutBuddiesList buddies={buddies} forNew={true} OnAddBuddyToInvites ={handleBuddyInviteList}/>
       <View style={styles.buttonContainer}>
             <Pressable onPress={onSubmitHandler} disabled={loading} style={styles.button}>
                 <Text style={styles.buttonText}>{loading ? 'Creating workout...' : 'Create Workout'} </Text>
