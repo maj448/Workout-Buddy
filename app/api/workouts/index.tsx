@@ -129,6 +129,7 @@ export const useInsertWorkout = () => {
 
       if(data.inviteBuddyList && data.inviteBuddyList.length > 0){
         for (let buddy of data.inviteBuddyList) {
+          console.log('ivb', buddy)
           const { error: inviteError } = await supabase.from('invitations').insert({
             from_user_id: data.user_id,
             workout_id: workoutData[0].id,

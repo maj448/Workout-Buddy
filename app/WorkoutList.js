@@ -9,7 +9,6 @@ import InvitedWorkoutListItem from './InvitedWorkoutListItem'
 
 export default function WorkoutList({workouts, invitedWorkouts, displayDate, selected}){
 
-  console.log('i', invitedWorkouts)
   const navigation = useNavigation();
 
     const [newWorkout, setNewWorkout] = useState('')

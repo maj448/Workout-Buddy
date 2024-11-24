@@ -76,7 +76,6 @@ const NewWorkoutScreen = ({route}) => {
     setOpenEnd(true);
   };
 
-  console.log(inputStartTime, inputEndTime)
   const formatTime = (date) => {
 
     if (!(date instanceof Date)) {
@@ -89,7 +88,6 @@ const NewWorkoutScreen = ({route}) => {
 
   const onSubmitHandler = () => {
     setLoading(true)
-    console.log('submitting')
     insertWorkout({inputTitle, inputNotes, inputDate, inputStartTime, inputEndTime, user_id, inviteBuddyList},
       {
         onSuccess: () => {

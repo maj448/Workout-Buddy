@@ -3,33 +3,21 @@ import InternalWorkoutBuddyListItem from "./InternalWorkoutBuddyListItem";
 import React, {useEffect, useState} from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import { Dropdown } from 'react-native-element-dropdown';
+import { Dropdown, MultiSelect } from 'react-native-element-dropdown';
 
 
 
 export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyToInvites}){
 
-  console.log(buddies)
 
 
   const [value, setValue] = useState(null);
     const [isFocus, setIsFocus] = useState(false);
     const [inviteBuddyList, setInviteBuddyList] = useState([])
     const [dropdownData, setDropdownData] = useState([])
+    const [selected, setSelected] = useState([])
 
-    const OnAddBuddy = (selectedValue) => {
-      
- 
-      setInviteBuddyList(prevList => {
-
-        if(!prevList.includes(selectedValue)){
-          const updatedList = [selectedValue, ...prevList];
-          return updatedList;
-        }
-        return prevList;
-      });
-    };
+    
 
     useEffect(() => {
 
@@ -41,13 +29,14 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
 
 
       setDropdownData(newDropdownData)
-      console.log('dropdown', dropdownData)
     }
 
-      if (inviteBuddyList.length > 0) {
-        OnAddBuddyToInvites(inviteBuddyList)
+      console.log('sel',selected)
+      if (selected.length > 0) {
+        OnAddBuddyToInvites(selected)
       }
-    }, [inviteBuddyList, buddies]);
+    }, [selected, buddies]);
+
 
   const navigation = useNavigation();
 
@@ -55,8 +44,8 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
     <View style={{backgroundColor: '#6EEB92', padding: 10, gap: 10}}>
       <Text style={{color: 'white', fontWeight: 'bold', fontSize: 24, }}>Buddies</Text>
       <View style ={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 10}}>
-        
-        <Dropdown
+        <View>
+        <MultiSelect
           style={[styles.dropdown, isFocus && { borderColor: 'blue' } ]}
           placeholderStyle={styles.placeholderStyle}
           selectedTextStyle={styles.selectedTextStyle}
@@ -69,25 +58,20 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
           valueField="value"
           placeholder={!isFocus ? 'Select Buddies' : '...'}
           searchPlaceholder="Search..."
-          value={value ? value : null}
+          value= {selected}
           onFocus={() => setIsFocus(true)}
           onBlur={() => setIsFocus(false)}
           onChange={item => {
-            setValue(item.value);
-            OnAddBuddy(item.value);
+            setSelected(item);
             setIsFocus(false);
           }}
-
+          selectedStyle={styles.selectedStyle}
         />
+        </View>
 
-        {/* { forNew &&
-          <Pressable onPress={OnAddSelected} >
-            <Ionicons name="add-circle-outline" size={24} color="white" />
-          </Pressable>
-        } */}
 
         {!forNew && 
-          <Pressable onPress={OnAddBuddy} style={styles.button}>
+          <Pressable onPress={() => {if (value) OnAddBuddy(value)}} style={styles.button}>
             <Text style={styles.buttonText}>Invite</Text> 
           </Pressable>}
       </View>
@@ -150,6 +134,10 @@ const styles = StyleSheet.create({
   inputSearchStyle: {
     height: 40,
     fontSize: 16,
+  },
+  selectedStyle: {
+    borderRadius: 12,
+    backgroundColor: 'blue'
   },
   button: {
     width: 100,

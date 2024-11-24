@@ -34,7 +34,6 @@ export default function Index() {
 
   const { data: workouts, isLoading: isWorkoutsLoading, error: workoutsError} = participantWorkouts(session?.user.id)
   const { data: invited, isLoading: isInvitedLoading, error: invitedError} = invitedWorkouts(session?.user.id)
-  //console.log(invited)
   
   const subtractDay = () => {
     const subDay = moment(selected).add(-1, 'day').toISOString()
@@ -96,7 +95,6 @@ export default function Index() {
         });
 
 
-        console.log('i',invited)
 
         const filteredInvites = invited.filter((invite) => {
           const workoutDate = invite.workout_date.split('T')[0];
@@ -104,7 +102,6 @@ export default function Index() {
         });
 
         setFilteredInvites(filteredInvites);
-        console.log('f', filteredInvites)
 
       }
 
