@@ -9,16 +9,15 @@ import { useState, useEffect, useCallback } from 'react'
 import { supabase } from './utils/supabase';
 import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from './providers/AuthProvider';
-import { participantWorkoutsTest } from './api/workouts';
+import { participantWorkouts, invitedWorkouts} from './api/workouts';
 import { ActivityIndicator } from 'react-native';
 import {  Gesture, GestureDetector, Directions, GestureHandlerRootView } from 'react-native-gesture-handler';
 import moment from 'moment'
 
 const workoutStatuses = {
   pending: { key: 'pending', color: 'blue' },
-  completed: { key: 'complete', color: 'green' },
+  completed: { key: 'past', color: 'gray' },
   upcoming: { key: 'upcoming', color: 'orange' },
-  missed: { key: 'missed', color: 'red' },
 };
 
 
@@ -29,10 +28,13 @@ export default function Index() {
   const today = format(new Date(), 'yyyy-MM-dd');
   const [selected, setSelected] = useState(today);
   const [filteredWorkouts, setFilteredWorkouts] = useState([])
+  const [filteredInvites, setFilteredInvites] = useState([])
   const [markedDates, setMarkedDates] = useState({});
   const [participantWorkoutsIds, setParticipantWorkoutsIds] = useState<any>()
 
-  const { data: workouts, isLoading: isWorkoutsLoading, error: workoutsError} = participantWorkoutsTest(session?.user.id)
+  const { data: workouts, isLoading: isWorkoutsLoading, error: workoutsError} = participantWorkouts(session?.user.id)
+  const { data: invited, isLoading: isInvitedLoading, error: invitedError} = invitedWorkouts(session?.user.id)
+  //console.log(invited)
   
   const subtractDay = () => {
     const subDay = moment(selected).add(-1, 'day').toISOString()
@@ -60,8 +62,9 @@ export default function Index() {
 
 
   useEffect(() => {
+    const newMarkedDates = {};
     if (workouts || workouts == '') {
-      const newMarkedDates = {};
+      
       workouts.forEach((workout) => {
         const workoutDate = workout.workout_date.split('T')[0];
 
@@ -76,6 +79,35 @@ export default function Index() {
         });
       });
 
+      if(invited || invited == '')
+      {
+        invited.forEach((invite) => {
+          const workoutDate = invite.workout_date.split('T')[0];
+  
+          if (!newMarkedDates[workoutDate]) {
+            newMarkedDates[workoutDate] = { dots: [] };
+          }
+  
+          const dotKey = `${invite.id}-${'pending'}`;
+          newMarkedDates[workoutDate].dots.push({
+            key: dotKey, 
+            color: workoutStatuses['pending']?.color,
+          });
+        });
+
+
+        console.log('i',invited)
+
+        const filteredInvites = invited.filter((invite) => {
+          const workoutDate = invite.workout_date.split('T')[0];
+          return workoutDate === selected;
+        });
+
+        setFilteredInvites(filteredInvites);
+        console.log('f', filteredInvites)
+
+      }
+
       setMarkedDates(newMarkedDates);
 
       const filtered = workouts.filter((workout) => {
@@ -83,17 +115,19 @@ export default function Index() {
         return workoutDate === selected;
       });
 
+
+
       setFilteredWorkouts(filtered);
     
   }
-}, [workouts, selected]);
+}, [workouts, invited, selected]);
 
-  if ( isWorkoutsLoading) {
+  if ( isWorkoutsLoading || isInvitedLoading) {
     return <ActivityIndicator />;
   }
 
-  if ( workoutsError) {
-    return console.error(workoutsError);
+  if ( workoutsError || invitedError) {
+    return console.error(workoutsError || invitedError);
     
   }
 
@@ -142,7 +176,7 @@ export default function Index() {
         />
     <GestureDetector gesture={combinedGesture} >
     {/* <View collapsable={false}> */}
-    <WorkoutList workouts={filteredWorkouts} displayDate ={displayDate} selected={selected}/>
+    <WorkoutList workouts={filteredWorkouts} invitedWorkouts={filteredInvites} displayDate ={displayDate} selected={selected}/>
     {/* </View> */}
     </GestureDetector>
     </SafeAreaView>

@@ -5,7 +5,7 @@ import { supabase } from '@/app/utils/supabase';
 
 
 
-export const participantWorkoutsTest = (user_id ) => {
+export const participantWorkouts = (user_id ) => {
     
   return useQuery({
     queryKey : ['participants', user_id], 
@@ -17,6 +17,8 @@ export const participantWorkoutsTest = (user_id ) => {
 
       if (participantsError) 
         throw new Error(participantsError.message);
+
+      
 
       if (!participants || participants.length === 0) return [];
 
@@ -36,6 +38,41 @@ export const participantWorkoutsTest = (user_id ) => {
   
 }
 
+export const invitedWorkouts = (user_id ) => {
+    
+  return useQuery({
+    queryKey : ['invitations', user_id], 
+    queryFn: async () => {
+   
+      const { data : invited, error : invitedError } = await supabase
+      .from('invitations')
+      .select('workout_id')
+      .eq('to_user_id', user_id); 
+
+
+
+      if (invitedError) 
+        throw new Error(invitedError.message);
+
+
+      if (!invited || invited.length === 0) return [];
+
+      const { data : workouts, error } = await supabase
+          .from('workouts')
+          .select('*')
+          .in('id', invited.map((p) => p.workout_id)); 
+  
+        if (error) throw new Error(error.message);
+
+        console.log(workouts)
+
+      return workouts;
+    },
+    });
+    
+      
+  
+}
 
 export const participantWorkoutInfo = (user_id, workout_id ) => {
 
