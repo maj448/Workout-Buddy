@@ -17,6 +17,8 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
     const [dropdownData, setDropdownData] = useState([])
     const [selected, setSelected] = useState([])
 
+
+
     
 
     useEffect(() => {
@@ -38,15 +40,17 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
     }, [selected, buddies]);
 
 
+  const selectBoxFlex = forNew ? {flex : 1 } : {flex : 6};
+
   const navigation = useNavigation();
 
     return(
     <View style={{backgroundColor: '#6EEB92', padding: 10, gap: 10}}>
       <Text style={{color: 'white', fontWeight: 'bold', fontSize: 24, }}>Buddies</Text>
       <View style ={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 10}}>
-        <View>
+        <View style={[selectBoxFlex]}>
         <MultiSelect
-          style={[styles.dropdown, isFocus && { borderColor: 'blue' } ]}
+          style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
           placeholderStyle={styles.placeholderStyle}
           selectedTextStyle={styles.selectedTextStyle}
           inputSearchStyle={styles.inputSearchStyle}
@@ -100,14 +104,14 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     height: 50,
-    width: 250,
+    //width: '100%',
     borderColor: 'gray',
     backgroundColor: 'lightgray',
     borderWidth: 0.5,
     borderRadius: 8,
     paddingHorizontal: 8,
     marginRight: 20,
-    flex: 6
+    //flex: 6
   },
   icon: {
     marginRight: 5,
@@ -149,6 +153,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     margin: 10,
     borderRadius: 10,
+    flex: 2
 
   },
   buttonText : {
