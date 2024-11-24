@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 
 
 
-export default function WorkoutBuddyListItem({ buddie }) {
+export default function InternalWorkoutBuddyListItem({ buddie, forNew}) {
     if (!buddie) {
         console.error("buddie is undefined", buddie);
         return null;  // Return null or an error message if workout is undefined
@@ -12,13 +12,16 @@ export default function WorkoutBuddyListItem({ buddie }) {
 
       //get username from profile table 
 
-
+      console.log('b',buddie)
     return(
 
         <View style= {styles.container}>
             <Text style= {styles.text}>
-               {buddie.username}
+               {buddie.profiles.username}
             </Text>
+            { !forNew &&
+            <Text>{buddie.invite_status ? buddie.invite_status : 'accpeted'}</Text>
+            }
         </View>
 
     )
@@ -30,10 +33,10 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        backgroundColor: 'lightgray'
+        backgroundColor: 'lightblue',
     },
     text: {
-        color: 'black',
+        color: 'white',
         fontSize: 16,
     },
     time: {

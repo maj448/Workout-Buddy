@@ -15,7 +15,7 @@ import { useAuth } from './providers/AuthProvider';
     missed: { backgroundColor: 'red', },
   };
 
-export default function WorkoutListItem({ workout }) {
+export default function InvitedWorkoutListItem({ workout }) {
     if (!workout) {
         console.error("workout is undefined", workout);
         return null;  
@@ -64,7 +64,7 @@ export default function WorkoutListItem({ workout }) {
     ]);
     };
 
-    const backgroundColorOnStatus = workoutStatuses[workout.workout_status]
+    const backgroundColorOnStatus = workoutStatuses['pending']
 
     return(
         <Pressable onPress={gotoDetailsScreen} onLongPress={confirmRemove}>
