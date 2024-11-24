@@ -5,9 +5,9 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import InternalWorkoutBuddiesList from './InternalWorkoutBuddiesList'
 import { ScrollView } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import { participantWorkoutInfo, useUpdateParticipantStatus } from './api/workouts';
+import { allWorkoutInvitations, allWorkoutParticipants, participantWorkoutInfo, useUpdateParticipantStatus } from './api/workouts';
 import { useAuth } from './providers/AuthProvider';
-import { userBuddies, workoutBuddies } from './api/buddies';
+import { userBuddies } from './api/buddies';
 
 
 const WorkoutDetailsScreen = ({route}) => {
@@ -19,10 +19,7 @@ const WorkoutDetailsScreen = ({route}) => {
       Alert.alert('Workout is undefined!')
       return null;  
     }
-    //console.log(workout)
 
-    //const displayStartTime = format(parseISO(workout.start_time), 'h:mm a')
-    //const displayEndTime = format(parseISO(workout.end_time), 'h:mm a')
     const displayDate = workout.workout_date.split('T')[0]
     const [newWorkout, setNewWorkout] = useState('')
     const [participantState, setParticipantState] = useState('waiting')
@@ -32,9 +29,15 @@ const WorkoutDetailsScreen = ({route}) => {
     const [inviteBuddyList, setInviteBuddyList] = useState([])
 
     const { data: participationInfo, isLoading: isParticipationLoading, error: participationError } = participantWorkoutInfo(session?.user.id, workout.id);
-    const { data: BuddiesInfo, isLoading: isBuddiesLoading, error: BuddiesError } = workoutBuddies(session?.user.id, workout.id);
+    //const { data: BuddiesInfo, isLoading: isBuddiesLoading, error: BuddiesError } = workoutBuddies(session?.user.id, workout.id);
+    const { data: allParticipants, isLoading: allParticipantsLoading, error: allParticipantsError } = allWorkoutParticipants(workout.id);
+    const { data: allInvitations, isLoading: allInvitationsLoading, error: allInvitationsError } = allWorkoutInvitations(workout.id);
+
+    console.log ('ap', allParticipants)
+    console.log ('ai', allInvitations)
 
     const {data: UserBuddies, isLoading : isLoadingUserBuddies} = userBuddies(session?.user.id);
+
     const {mutate: updateParticipantStatus} = useUpdateParticipantStatus();
 
     const onStart = () => {
@@ -121,7 +124,7 @@ const WorkoutDetailsScreen = ({route}) => {
 
       </View>
 
-      <InternalWorkoutBuddiesList buddies={UserBuddies} forNew={false} OnAddBuddyToInvites={handleBuddyInviteList}/>
+      <InternalWorkoutBuddiesList buddies={UserBuddies} forNew={false} OnAddBuddyToInvites={handleBuddyInviteList} allParticipants={allParticipants} allInvitations={allInvitations}/>
 
       <View style={styles.buttonContainer}>
       {!completed &&

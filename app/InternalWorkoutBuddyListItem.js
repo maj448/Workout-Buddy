@@ -12,15 +12,15 @@ export default function InternalWorkoutBuddyListItem({ buddie, forNew}) {
 
       //get username from profile table 
 
-
+      console.log('b',buddie)
     return(
 
         <View style= {styles.container}>
             <Text style= {styles.text}>
-               {buddie.username}
+               {buddie.profiles.username}
             </Text>
             { !forNew &&
-            <Text>invite status</Text>
+            <Text>{buddie.invite_status ? buddie.invite_status : 'accpeted'}</Text>
             }
         </View>
 
@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        backgroundColor: 'blue'
+        backgroundColor: 'lightblue',
     },
     text: {
         color: 'white',

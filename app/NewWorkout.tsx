@@ -198,7 +198,7 @@ const NewWorkoutScreen = ({route}) => {
 
         </View>
       </KeyboardAvoidingView>
-      <InternalWorkoutBuddiesList buddies={buddies} forNew={true} OnAddBuddyToInvites ={handleBuddyInviteList}/>
+      <InternalWorkoutBuddiesList buddies={buddies} forNew={true} OnAddBuddyToInvites ={handleBuddyInviteList} allParticipants={[]} allInvitations={[]}/>
       <View style={styles.buttonContainer}>
             <Pressable onPress={onSubmitHandler} disabled={loading} style={styles.button}>
                 <Text style={styles.buttonText}>{loading ? 'Creating workout...' : 'Create Workout'} </Text>

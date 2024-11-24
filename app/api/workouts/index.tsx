@@ -47,7 +47,7 @@ export const invitedWorkouts = (user_id ) => {
       const { data : invited, error : invitedError } = await supabase
       .from('invitations')
       .select('workout_id')
-      .eq('to_user_id', user_id); 
+      .eq('user_id', user_id); 
 
 
 
@@ -94,6 +94,44 @@ export const participantWorkoutInfo = (user_id, workout_id ) => {
   
 };
 
+export const allWorkoutParticipants = ( workout_id ) => {
+
+  return useQuery({
+      queryKey : ['participants', workout_id], 
+      queryFn: async () => {
+        const { data, error } = await supabase
+          .from('participants')
+          .select('*, profiles(*)')
+          .eq('workout_id', workout_id); 
+  
+        if (error) 
+          throw new Error(error.message);
+        return data;
+      },
+      });
+      
+  
+};
+
+export const allWorkoutInvitations = ( workout_id ) => {
+
+  return useQuery({
+      queryKey : ['invitations', workout_id], 
+      queryFn: async () => {
+        const { data, error } = await supabase
+          .from('invitations')
+          .select('*, profiles(*)')
+          .eq('workout_id', workout_id); 
+  
+        if (error) 
+          throw new Error(error.message);
+        return data;
+      },
+      });
+      
+  
+};
+
 export const useInsertWorkout = () => {
 
   const queryClient = useQueryClient();
@@ -114,7 +152,6 @@ export const useInsertWorkout = () => {
         throw workoutError;
       }
       
-      //return workoutData
 
       if(workoutData && workoutData.length > 0){
       const { error: participantError } = await supabase.from('participants').insert({
@@ -131,9 +168,9 @@ export const useInsertWorkout = () => {
         for (let buddy of data.inviteBuddyList) {
           console.log('ivb', buddy)
           const { error: inviteError } = await supabase.from('invitations').insert({
-            from_user_id: data.user_id,
+            // from_user_id: data.user_id,
             workout_id: workoutData[0].id,
-            to_user_id: buddy.id,
+            user_id: buddy.id,
             invite_status: 'pending', 
           });
 
@@ -151,13 +188,43 @@ export const useInsertWorkout = () => {
     }
     },
     async onSuccess(returnedData) {
-      console.log('Mutation successful:', returnedData);
       await queryClient.invalidateQueries(['participants', returnedData?.user_id]);
-      //await queryClient.invalidateQueries(['workouts', {participants: [...returnedData.old_workouts, { workout_id: returnedData.workout_id } ]}]);
-      console.log('Queries invalidated successfully');
     },
     onError(error) {
-      //console.log(error);
+      console.log(error);
+    },
+  });
+
+};
+
+export const useInviteToWorkout = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    async mutationFn(data : any) {
+      if(data.inviteBuddyList && data.inviteBuddyList.length > 0){
+        for (let buddy of data.inviteBuddyList) {
+          console.log('ivb', buddy)
+          const { error: inviteError } = await supabase.from('invitations').insert({
+            // from_user_id: data.user_id,
+            workout_id: data.workout_id,
+            user_id: buddy.id,
+            invite_status: 'pending', 
+          });
+
+          if (inviteError) {
+            console.log(inviteError)
+            throw inviteError;
+          }
+        }
+      return { workout_id : data.workout_id };
+    }
+    },
+    async onSuccess(returnedData) {
+      await queryClient.invalidateQueries(['invitations', returnedData?.workout_id]);
+    },
+    onError(error) {
+      console.log(error);
     },
   });
 

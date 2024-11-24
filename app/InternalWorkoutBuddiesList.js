@@ -7,15 +7,15 @@ import { Dropdown, MultiSelect } from 'react-native-element-dropdown';
 
 
 
-export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyToInvites}){
+export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyToInvites, allParticipants, allInvitations}){
 
 
 
   const [value, setValue] = useState(null);
-    const [isFocus, setIsFocus] = useState(false);
-    const [inviteBuddyList, setInviteBuddyList] = useState([])
-    const [dropdownData, setDropdownData] = useState([])
-    const [selected, setSelected] = useState([])
+  const [isFocus, setIsFocus] = useState(false);
+  const [inviteBuddyList, setInviteBuddyList] = useState([])
+  const [dropdownData, setDropdownData] = useState([])
+  const [selected, setSelected] = useState([])
 
 
 
@@ -80,11 +80,16 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
           </Pressable>}
       </View>
 
-      <View>
+      <View style={styles.listGap}>
 
-        {inviteBuddyList && inviteBuddyList.map((buddie) => (
+
+        {allInvitations && allInvitations.map((buddie) => (
           <InternalWorkoutBuddyListItem key={buddie.id} buddie={buddie} forNew={forNew}/>
         ))}
+        {allParticipants && allParticipants.map((buddie) => (
+          <InternalWorkoutBuddyListItem key={buddie.id} buddie={buddie} forNew={forNew}/>
+        ))}
+
 
       </View>
 
@@ -165,6 +170,9 @@ const styles = StyleSheet.create({
     flex:3, 
     alignItems: 'center',
     justifyContent: 'flex-start',
+  },
+  listGap: {
+    gap: 5
   }
 
 
