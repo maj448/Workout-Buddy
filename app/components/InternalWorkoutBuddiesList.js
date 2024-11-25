@@ -4,7 +4,7 @@ import React, {useEffect, useState} from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import { MultiSelect } from 'react-native-element-dropdown';
-import { useInviteToWorkout } from "./api/workouts";
+import { useInviteToWorkout } from "../api/workouts";
 
 
 

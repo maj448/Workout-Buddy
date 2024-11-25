@@ -6,7 +6,7 @@ import { useInsertWorkout} from './api/workouts';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { format, parseISO, startOfSecond} from 'date-fns';
 import { useNavigation } from '@react-navigation/native';
-import InternalWorkoutBuddiesList from './InternalWorkoutBuddiesList';
+import InternalWorkoutBuddiesList from './components/InternalWorkoutBuddiesList';
 import { userBuddies } from './api/buddies';
 import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
 

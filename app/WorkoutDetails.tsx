@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, Button, Alert, Pressable } from 'react-native';
 import { format, formatDate, parseISO} from 'date-fns';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import InternalWorkoutBuddiesList from './InternalWorkoutBuddiesList'
+import InternalWorkoutBuddiesList from './components/InternalWorkoutBuddiesList'
 import { ScrollView } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import { allWorkoutInvitations, allWorkoutParticipants, participantWorkoutInfo, useUpdateParticipantStatus } from './api/workouts';

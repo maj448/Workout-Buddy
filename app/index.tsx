@@ -3,7 +3,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import { View, Text, TouchableOpacity, ScrollView, Button } from 'react-native';
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 import { format, parseISO} from 'date-fns';
-import WorkoutList from "./WorkoutList"
+import WorkoutList from "./components/WorkoutList"
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from './utils/supabase';

@@ -5,7 +5,7 @@ import {Calendar, LocaleConfig} from 'react-native-calendars';
 import { supabase } from './utils/supabase';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from './providers/AuthProvider';
-import WorkoutBuddiesList from './WorkoutBuddiesList';
+import WorkoutBuddiesList from './components/WorkoutBuddiesList';
 
 import {useState, useEffect} from 'react';
 import { userBuddies } from './api/buddies';

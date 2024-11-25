@@ -1,7 +1,7 @@
 import {View, Text, StyleSheet, Pressable, Alert} from 'react-native'
 import { useNavigation } from '@react-navigation/native';
-import { useAcceptInvite, useDeclineInvite, useRemoveWorkout } from './api/workouts';
-import { useAuth } from './providers/AuthProvider';
+import { useAcceptInvite, useDeclineInvite } from '../api/workouts';
+import { useAuth } from '../providers/AuthProvider';
 
 
 
