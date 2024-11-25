@@ -17,3 +17,25 @@ export const userProfileDetails = (user_id ) => {
         },
       });
 }
+
+
+
+export const usernameUnique = () => {
+
+
+  return useQuery({
+    queryKey: ['profilesusername'],
+    queryFn: async () => {
+        const { data: usernameFound, error } = await supabase
+          .from('profiles')
+          .select('username')
+  
+        if (error) 
+          {console.log(error)
+            throw new Error(error.message);}
+        return usernameFound;
+      },
+    });
+}
+
+

@@ -1,8 +1,9 @@
 import {SafeAreaView} from 'react-native-safe-area-context';
-import { View, Text, TextInput, Button, StyleSheet, Alert, Pressable } from 'react-native';
-import { useState } from 'react';
+import { View, Text, TextInput, Button, StyleSheet, Alert, Pressable, KeyboardAvoidingView, Platform} from 'react-native';
+import { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { supabase } from '../utils/supabase';
+import { usernameUnique } from '../api/profile';
 
 
 
@@ -15,22 +16,57 @@ export default function SignUp() {
     const [inputConfPassword, setInputConfPassword] = useState('')
     const [loading, setLoading] = useState(false);
 
-    const gotoLoginScreen = () => {
-		navigation.navigate('Login');
-	};
 
-    async function signUpWithEmail()
-    {
+    const {data : allUsernames, isLoading, error} = usernameUnique();
+    console.log(allUsernames)
+
+    // useEffect(() => {
+
+
+
+    // }, [inputUsername]);
+
+    const validation = async() => {
+
+        if (!inputFullName.trim()) {
+            Alert.alert("Full Name is required.");
+            setLoading(false);
+            return;
+        }
+    
+        // Validate username input
+        if (!inputUsername || inputUsername.trim() === '') {
+            Alert.alert("Username is required.");
+            setLoading(false);
+            return;
+        }
+
         if (inputPassword !== inputConfPassword) {
             Alert.alert("Passwords don't match");
             return;
         }
+
+        if (allUsernames?.find(user => user.username == inputUsername)) {
+            Alert.alert("Username is already taken.");
+            setLoading(false);
+            return;
+        }
+    
         
         setLoading(true);
+        signUpWithEmail()
+
+
+    }
+
+    async function signUpWithEmail()
+    {
+
+
         
         const { data, error: signUpError } = await supabase.auth.signUp({
-            email: inputEmail,
-            password: inputPassword
+            email: inputEmail.trim(),
+            password: inputPassword.trim()
         });
         
         if (signUpError) {
@@ -41,11 +77,7 @@ export default function SignUp() {
         }
         
         if (data.user) {
-            if (!inputUsername || inputUsername.trim() === '') {
-                Alert.alert("Username is required.");
-                setLoading(false);
-                return;
-            }
+           
         
             // Insert profile
             const { error: profileError } = await supabase
@@ -54,7 +86,7 @@ export default function SignUp() {
                     {
                         id: data.user.id,
                         full_name: inputFullName,
-                        username: inputUsername,
+                        username: inputUsername.trim(),
                     }
                 ], { onConflict: ['id'] }); 
         
@@ -74,8 +106,8 @@ export default function SignUp() {
     }
 
     return(
+        
         <SafeAreaView style={styles.container}>
-            
             <View style={styles.inputArea}>
                 <Text style={styles.label}>Full name:</Text>
                 <TextInput
@@ -128,14 +160,17 @@ export default function SignUp() {
 
             </View>
 
+            <KeyboardAvoidingView style={{ flex:3}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
             <View style={styles.buttonContainer}>
-            <Pressable onPress={signUpWithEmail} disabled={loading} style={styles.button}>
+            <Pressable onPress={validation} disabled={loading} style={styles.button}>
                 <Text style={styles.buttonText}>{loading ? 'Creating account...' : 'Create Account'} </Text>
             </Pressable>
             </View>
+            </KeyboardAvoidingView>
 
 
         </SafeAreaView>
+        
     )
 
 }

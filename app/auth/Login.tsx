@@ -1,5 +1,5 @@
 import {SafeAreaView} from 'react-native-safe-area-context';
-import { View, Text, TextInput, Button, StyleSheet, Alert, Pressable, KeyboardAvoidingView } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert, Pressable, KeyboardAvoidingView, Platform } from 'react-native';
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { supabase } from '../utils/supabase';
@@ -41,13 +41,13 @@ export default function Login() {
 
 
     return (
-
+        
         <SafeAreaView style={styles.container}>
             <View style={{flex: 4 }}>
             <Text style={styles.header}>Workout Buddy</Text>
             </View>
 
-            {/* <KeyboardAvoidingView style={{flex: 6 }}> */}
+            
             <View style={{flex: 3}}>
             <View style={styles.inputArea}>
                 <Text style={styles.label}>Email:</Text>
@@ -71,6 +71,7 @@ export default function Login() {
             </View>
             </View>
 
+            <KeyboardAvoidingView style={{ flex: 3 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
             <View style={styles.buttonContainer}>
             <Pressable onPress={signInWithEmail} disabled={loading} style={styles.button}>
                 <Text style={styles.buttonText}>{loading ? 'Logging in...' : 'Login'} </Text>
@@ -79,11 +80,12 @@ export default function Login() {
                 <Text style={styles.buttonText}>Sign Up</Text> 
             </Pressable>
             </View>
-            {/* </KeyboardAvoidingView> */}
+            </KeyboardAvoidingView>
             
 
 
         </SafeAreaView>
+        
 
     );
 

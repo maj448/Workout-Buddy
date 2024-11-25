@@ -10,7 +10,6 @@ const ProfileScreen = () => {
 
 
   const navigation = useNavigation();
-  const [userProfile, setUserProfile] = useState()
   const [userProfileFullName, setUserProfileFullName] = useState()
   const [userProfileUserame, setUserProfileUserame] = useState()
   const [userProfileAvatar, setUserProfileAvatar] = useState()
@@ -37,7 +36,6 @@ const ProfileScreen = () => {
  
   useEffect(() => {
     if (profile) {
-      setUserProfile(profile.id); 
       setUserProfileFullName(profile.full_name)
       setUserProfileUserame(profile.username)
       setUserProfileAvatar(profile.avatar_url)
