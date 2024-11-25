@@ -44,7 +44,6 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
   const selectBoxFlex = forNew ? {flex : 1 } : {flex : 6};
 
   const sendInvites = () => {
-    console.log('got here')
 
       inviteToWorkout({selected, workout_id})
       setSelected([])

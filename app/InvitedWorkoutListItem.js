@@ -7,14 +7,6 @@ import { useAuth } from './providers/AuthProvider';
 
 
 
-
-  const workoutStatuses = {
-    pending: { backgroundColor: 'blue', },
-    completed: { backgroundColor: 'green', },
-    upcoming: { backgroundColor: 'orange', },
-    missed: { backgroundColor: 'red', },
-  };
-
 export default function InvitedWorkoutListItem({ workout }) {
     if (!workout) {
         console.error("workout is undefined", workout);
@@ -44,38 +36,35 @@ export default function InvitedWorkoutListItem({ workout }) {
         }
 	};
 
-    const onRemove = () => {
-        //const data = [{user_id : session.user.id}, {workout_id : workout.id}]
-        removeWorkout({user_id : session.user.id, workout_id : workout.id});
 
-    
-      };
+    const acceptInvite = () => {
 
-    const confirmRemove = () => {
-    Alert.alert('Confirm', 'Are you sure you want to remove this workout?', [
-        {
-        text: 'Cancel',
-        },
-        {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: onRemove,
-        },
-    ]);
-    };
+    }
 
-    const backgroundColorOnStatus = workoutStatuses['pending']
+    const decilneInvite = () => {
+        
+    }
+
 
     return(
-        <Pressable onPress={gotoDetailsScreen} onLongPress={confirmRemove}>
-        <View style= {[styles.container, backgroundColorOnStatus]}>
+        <Pressable onPress={gotoDetailsScreen} style={styles.fullContainer} >
+        <View style= {styles.container}>
             <Text style= {styles.text}>
                 {workout.title}
             </Text>
-            {/* <Text style={styles.time}>Start: {displayStartTime}</Text>
-            <Text style={styles.time}>End: {displayEndTime}</Text> */}
+
             <Text style={styles.time}>{formatTime(workout.start_time)} to {formatTime(workout.end_time)}</Text>
+
+
         </View>
+        <View style={styles.buttonContainer}>
+            <Pressable onPress={acceptInvite}  style={styles.button}>
+                <Text style={styles.buttonText}>Accept </Text>
+            </Pressable>
+            <Pressable onPress={decilneInvite} style={styles.button}>
+                <Text style={styles.buttonText}>Decline</Text> 
+            </Pressable>
+            </View>
         </Pressable>
 
     )
@@ -96,4 +85,33 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: 'white',
       },
+      button: {
+        width: 100,
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 2,
+        backgroundColor: 'lightgray',
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: 10,
+        borderRadius: 10,
+
+      },
+      buttonText : {
+        fontSize: 16,
+        color: '#3D3D3D',
+        fontFamily: 'fantasy'
+      },
+      buttonContainer : {
+        flex:3, 
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row'
+      },
+      fullContainer: {
+        borderRadius: 5,
+        backgroundColor: 'blue'
+        //justifyContent: 'space-between',
+    },
+
 })

@@ -14,7 +14,7 @@ export default function InternalWorkoutBuddyListItem({ buddie, forNew}) {
                {buddie.profiles.username}
             </Text>
             { !forNew &&
-            <Text>{buddie.invite_status ? buddie.invite_status : 'accpeted'}</Text>
+            <Text>{buddie.invite_status ? buddie.invite_status : buddie.status}</Text>
             }
         </View>
 

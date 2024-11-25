@@ -25,7 +25,9 @@ export const participantWorkouts = (user_id ) => {
       const { data : workouts, error } = await supabase
           .from('workouts')
           .select('*')
-          .in('id', participants.map((p) => p.workout_id)); 
+          .in('id', participants.map((p) => p.workout_id))
+          .order('workout_status', { ascending: true })
+          .order('workout_date', { ascending: true }); 
   
         if (error) throw new Error(error.message);
 
@@ -121,7 +123,8 @@ export const allWorkoutInvitations = ( workout_id ) => {
         const { data, error } = await supabase
           .from('invitations')
           .select('*, profiles(*)')
-          .eq('workout_id', workout_id); 
+          .eq('workout_id', workout_id)
+          .eq('invite_status', 'pending'); 
   
         if (error) 
           throw new Error(error.message);
@@ -204,7 +207,6 @@ export const useInviteToWorkout = () => {
     async mutationFn(data : any) {
       if(data.selected && data.selected.length > 0){
         for (let buddy of data.selected) {
-          console.log('ivb', buddy)
           const { error: inviteError } = await supabase.from('invitations').insert({
             workout_id: data.workout_id,
             user_id: buddy.id,
