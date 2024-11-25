@@ -100,9 +100,13 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   image: {
-    width: '100%',
+    width: '50%',
     aspectRatio: 1,
     alignSelf: 'center',
+    borderRadius: 100,
+    borderColor: 'black',
+    borderWidth: 2,
+    margin: 10
   },
 });
 

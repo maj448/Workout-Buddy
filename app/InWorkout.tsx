@@ -1,45 +1,91 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button, Image, FlatList } from 'react-native';
-import { TouchableHighlight } from 'react-native-gesture-handler';
+import React, { useState, useEffect, useRef} from 'react';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {Stopwatch} from 'react-native-stopwatch-timer';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useIsFocused} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useUpdateParticipantStatus } from './api/workouts';
 
 
-export default function InWorkout() {
+export default function InWorkout({route}) {
   const navigation = useNavigation()
+  const isFocused = useIsFocused();
+  const stopwatchRef = useRef(Stopwatch);
+  const {user_id, workout_id} = route.params;
 
-  const gotoDetails = () => {
-    navigation.navigate('Workout Details');
-  };
-  const [isStopwatchStart, setIsStopwatchStart] = useState(false);
+  const {mutate: updateParticipantStatus} = useUpdateParticipantStatus();
+
+  const onEnd = () => {
+    //update activity and duration of participant
+    updateParticipantStatus({user_id : user_id, workout_id : workout_id, status : 'complete'},
+      {
+        onSuccess: () => {
+          navigation.goBack();
+        },
+      }
+    )
+    
+  }
+
+  const returnToDetails = () => {
+    navigation.goBack()
+  }
+
+  const [isStopwatchStarted, setIsStopwatchStarted] = useState(false);
+  const [duration, setDuration] = useState(0);
+
+  // const getFormattedTime = (time: string) => {
+  //   const milliseconds = parseInt(time, 10); 
+  //   setDuration(milliseconds); 
+  // };
+  //console.log(duration)
+
+  useEffect(() => {
+    if (!isFocused && isStopwatchStarted) {
+      setIsStopwatchStarted(true); 
+    } 
+
+    // const saveTimerState = async (isStopwatchStarted, elapsedTime) => {
+    //   await AsyncStorage.setItem('isTimerRunning', JSON.stringify(isStopwatchStarted));
+    //   await AsyncStorage.setItem('elapsedTime', JSON.stringify(elapsedTime));
+    // };
+
+    // const loadTimerState = async () => {
+    //   const isRunning = JSON.parse(await AsyncStorage.getItem('isTimerRunning')) || false;
+    //   const elapsedTime = JSON.parse(await AsyncStorage.getItem('elapsedTime')) || 0;
+    //   return { isRunning, elapsedTime };
+    // };
+
+    console.log(duration)
+  }, [isFocused, isStopwatchStarted], duration);
 
   return (
 
     <SafeAreaView style={styles.container}>
+      <Pressable onPress={returnToDetails}  style={styles.button}>
+        <Text style={styles.buttonText}>Return to Details </Text>
+      </Pressable>
       <View style={styles.container}>
 
         <View style={styles.sectionStyle}>
           <Stopwatch
-            start={isStopwatchStart}
-
+            ref={stopwatchRef}
+            start={isStopwatchStarted}
             options={options}
-            // Options for the styling
+            getTime={(time) => {setDuration(time)}}
           />
-          <TouchableHighlight
-            onPress={() => {
-              setIsStopwatchStart(!isStopwatchStart);
-            }}>
+          <Pressable
+            style={styles.button}
+            onPress={() => {setIsStopwatchStarted(!isStopwatchStarted);}}>
             <Text style={styles.buttonText}>
-              {!isStopwatchStart ? 'Start' : 'Pause'}
+              {!isStopwatchStarted ? 'Start' : 'Pause'}
             </Text>
-          </TouchableHighlight>
-          <TouchableHighlight
-            onPress={() => {
-              //setIsStopwatchStart(false);gotoDetails
-              navigation.goBack()}}>
+          </Pressable>
+          <Pressable
+            style={styles.button}
+            onPress={onEnd}>
             <Text style={styles.buttonText}>End</Text>
-          </TouchableHighlight>
+          </Pressable>
         </View>
       </View>
     </SafeAreaView>
@@ -87,9 +133,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  buttonText: {
-    fontSize: 20,
-    marginTop: 10,
+  // buttonText: {
+  //   fontSize: 20,
+  //   marginTop: 10,
+  // },
+  button: {
+    width: 100,
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 2,
+    backgroundColor: 'lightgray',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 10,
+    borderRadius: 10,
+
+  },
+  buttonText : {
+    fontSize: 16,
+    color: '#3D3D3D',
+    fontFamily: 'fantasy'
+  },
+  buttonContainer : {
+    flex:2, 
+    alignItems: 'center',
+    justifyContent: 'flex-start',
   },
 });
 

@@ -41,10 +41,10 @@ const WorkoutDetailsScreen = ({route}) => {
     const {mutate: updateParticipantStatus} = useUpdateParticipantStatus();
 
     const onStart = () => {
-      updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'complete'},
+      updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'in workout'},
         {
           onSuccess: () => {
-            navigation.navigate('In Workout');
+            navigation.navigate('In Workout', {user_id : session?.user.id, workout_id : workout.id });
           },
         }
       )
@@ -65,7 +65,7 @@ const WorkoutDetailsScreen = ({route}) => {
     //console.log('og state', participantState)
     const onCheckIn = () => {
       
-      if(participantState == 'checkedIn')
+      if(participantState == 'checked in')
       {
         
         updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'waiting'})
@@ -73,7 +73,7 @@ const WorkoutDetailsScreen = ({route}) => {
       }
       if(participantState == 'waiting')
       {
-        updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'checkedIn'})
+        updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'checked in'})
       }
 
     }
@@ -88,9 +88,13 @@ const WorkoutDetailsScreen = ({route}) => {
     useEffect(() => {
       if (participationInfo)
         setParticipantState(participationInfo.status)
-      if(participantState == 'checkedIn')
+      if(participantState == 'checked in')
       {
         setCanStart(true)
+      }
+      else if (participantState == 'in workout'){
+        setCanStart(true)
+        setCompleted(false)
       }
       else if (participantState == 'complete'){
         setCanStart(false)
@@ -128,7 +132,7 @@ const WorkoutDetailsScreen = ({route}) => {
       <InternalWorkoutBuddiesList buddies={UserBuddies} forNew={false} OnAddBuddyToInvites={handleBuddyInviteList} allParticipants={allParticipants} allInvitations={allInvitations} workout_id= {workout.id}/>
 
       <View style={styles.buttonContainer}>
-      {!completed &&
+      {!completed && participantState != 'in workout' &&
         
           <Pressable onPress= {onCheckIn} style={styles.button}>
               <Text>{ canStart ? 'Leave' : 'Check In'}</Text>
@@ -141,7 +145,7 @@ const WorkoutDetailsScreen = ({route}) => {
         { canStart && !completed &&
 
             <Pressable onPress={onStart}  style={styles.button}>
-                <Text style={styles.buttonText}>Start!</Text>
+                <Text style={styles.buttonText}>{participantState == 'in workout' ? 'Resume' : 'Start!'} </Text>
             </Pressable>
         }
         </View>
