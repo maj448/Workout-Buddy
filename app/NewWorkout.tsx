@@ -105,15 +105,9 @@ const NewWorkoutScreen = ({route}) => {
   }
 
   const handleBuddyInviteList = (buddy) => {
-      console.log('bud', buddy)
       setInviteBuddyList(buddy)
       
-    console.log('list', inviteBuddyList)
   };
-
-  useEffect(() => {
-    console.log('Updated inviteBuddyList:', inviteBuddyList);
-  }, [inviteBuddyList]);
 
 
   return (
@@ -198,7 +192,7 @@ const NewWorkoutScreen = ({route}) => {
 
         </View>
       </KeyboardAvoidingView>
-      <InternalWorkoutBuddiesList buddies={buddies} forNew={true} OnAddBuddyToInvites ={handleBuddyInviteList} allParticipants={[]} allInvitations={[]}/>
+      <InternalWorkoutBuddiesList buddies={buddies} forNew={true} OnAddBuddyToInvites ={handleBuddyInviteList} allParticipants={[]} allInvitations={[]} workout_id={null}/>
       <View style={styles.buttonContainer}>
             <Pressable onPress={onSubmitHandler} disabled={loading} style={styles.button}>
                 <Text style={styles.buttonText}>{loading ? 'Creating workout...' : 'Create Workout'} </Text>

@@ -120,11 +120,12 @@ const WorkoutDetailsScreen = ({route}) => {
           //<Text style= {styles.text}>Activity: {workout.activity}</Text>
           <Text style= {styles.text}>Duration: {participationInfo.duration}</Text>
         }
-        <Text style= {styles.text}>Notes: {workout.notes}</Text>
+        <Text style= {styles.text}>Notes: </Text>
+        <Text style= {styles.text}>{workout.notes}</Text>
 
       </View>
 
-      <InternalWorkoutBuddiesList buddies={UserBuddies} forNew={false} OnAddBuddyToInvites={handleBuddyInviteList} allParticipants={allParticipants} allInvitations={allInvitations}/>
+      <InternalWorkoutBuddiesList buddies={UserBuddies} forNew={false} OnAddBuddyToInvites={handleBuddyInviteList} allParticipants={allParticipants} allInvitations={allInvitations} workout_id= {workout.id}/>
 
       <View style={styles.buttonContainer}>
       {!completed &&

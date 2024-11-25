@@ -202,11 +202,10 @@ export const useInviteToWorkout = () => {
 
   return useMutation({
     async mutationFn(data : any) {
-      if(data.inviteBuddyList && data.inviteBuddyList.length > 0){
-        for (let buddy of data.inviteBuddyList) {
+      if(data.selected && data.selected.length > 0){
+        for (let buddy of data.selected) {
           console.log('ivb', buddy)
           const { error: inviteError } = await supabase.from('invitations').insert({
-            // from_user_id: data.user_id,
             workout_id: data.workout_id,
             user_id: buddy.id,
             invite_status: 'pending', 
@@ -217,6 +216,7 @@ export const useInviteToWorkout = () => {
             throw inviteError;
           }
         }
+
       return { workout_id : data.workout_id };
     }
     },

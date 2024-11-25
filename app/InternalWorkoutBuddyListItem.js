@@ -1,7 +1,4 @@
-import {View, Text, StyleSheet, Pressable} from 'react-native'
-import { format, parseISO} from 'date-fns';
-import { useNavigation } from '@react-navigation/native';
-
+import {View, Text, StyleSheet} from 'react-native'
 
 
 export default function InternalWorkoutBuddyListItem({ buddie, forNew}) {
@@ -10,9 +7,6 @@ export default function InternalWorkoutBuddyListItem({ buddie, forNew}) {
         return null;  // Return null or an error message if workout is undefined
       }
 
-      //get username from profile table 
-
-      console.log('b',buddie)
     return(
 
         <View style= {styles.container}>
