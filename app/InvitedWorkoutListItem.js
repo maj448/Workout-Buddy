@@ -1,8 +1,6 @@
 import {View, Text, StyleSheet, Pressable, Alert} from 'react-native'
-import AntDesign from '@expo/vector-icons/AntDesign';
-import { format, parseISO} from 'date-fns';
 import { useNavigation } from '@react-navigation/native';
-import { useRemoveWorkout } from './api/workouts';
+import { useAcceptInvite, useDeclineInvite, useRemoveWorkout } from './api/workouts';
 import { useAuth } from './providers/AuthProvider';
 
 
@@ -15,7 +13,8 @@ export default function InvitedWorkoutListItem({ workout }) {
 
     const {session} = useAuth();
 
-    const { mutate: removeWorkout } = useRemoveWorkout();
+    const { mutate: Accept } = useAcceptInvite();
+    const { mutate: Decline } = useDeclineInvite();
 
     const navigation = useNavigation()
 
@@ -39,10 +38,12 @@ export default function InvitedWorkoutListItem({ workout }) {
 
     const acceptInvite = () => {
 
+        Accept({ user_id : session.user.id, workout_id : workout.id} );
+
     }
 
     const decilneInvite = () => {
-        
+        Decline({ user_id : session.user.id, workout_id : workout.id} );
     }
 
 

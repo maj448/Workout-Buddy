@@ -2,9 +2,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/app/utils/supabase';
 
 
-
-
-
 export const participantWorkouts = (user_id ) => {
     
   return useQuery({
@@ -49,7 +46,8 @@ export const invitedWorkouts = (user_id ) => {
       const { data : invited, error : invitedError } = await supabase
       .from('invitations')
       .select('workout_id')
-      .eq('user_id', user_id); 
+      .eq('user_id', user_id)
+      .eq('invite_status', 'pending'); 
 
 
 
@@ -124,7 +122,8 @@ export const allWorkoutInvitations = ( workout_id ) => {
           .from('invitations')
           .select('*, profiles(*)')
           .eq('workout_id', workout_id)
-          .eq('invite_status', 'pending'); 
+          .eq('invite_status', 'pending')
+          .eq('invite_status', 'declined'); 
   
         if (error) 
           throw new Error(error.message);
@@ -304,6 +303,74 @@ export const useUpdateParticipantStatus = () => {
     async onSuccess(returnedData) {
       console.log('on suc', returnedData)
       await queryClient.invalidateQueries(['participants', returnedData.user_id, returnedData.workout_id]);
+    },
+  });
+};
+
+export const useAcceptInvite = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    async mutationFn(data: any) {
+      console.log(data)
+      const { error  } = await supabase
+        .from('invitations')
+        .update({
+          invite_status : 'accepted'
+        })
+        .eq('user_id', data.user_id)
+        .eq('workout_id', data.workout_id);
+
+      if (error) {
+        console.log(error)
+        throw new Error(error.message);
+      }
+
+      const { error: participantError } = await supabase.from('participants').insert({
+        user_id: data.user_id,
+        workout_id: data.workout_id
+      });
+
+      if (participantError) {
+        console.log(participantError)
+        throw new Error(participantError.message);
+      }
+
+      return {user_id : data.user_id};
+    },
+    async onSuccess(returnedData) {
+      await queryClient.invalidateQueries(['participants', returnedData?.user_id]);
+      await queryClient.invalidateQueries(['invitations', returnedData?.user_id]);
+      
+    },
+  });
+};
+
+export const useDeclineInvite = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    async mutationFn(data: any) {
+      console.log(data)
+      const { error } = await supabase
+        .from('invitations')
+        .update({
+          invite_status : 'declined'
+        })
+        .eq('user_id', data.user_id)
+        .eq('workout_id', data.workout_id);
+
+      if (error) {
+        console.log(error)
+        throw new Error(error.message);
+      }
+
+      return {user_id : data.user_id};
+    },
+    async onSuccess(returnedData) {
+      await queryClient.invalidateQueries(['participants', returnedData?.user_id]);
+      await queryClient.invalidateQueries(['invitations', returnedData?.user_id]);
+      
     },
   });
 };
