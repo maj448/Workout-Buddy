@@ -1,25 +1,45 @@
-import {View, Text, StyleSheet, Pressable} from 'react-native'
-import { format, parseISO} from 'date-fns';
-import { useNavigation } from '@react-navigation/native';
+import { Text, StyleSheet, Pressable, Alert} from 'react-native'
+import { useRemoveBuddie } from '../api/buddies';
+import { useAuth } from '../providers/AuthProvider';
 
 
 
 export default function WorkoutBuddyListItem({ buddie }) {
+
+    const {session} = useAuth();
+
+    const { mutate: removeBuddie } = useRemoveBuddie(); 
+
     if (!buddie) {
         console.error("buddie is undefined", buddie);
-        return null;  // Return null or an error message if workout is undefined
+        return null;  
       }
 
-      //get username from profile table 
+    const onRemove = () => {
+        removeBuddie({user_id : session.user.id, buddy_id : buddie.id});
+    };
+
+    const confirmRemove = () => {
+    Alert.alert('Confirm', 'Are you sure you want to remove this buddy?', [
+        {
+        text: 'Cancel',
+        },
+        {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: onRemove,
+        },
+    ]);
+    };
 
 
     return(
 
-        <View style= {styles.container}>
+        <Pressable style= {styles.container} onLongPress={confirmRemove}>
             <Text style= {styles.text}>
                {buddie.username}
             </Text>
-        </View>
+        </Pressable>
 
     )
 }

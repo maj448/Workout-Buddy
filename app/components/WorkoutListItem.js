@@ -1,6 +1,4 @@
 import {View, Text, StyleSheet, Pressable, Alert} from 'react-native'
-import AntDesign from '@expo/vector-icons/AntDesign';
-import { format, parseISO} from 'date-fns';
 import { useNavigation } from '@react-navigation/native';
 import { useRemoveWorkout } from '../api/workouts';
 import { useAuth } from '../providers/AuthProvider';
