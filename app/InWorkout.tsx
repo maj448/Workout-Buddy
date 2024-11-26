@@ -12,12 +12,14 @@ export default function InWorkout({route}) {
   const isFocused = useIsFocused();
   const stopwatchRef = useRef(Stopwatch);
   const {user_id, workout_id} = route.params;
+  const [isStopwatchStarted, setIsStopwatchStarted] = useState(false);
+  const [duration, setDuration] = useState(0);
 
   const {mutate: updateParticipantStatus} = useUpdateParticipantStatus();
 
   const onEnd = () => {
     //update activity and duration of participant
-    updateParticipantStatus({user_id : user_id, workout_id : workout_id, status : 'complete'},
+    updateParticipantStatus({user_id : user_id, workout_id : workout_id, status : 'complete', duration : duration , activity : 'N/A'},
       {
         onSuccess: () => {
           navigation.goBack();
@@ -31,8 +33,7 @@ export default function InWorkout({route}) {
     navigation.goBack()
   }
 
-  const [isStopwatchStarted, setIsStopwatchStarted] = useState(false);
-  const [duration, setDuration] = useState(0);
+
 
   // const getFormattedTime = (time: string) => {
   //   const milliseconds = parseInt(time, 10); 
@@ -57,7 +58,7 @@ export default function InWorkout({route}) {
     // };
 
     console.log(duration)
-  }, [isFocused, isStopwatchStarted], duration);
+  }, [isFocused, isStopwatchStarted, duration]);
 
   return (
 

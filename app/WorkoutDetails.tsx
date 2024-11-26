@@ -68,12 +68,12 @@ const WorkoutDetailsScreen = ({route}) => {
       if(participantState == 'checked in')
       {
         
-        updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'waiting'})
+        updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'waiting', duration : '0', activity : 'N/A'})
       
       }
       if(participantState == 'waiting')
       {
-        updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'checked in'})
+        updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'checked in', duration : '0', activity : 'N/A'})
       }
 
     }

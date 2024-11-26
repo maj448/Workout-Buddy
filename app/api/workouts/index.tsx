@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/app/utils/supabase';
 
 
+
 export const participantWorkouts = (user_id ) => {
     
   return useQuery({
@@ -286,7 +287,9 @@ export const useUpdateParticipantStatus = () => {
       const { error, data: updatedStatus } = await supabase
         .from('participants')
         .update({
-          status : data.status
+          status : data.status,
+          duration : data.duration,
+          activity : data.activity
         })
         .eq('user_id', data.user_id)
         .eq('workout_id', data.workout_id)
