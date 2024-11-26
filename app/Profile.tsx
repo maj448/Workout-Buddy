@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useAuth } from './providers/AuthProvider';
 import { useEffect, useState } from 'react';
 import { userProfileDetails } from './api/profile';
+import * as ImagePicker from 'expo-image-picker';
 
 const ProfileScreen = () => {
   const { session } = useAuth();
@@ -14,6 +15,7 @@ const ProfileScreen = () => {
   const [userProfileUserame, setUserProfileUserame] = useState()
   const [userProfileAvatar, setUserProfileAvatar] = useState()
   const [loading, setLoading] = useState(false)
+  const [image, setImage] = useState<string | null>(null);
 
   if(!session){
     navigation.navigate("Login");
@@ -29,10 +31,24 @@ const ProfileScreen = () => {
     
   };
 
+
   const { data: profile } =  userProfileDetails(session?.user.id)
 
-  console.log(userProfileAvatar)
-  console.log(userProfileAvatar)
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
  
   useEffect(() => {
     if (profile) {
@@ -47,10 +63,11 @@ const ProfileScreen = () => {
     <View style={styles.container}>
       <View style={styles.infoContainer}>
       <Image
-        source={{ uri: userProfileAvatar || 'https://img.icons8.com/nolan/64/user-default.png' }}
+        source={{ uri: image ||  userProfileAvatar}}
         style={styles.image}
         resizeMode="contain"
       />
+      <Text  onPress= {pickImage} style={styles.imageButton}>Change Profile Picture</Text>
       <Text>Full name: {userProfileFullName}</Text>
       <Text>Username: {userProfileUserame}</Text>
       </View>
@@ -105,6 +122,10 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     borderWidth: 2,
     margin: 10
+  },
+  imageButton: {
+
+    alignSelf: 'center',
   },
 });
 
