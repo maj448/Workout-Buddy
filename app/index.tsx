@@ -9,14 +9,14 @@ import { useState, useEffect, useCallback } from 'react'
 import { supabase } from './utils/supabase';
 import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from './providers/AuthProvider';
-import { participantWorkouts, invitedWorkouts} from './api/workouts';
+import { participantWorkouts, invitedWorkouts, updateOldWorkouts} from './api/workouts';
 import { ActivityIndicator } from 'react-native';
 import {  Gesture, GestureDetector, Directions, GestureHandlerRootView } from 'react-native-gesture-handler';
 import moment from 'moment'
 
 const workoutStatuses = {
   pending: { key: 'pending', color: 'blue' },
-  completed: { key: 'past', color: 'gray' },
+  past: { key: 'past', color: 'gray' },
   upcoming: { key: 'upcoming', color: 'orange' },
 };
 
@@ -30,10 +30,11 @@ export default function Index() {
   const [filteredWorkouts, setFilteredWorkouts] = useState([])
   const [filteredInvites, setFilteredInvites] = useState([])
   const [markedDates, setMarkedDates] = useState({});
-  const [participantWorkoutsIds, setParticipantWorkoutsIds] = useState<any>()
 
+  const {data: updatedOld} = updateOldWorkouts()
   const { data: workouts, isLoading: isWorkoutsLoading, error: workoutsError} = participantWorkouts(session?.user.id)
   const { data: invited, isLoading: isInvitedLoading, error: invitedError} = invitedWorkouts(session?.user.id)
+  
   
   const subtractDay = () => {
     const subDay = moment(selected).add(-1, 'day').toISOString()
@@ -117,7 +118,7 @@ export default function Index() {
       setFilteredWorkouts(filtered);
     
   }
-}, [workouts, invited, selected]);
+}, [workouts, invited, selected, updatedOld]);
 
   if ( isWorkoutsLoading || isInvitedLoading) {
     return <ActivityIndicator />;

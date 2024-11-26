@@ -10,9 +10,8 @@ import { useAuth } from '../providers/AuthProvider';
 
   const workoutStatuses = {
     pending: { backgroundColor: 'blue', },
-    completed: { backgroundColor: 'green', },
+    past: { backgroundColor: 'gray', },
     upcoming: { backgroundColor: 'orange', },
-    missed: { backgroundColor: 'red', },
   };
 
 export default function WorkoutListItem({ workout }) {

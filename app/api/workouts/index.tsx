@@ -23,7 +23,7 @@ export const participantWorkouts = (user_id ) => {
           .from('workouts')
           .select('*')
           .in('id', participants.map((p) => p.workout_id))
-          .order('workout_status', { ascending: true })
+          .order('workout_status', { ascending: false })
           .order('workout_date', { ascending: false }); 
   
         if (error) throw new Error(error.message);
@@ -376,52 +376,24 @@ export const useDeclineInvite = () => {
 };
 
 
-export const useUpdateWorkoutStatus = () => {
-  const queryClient = useQueryClient();
+export const updateOldWorkouts = () => {
 
-  return useMutation({
-    async mutationFn(data: any) {
-      console.log(data)
-
-      const { data : participants, error : participantsError } = await supabase
-        .from('participants')
-        .select('workout_id')
-        .eq('user_id', data.user_id); 
-
-      if (participantsError) 
-        throw new Error(participantsError.message);
-
-      if (!participants || participants.length === 0) return [];
-
-      const { data : workouts, error : workoutsError } = await supabase
-          .from('workouts')
-          .select('*')
-          .in('id', participants.map((p) => p.workout_id)); 
-  
-        if (workoutsError) throw new Error(workoutsError.message);
-
-        //check if for each workout data.today > workout.workout_date 
-        //if true status = 'past' if false don't update it
-
-      //make a function to update the status of the affected workouts
-      const { error, data: updatedStatus } = await supabase
+  const currentTime = new Date().toISOString();
+  return useQuery({
+    queryKey : ['workouts'], 
+    queryFn: async () => {
+      const { data, error } = await supabase
         .from('workouts')
-        .update({
-          workout_status : data.status
-        })
-        .eq('id', data.workout_id)
-        .select()
+        .update({ workout_status: 'past' })
+        .lt('end_time', currentTime)
+        .neq('workout_status', 'past');
 
-      if (error) {
-        console.log(error)
+
+      if (error) 
         throw new Error(error.message);
-      }
-      console.log(updatedStatus)
-      return updatedStatus;
+      return 'updated';
     },
-    async onSuccess(returnedData) {
-      console.log('on suc', returnedData)
-      await queryClient.invalidateQueries(['participants', returnedData.user_id, returnedData.workout_id]);
-    },
-  });
+    });
+    
+
 };
