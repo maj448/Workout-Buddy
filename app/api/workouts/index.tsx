@@ -24,7 +24,7 @@ export const participantWorkouts = (user_id ) => {
           .select('*')
           .in('id', participants.map((p) => p.workout_id))
           .order('workout_status', { ascending: true })
-          .order('workout_date', { ascending: true }); 
+          .order('workout_date', { ascending: false }); 
   
         if (error) throw new Error(error.message);
 
@@ -115,6 +115,7 @@ export const allWorkoutParticipants = ( workout_id ) => {
 
 export const allWorkoutInvitations = ( workout_id ) => {
 
+  const status = ['pending', 'declined']
   return useQuery({
       queryKey : ['invitations', workout_id], 
       queryFn: async () => {
@@ -122,8 +123,7 @@ export const allWorkoutInvitations = ( workout_id ) => {
           .from('invitations')
           .select('*, profiles(*)')
           .eq('workout_id', workout_id)
-          .eq('invite_status', 'pending')
-          .eq('invite_status', 'declined'); 
+          .in('invite_status', status);
   
         if (error) 
           throw new Error(error.message);
