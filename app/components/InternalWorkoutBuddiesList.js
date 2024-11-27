@@ -13,11 +13,15 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
   const [isFocus, setIsFocus] = useState(false);
   const [dropdownData, setDropdownData] = useState([])
   const [selected, setSelected] = useState([])
+  let TEN_MINUTES = Date.now() + 600000;
+  const [workoutStatus, setWorkoutStatus] = useState('new')
 
 
   const {mutate: inviteToWorkout} = useInviteToWorkout();
 
   useEffect(() => {
+    if(workout)
+      setWorkoutStatus(workout.workout_status)
 
     if(buddies){
       const newDropdownData = buddies.map(buddy => ({
@@ -41,28 +45,6 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
     ];
   
     return selected.filter(item => !alreadyInWorkout.includes(item.id));
-      // const onlyNew = []
-      // console.log('ap',allParticipants)
-      // console.log('ai', allInvitations)
-
-
-      // selected.forEach((person) => {
-      //   allParticipants.forEach((participant) =>{
-      //     if(!allParticipants.includes(person))
-      //       {
-        
-      //         if(!allInvitations.includes(person))
-      //           {
-      //             onlyNew.push(person)
-      //           }
-      //       }
-          
-      //   })
-        
-      // })
-
-      // return onlyNew;
-
       
   }
   const selectBoxFlex = forNew ? {flex : 1 } : {flex : 6};
@@ -70,8 +52,8 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
   const sendInvites = () => {
       let workout_id = workout.id
       let newInvites = checkNewInvites();
-      console.log('s',selected)
-      console.log('ni',newInvites)
+      // console.log('s',selected)
+      // console.log('ni',newInvites)
       inviteToWorkout({selected : newInvites, workout_id})
       setSelected([])
   }
@@ -89,7 +71,7 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
       <Text style={{color: 'white', fontWeight: 'bold', fontSize: 24, }}>Completed with Buddies:</Text>
       }
 
-      { participantState != 'complete' && workout.workout_status != 'past' &&
+      { participantState != 'complete' && workoutStatus != 'past' &&
       <View style ={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 10}}>
 
         <View style={[selectBoxFlex]}>

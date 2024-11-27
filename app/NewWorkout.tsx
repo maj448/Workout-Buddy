@@ -42,26 +42,60 @@ const NewWorkoutScreen = ({route}) => {
 
   };
 
+  // const onChangeDate = (event, selectedDate) => {
+  //   const currentDate = selectedDate || inputDate;
+  //   setInputDate(currentDate);
+  //   setInputStartTime(new Date(currentDate.setHours(inputStartTime.getHours(), inputStartTime.getMinutes())));
+  //   setInputEndTime(new Date(currentDate.setHours(inputEndTime.getHours(), inputEndTime.getMinutes())));
+  //   setOpen(false)
+  // };
   const onChangeDate = (event, selectedDate) => {
-    const currentDate = selectedDate || inputDate;
-    setInputDate(currentDate);
-    setInputStartTime(new Date(currentDate.setHours(inputStartTime.getHours(), inputStartTime.getMinutes())));
-    setInputEndTime(new Date(currentDate.setHours(inputEndTime.getHours(), inputEndTime.getMinutes())));
-    setOpen(false)
+    const currentDate = selectedDate || inputDate; // default to inputDate if selectedDate is null
+    const date = new Date(currentDate); // Create a new date object to avoid modifying the original
+  
+    // Set the start and end times to the selected date
+    setInputDate(date); 
+    setInputStartTime(new Date(date.setHours(inputStartTime.getHours(), inputStartTime.getMinutes())));
+    setInputEndTime(new Date(date.setHours(inputEndTime.getHours(), inputEndTime.getMinutes())));
+  
+    setOpen(false);
   };
 
-  const onChangeStart = (event, selectedStart) => {
-    const start = new Date(inputDate.setHours(selectedStart.getHours(), selectedStart.getMinutes())) || inputStartTime;
-    setInputStartTime(start);
-    setOpenStart(false)
+  // const onChangeStart = (event, selectedStart) => {
+  //   console.log('id',inputDate)
+  //   const start = new Date(inputDate.setHours(selectedStart.getHours(), selectedStart.getMinutes())) || inputStartTime;
+  //   setInputStartTime(start);
+  //   setOpenStart(false)
+  //   console.log('s',start)
     
+  // };
+  const onChangeStart = (event, selectedStart) => {
+    // Ensure selectedStart is not null, fallback to the previous value if it's null
+    const start = new Date(inputDate); // Copy the current inputDate
+    start.setHours(selectedStart.getHours(), selectedStart.getMinutes()); // Set the start time
+  
+    setInputStartTime(start); 
+    setOpenStart(false); 
+    console.log('Start time set:', start);
   };
+  
 
-
+  // const onChangeEnd = (event, selectedEnd) => {
+  //   console.log('id',inputDate)
+  //   const end = new Date(inputDate.setHours(selectedEnd.getHours(), selectedEnd.getMinutes())) || inputEndTime;
+  //   setInputEndTime(end);
+  //   setOpenEnd(false)
+  //   console.log('e',end)
+  // };
+  
   const onChangeEnd = (event, selectedEnd) => {
-    const end = new Date(inputDate.setHours(selectedEnd.getHours(), selectedEnd.getMinutes())) || inputEndTime;
-    setInputEndTime(end);
-    setOpenEnd(false)
+    // Ensure selectedEnd is not null, fallback to the previous value if it's null
+    const end = new Date(inputDate); // Copy the current inputDate
+    end.setHours(selectedEnd.getHours(), selectedEnd.getMinutes()); // Set the end time
+  
+    setInputEndTime(end); 
+    setOpenEnd(false); 
+    console.log('End time set:', end);
   };
   
   const showDatepicker = () => {
@@ -156,7 +190,7 @@ const NewWorkoutScreen = ({route}) => {
             value={inputStartTime}
             mode="time"
             display="spinner"
-            minuteInterval={15}
+            // minuteInterval={15}
             onChange={onChangeStart}
           />
         )}
@@ -172,7 +206,7 @@ const NewWorkoutScreen = ({route}) => {
             value={inputEndTime}
             mode="time"
             display="spinner"
-            minuteInterval={15}
+            // minuteInterval={15}
             onChange={onChangeEnd}
           />
         )}
@@ -193,7 +227,7 @@ const NewWorkoutScreen = ({route}) => {
 
         </View>
       </KeyboardAvoidingView>
-      <InternalWorkoutBuddiesList buddies={buddies} forNew={true} OnAddBuddyToInvites ={handleBuddyInviteList} allParticipants={[]} allInvitations={[]} workout_id={null}/>
+      <InternalWorkoutBuddiesList buddies={buddies} forNew={true} OnAddBuddyToInvites ={handleBuddyInviteList} allParticipants={[]} allInvitations={[]} workout={null} participantState={null}/>
       <View style={styles.buttonContainer}>
             <Pressable onPress={onSubmitHandler} disabled={loading} style={styles.button}>
                 <Text style={styles.buttonText}>{loading ? 'Creating Workout...' : 'Create Workout'} </Text>

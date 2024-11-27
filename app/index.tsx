@@ -18,7 +18,7 @@ import { useInviteSubscription } from './api/subscriptions';
 const workoutStatuses = {
   pending: { key: 'pending', color: 'blue' },
   past: { key: 'past', color: 'gray' },
-  complete: { key: 'complete', color: 'green' },
+  complete: { key: 'complete', color: 'limegreen' },
   upcoming: { key: 'upcoming', color: 'orange' },
 };
 
@@ -111,7 +111,8 @@ export default function Index() {
 
 
         const filteredInvites = invited.filter((invite) => {
-          const workoutDate = invite.workout_date.split('T')[0];
+          let convertToLocal = new Date(invite.workout_date)
+          const workoutDate = convertToLocal.toLocaleDateString().split('T')[0];
           return workoutDate === selected;
         });
 
@@ -122,7 +123,9 @@ export default function Index() {
       setMarkedDates(newMarkedDates);
 
       const filtered = workoutsWithParticipation.filter((workout) => {
-        const workoutDate = workout.workouts.workout_date.split('T')[0];
+        let convertToLocal = new Date(workout.workouts.workout_date)
+    
+        const workoutDate = convertToLocal.toLocaleDateString().split('T')[0];
         return workoutDate === selected;
       });
 

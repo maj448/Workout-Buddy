@@ -28,6 +28,7 @@ const WorkoutDetailsScreen = ({route}) => {
     const [completed, setCompleted] = useState(false)
     const navigation = useNavigation()
     const [inviteBuddyList, setInviteBuddyList] = useState([])
+    let TEN_MINUTES = Date.now() + 600000;
 
     const { data: participationInfo, isLoading: isParticipationLoading, error: participationError } = participantWorkoutInfo(session?.user.id, workout.id);
     //const { data: BuddiesInfo, isLoading: isBuddiesLoading, error: BuddiesError } = workoutBuddies(session?.user.id, workout.id);
@@ -73,10 +74,7 @@ const WorkoutDetailsScreen = ({route}) => {
 
 
     };
-    //console.log(workout.end_time)
-    //console.log(displayEndTime)
 
-    //console.log('og state', participantState)
     const onCheckIn = () => {
       
       if(participantState == 'checked in')
@@ -151,7 +149,7 @@ const WorkoutDetailsScreen = ({route}) => {
         participantState={participantState}/>
 
       <View style={styles.buttonContainer}>
-      {!completed && participantState != 'in workout' && workout.workout_status != 'past' &&
+      {!completed && participantState != 'in workout' && workout.workout_status != 'past' && Date.parse(workout.start_time ) > TEN_MINUTES &&
         
           <Pressable onPress= {onCheckIn} style={styles.button}>
               <Text>{ canStart ? 'Leave' : 'Check In'}</Text>
@@ -168,6 +166,7 @@ const WorkoutDetailsScreen = ({route}) => {
             </Pressable>
         }
         </View>
+
       </ScrollView>
   );
 };
