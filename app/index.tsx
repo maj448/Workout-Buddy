@@ -18,6 +18,7 @@ import { useInviteSubscription } from './api/subscriptions';
 const workoutStatuses = {
   pending: { key: 'pending', color: 'blue' },
   past: { key: 'past', color: 'gray' },
+  complete: { key: 'complete', color: 'green' },
   upcoming: { key: 'upcoming', color: 'orange' },
 };
 
@@ -33,8 +34,11 @@ export default function Index() {
   const [markedDates, setMarkedDates] = useState({});
 
   const {data: updatedOld} = updateOldWorkouts()
-  const { data: workouts, isLoading: isWorkoutsLoading, error: workoutsError} = participantWorkouts(session?.user.id)
+  const { data: workoutsWithParticipation, isLoading: isWorkoutsLoading, error: workoutsError} = participantWorkouts(session?.user.id)
   const { data: invited, isLoading: isInvitedLoading, error: invitedError} = invitedWorkouts(session?.user.id)
+  //const { data: workoutsTEST} = participantWorkoutsTEST(session?.user.id)
+  //console.log('wt', workoutsTEST[0].workouts)
+
   
   useInviteSubscription(session?.user.id);
   
@@ -65,19 +69,26 @@ export default function Index() {
 
   useEffect(() => {
     const newMarkedDates = {};
-    if (workouts || workouts == '') {
+    if (workoutsWithParticipation || workoutsWithParticipation == '') {
       
-      workouts.forEach((workout) => {
-        const workoutDate = workout.workout_date.split('T')[0];
+      workoutsWithParticipation.forEach((workout) => {
+        let colorValue
+
+        const workoutDate = workout.workouts.workout_date.split('T')[0];
 
         if (!newMarkedDates[workoutDate]) {
           newMarkedDates[workoutDate] = { dots: [] };
         }
 
-        const dotKey = `${workout.id}-${workout.workout_status}`;
+        const dotKey = `${workout.workouts.id}-${workout.workouts.workout_status}`;
+
+        if (workout.status == 'complete')
+          colorValue = workoutStatuses['complete']?.color
+        else
+          colorValue = workoutStatuses[workout.workouts.workout_status]?.color
         newMarkedDates[workoutDate].dots.push({
           key: dotKey, 
-          color: workoutStatuses[workout.workout_status]?.color,
+          color: colorValue,
         });
       });
 
@@ -110,8 +121,8 @@ export default function Index() {
 
       setMarkedDates(newMarkedDates);
 
-      const filtered = workouts.filter((workout) => {
-        const workoutDate = workout.workout_date.split('T')[0];
+      const filtered = workoutsWithParticipation.filter((workout) => {
+        const workoutDate = workout.workouts.workout_date.split('T')[0];
         return workoutDate === selected;
       });
 
@@ -120,7 +131,7 @@ export default function Index() {
       setFilteredWorkouts(filtered);
     
   }
-}, [workouts, invited, selected, updatedOld]);
+}, [workoutsWithParticipation, invited, selected, updatedOld]);
 
   if ( isWorkoutsLoading || isInvitedLoading) {
     return <ActivityIndicator />;

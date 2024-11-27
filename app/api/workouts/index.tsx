@@ -3,14 +3,47 @@ import { supabase } from '@/app/utils/supabase';
 
 
 
+// export const participantWorkouts = (user_id ) => {
+    
+//   return useQuery({
+//     queryKey : ['participants', user_id], 
+//     queryFn: async () => {
+//       const { data : participants, error : participantsError } = await supabase
+//         .from('participants')
+//         .select('workout_id')
+//         .eq('user_id', user_id); 
+
+//       if (participantsError) 
+//         throw new Error(participantsError.message);
+
+      
+
+//       if (!participants || participants.length === 0) return [];
+
+//       const { data : workouts, error } = await supabase
+//           .from('workouts')
+//           .select('*')
+//           .in('id', participants.map((p) => p.workout_id))
+//           .order('workout_status', { ascending: false })
+//           .order('workout_date', { ascending: false }); 
+  
+//         if (error) throw new Error(error.message);
+
+
+//       return workouts;
+//     },
+//     });
+  
+// }
+
 export const participantWorkouts = (user_id ) => {
     
   return useQuery({
-    queryKey : ['participants', user_id], 
+    queryKey : ['participants'], 
     queryFn: async () => {
       const { data : participants, error : participantsError } = await supabase
         .from('participants')
-        .select('workout_id')
+        .select('*, workouts(*)')
         .eq('user_id', user_id); 
 
       if (participantsError) 
@@ -18,19 +51,19 @@ export const participantWorkouts = (user_id ) => {
 
       
 
-      if (!participants || participants.length === 0) return [];
+      // if (!participants || participants.length === 0) return [];
 
-      const { data : workouts, error } = await supabase
-          .from('workouts')
-          .select('*')
-          .in('id', participants.map((p) => p.workout_id))
-          .order('workout_status', { ascending: false })
-          .order('workout_date', { ascending: false }); 
+      // const { data : workouts, error } = await supabase
+      //     .from('workouts')
+      //     .select('*')
+      //     .in('id', participants.map((p) => p.workout_id))
+      //     .order('workout_status', { ascending: false })
+      //     .order('workout_date', { ascending: false }); 
   
-        if (error) throw new Error(error.message);
+      //   if (error) throw new Error(error.message);
 
 
-      return workouts;
+      return participants;
     },
     });
     
