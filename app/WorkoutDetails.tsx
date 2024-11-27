@@ -8,6 +8,8 @@ import React, {useEffect, useState} from 'react';
 import { allWorkoutInvitations, allWorkoutParticipants, participantWorkoutInfo, useUpdateParticipantStatus } from './api/workouts';
 import { useAuth } from './providers/AuthProvider';
 import { userBuddies } from './api/buddies';
+import { supabase } from './utils/supabase';
+
 
 
 const WorkoutDetailsScreen = ({route}) => {
@@ -38,6 +40,20 @@ const WorkoutDetailsScreen = ({route}) => {
 
     const {data: UserBuddies, isLoading : isLoadingUserBuddies} = userBuddies(session?.user.id);
 
+
+    useEffect(() => {
+      
+      const channels = supabase.channel('custom-all-channel')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'participants' },
+        (payload) => {
+          console.log('Change received!', payload)
+        }
+      )
+      .subscribe()
+
+  }, []);
     const {mutate: updateParticipantStatus} = useUpdateParticipantStatus();
 
     const onStart = () => {

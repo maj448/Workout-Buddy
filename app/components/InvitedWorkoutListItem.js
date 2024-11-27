@@ -106,13 +106,13 @@ const styles = StyleSheet.create({
       buttonContainer : {
         flex:3, 
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'space-evenly',
         flexDirection: 'row'
       },
       fullContainer: {
         borderRadius: 5,
-        backgroundColor: 'blue'
-        //justifyContent: 'space-between',
+        backgroundColor: 'blue',
+        marginBottom: 5
     },
 
 })

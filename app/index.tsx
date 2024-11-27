@@ -13,6 +13,7 @@ import { participantWorkouts, invitedWorkouts, updateOldWorkouts} from './api/wo
 import { ActivityIndicator } from 'react-native';
 import {  Gesture, GestureDetector, Directions, GestureHandlerRootView } from 'react-native-gesture-handler';
 import moment from 'moment'
+import { useInviteSubscription } from './api/subscriptions';
 
 const workoutStatuses = {
   pending: { key: 'pending', color: 'blue' },
@@ -24,7 +25,7 @@ const workoutStatuses = {
 export default function Index() {
   const { session } = useAuth();
   const navigation = useNavigation();
-  const queryClient = useQueryClient();
+
   const today = format(new Date(), 'yyyy-MM-dd');
   const [selected, setSelected] = useState(today);
   const [filteredWorkouts, setFilteredWorkouts] = useState([])
@@ -35,6 +36,7 @@ export default function Index() {
   const { data: workouts, isLoading: isWorkoutsLoading, error: workoutsError} = participantWorkouts(session?.user.id)
   const { data: invited, isLoading: isInvitedLoading, error: invitedError} = invitedWorkouts(session?.user.id)
   
+  useInviteSubscription(session?.user.id);
   
   const subtractDay = () => {
     const subDay = moment(selected).add(-1, 'day').toISOString()

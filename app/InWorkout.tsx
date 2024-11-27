@@ -1,16 +1,15 @@
 import React, { useState, useEffect, useRef} from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {Stopwatch} from 'react-native-stopwatch-timer';
 import { useNavigation, useIsFocused} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useUpdateParticipantStatus } from './api/workouts';
+import StopwatchContainer from './components/Stopwatch.container'
 
 
 export default function InWorkout({route}) {
   const navigation = useNavigation()
   const isFocused = useIsFocused();
-  const stopwatchRef = useRef(Stopwatch);
   const {user_id, workout_id} = route.params;
   const [isStopwatchStarted, setIsStopwatchStarted] = useState(false);
   const [duration, setDuration] = useState(0);
@@ -69,12 +68,8 @@ export default function InWorkout({route}) {
       <View style={styles.container}>
 
         <View style={styles.sectionStyle}>
-          <Stopwatch
-            ref={stopwatchRef}
-            start={isStopwatchStarted}
-            options={options}
-            getTime={(time) => {setDuration(time)}}
-          />
+
+          <StopwatchContainer/>
           <Pressable
             style={styles.button}
             onPress={() => {setIsStopwatchStarted(!isStopwatchStarted);}}>
@@ -88,6 +83,7 @@ export default function InWorkout({route}) {
             <Text style={styles.buttonText}>End</Text>
           </Pressable>
         </View>
+        
       </View>
     </SafeAreaView>
     // <View style={styles.container}>
