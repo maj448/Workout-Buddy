@@ -8,6 +8,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import { decode } from 'base64-arraybuffer';
 import { randomUUID } from 'expo-crypto';
+import RemoteImage from './components/RemoteImage'
 
 const ProfileScreen = () => {
   const { session } = useAuth();
@@ -100,8 +101,9 @@ const ProfileScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.infoContainer}>
-      <Image
-        source={{ uri: image || userProfileAvatar  }}
+      <RemoteImage
+        path={profile.avatar_url}
+        fallback='https://img.icons8.com/nolan/64/user-default.png'
         style={styles.image}
         resizeMode="contain"
       />
