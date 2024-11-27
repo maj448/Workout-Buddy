@@ -23,7 +23,6 @@ const WorkoutDetailsScreen = ({route}) => {
     }
 
     const displayDate = workout.workout_date.split('T')[0]
-    const [newWorkout, setNewWorkout] = useState('')
     const [participantState, setParticipantState] = useState('waiting')
     const [canStart, setCanStart] = useState(false)
     const [completed, setCompleted] = useState(false)
@@ -142,10 +141,17 @@ const WorkoutDetailsScreen = ({route}) => {
 
       </View>
 
-      <InternalWorkoutBuddiesList buddies={UserBuddies} forNew={false} OnAddBuddyToInvites={handleBuddyInviteList} allParticipants={allParticipants} allInvitations={allInvitations} workout_id= {workout.id}/>
+      <InternalWorkoutBuddiesList 
+        buddies={UserBuddies} 
+        forNew={false} 
+        OnAddBuddyToInvites={handleBuddyInviteList} 
+        allParticipants={allParticipants} 
+        allInvitations={allInvitations} 
+        workout= {workout} 
+        participantState={participantState}/>
 
       <View style={styles.buttonContainer}>
-      {!completed && participantState != 'in workout' &&
+      {!completed && participantState != 'in workout' && workout.workout_status != 'past' &&
         
           <Pressable onPress= {onCheckIn} style={styles.button}>
               <Text>{ canStart ? 'Leave' : 'Check In'}</Text>
@@ -155,14 +161,13 @@ const WorkoutDetailsScreen = ({route}) => {
 
       }
         
-        { canStart && !completed &&
+        { canStart && !completed && 
 
             <Pressable onPress={onStart}  style={styles.button}>
                 <Text style={styles.buttonText}>{participantState == 'in workout' ? 'Resume' : 'Start!'} </Text>
             </Pressable>
         }
         </View>
-      {/* </View> */}
       </ScrollView>
   );
 };

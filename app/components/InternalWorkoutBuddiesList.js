@@ -1,19 +1,17 @@
-import { View, Text, FlatList, TextInput, Button, Pressable, StyleSheet } from "react-native"
+import { View, Text, Pressable, StyleSheet } from "react-native"
 import InternalWorkoutBuddyListItem from "./InternalWorkoutBuddyListItem";
 import React, {useEffect, useState} from 'react';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import { MultiSelect } from 'react-native-element-dropdown';
 import { useInviteToWorkout } from "../api/workouts";
 
 
 
-export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyToInvites, allParticipants, allInvitations, workout_id}){
+export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyToInvites, allParticipants, allInvitations, workout, participantState}){
 
+  console.log('AP', allParticipants)
 
-  const [value, setValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
-  const [inviteBuddyList, setInviteBuddyList] = useState([])
   const [dropdownData, setDropdownData] = useState([])
   const [selected, setSelected] = useState([])
 
@@ -44,7 +42,7 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
   const selectBoxFlex = forNew ? {flex : 1 } : {flex : 6};
 
   const sendInvites = () => {
-
+      let workout_id = workout.id
       inviteToWorkout({selected, workout_id})
       setSelected([])
   }
@@ -53,8 +51,18 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
 
     return(
     <View style={{backgroundColor: '#6EEB92', padding: 10, gap: 10}}>
-      <Text style={{color: 'white', fontWeight: 'bold', fontSize: 24, }}>Buddies</Text>
+
+      { participantState != 'complete' && 
+      <Text style={{color: 'white', fontWeight: 'bold', fontSize: 24, }}>Buddies:</Text>
+      }
+
+      { participantState == 'complete' &&
+      <Text style={{color: 'white', fontWeight: 'bold', fontSize: 24, }}>Completed with Buddies:</Text>
+      }
+
+      { participantState != 'complete' && workout.workout_status != 'past' &&
       <View style ={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 10}}>
+
         <View style={[selectBoxFlex]}>
         <MultiSelect
           style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
@@ -87,6 +95,8 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
           </Pressable>}
       </View>
 
+       
+      }
       <View style={styles.listGap}>
 
 
