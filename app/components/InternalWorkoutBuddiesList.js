@@ -41,29 +41,7 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
     ];
   
     return selected.filter(item => !alreadyInWorkout.includes(item.id));
-      // const onlyNew = []
-      // console.log('ap',allParticipants)
-      // console.log('ai', allInvitations)
-
-
-      // selected.forEach((person) => {
-      //   allParticipants.forEach((participant) =>{
-      //     if(!allParticipants.includes(person))
-      //       {
-        
-      //         if(!allInvitations.includes(person))
-      //           {
-      //             onlyNew.push(person)
-      //           }
-      //       }
-          
-      //   })
-        
-      // })
-
-      // return onlyNew;
-
-      
+   
   }
   const selectBoxFlex = forNew ? {flex : 1 } : {flex : 6};
 

@@ -78,15 +78,22 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
+
     text: {
-        color: 'white',
-        fontSize: 16,
+        color: 'black',
+        fontSize: 18,
+        fontWeight: 'bold',
+        fontFamily: 'fantasy',
+        maxWidth: '200'
     },
+
     time: {
-        fontSize: 14,
-        color: 'white',
+        fontSize: 18,
+        color: 'black',
+        fontFamily: 'fantasy'
       },
-      button: {
+
+    button: {
         width: 100,
         height: 40,
         borderColor: 'gray',
@@ -97,21 +104,26 @@ const styles = StyleSheet.create({
         margin: 10,
         borderRadius: 10,
 
-      },
-      buttonText : {
+    },
+
+    buttonText : {
         fontSize: 16,
         color: '#3D3D3D',
         fontFamily: 'fantasy'
-      },
-      buttonContainer : {
+    },
+
+    buttonContainer : {
         flex:3, 
         alignItems: 'center',
         justifyContent: 'space-evenly',
         flexDirection: 'row'
-      },
-      fullContainer: {
+    },
+
+    fullContainer: {
         borderRadius: 5,
         backgroundColor: 'blue',
+        borderColor: '#5096D1',
+        borderWidth: 2, 
         marginBottom: 5
     },
 

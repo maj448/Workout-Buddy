@@ -16,10 +16,10 @@ import moment from 'moment'
 import { useInviteSubscription } from './api/subscriptions';
 
 const workoutStatuses = {
-  pending: { key: 'pending', color: 'blue' },
-  past: { key: 'past', color: 'gray' },
-  complete: { key: 'complete', color: 'green' },
-  upcoming: { key: 'upcoming', color: 'orange' },
+  pending: { key: 'pending', color: '#4A90E2' },
+  past: { key: 'past', color: '#B0B0B0' },
+  complete: { key: 'complete', color: '#1E7A56' },
+  upcoming: { key: 'upcoming', color: '#F77F00' },
 };
 
 

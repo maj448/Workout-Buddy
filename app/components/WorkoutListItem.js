@@ -7,10 +7,10 @@ import { useAuth } from '../providers/AuthProvider';
 
 
   const workoutStatuses = {
-    pending: { backgroundColor: 'blue', },
-    past: { backgroundColor: 'gray', },
-    complete: { backgroundColor:  'limegreen' },
-    upcoming: { backgroundColor: 'orange', },
+    pending: { backgroundColor: '#4A90E2', borderColor: '#357ABD',},
+    past: { backgroundColor: '#B0B0B0', borderColor: '#8A8A8A',},
+    complete: { backgroundColor:  '#1E7A56', borderColor: '#165A3F',},
+    upcoming: { backgroundColor: '#FFCC00', borderColor: '#D66A00',},
   };
 
 export default function WorkoutListItem({ workout }) {
@@ -80,13 +80,19 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         flexDirection: 'row',
         justifyContent: 'space-between',
+        //borderColor: '#4B4B4B',
+        borderWidth: 2, 
     },
     text: {
-        color: 'white',
-        fontSize: 16,
+        color: 'black',
+        fontSize: 18,
+        fontWeight: 'bold',
+        fontFamily: 'fantasy',
+        maxWidth: '200'
     },
     time: {
-        fontSize: 14,
-        color: 'white',
+        fontSize: 18,
+        color: 'black',
+        fontFamily: 'fantasy'
       },
 })
