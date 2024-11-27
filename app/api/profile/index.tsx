@@ -44,7 +44,6 @@ export const useUpdateProfilePic = () => {
 
   return useMutation({
     async mutationFn(data: any) {
-      console.log(data)
       const { error, } = await supabase
         .from('profiles')
         .update({

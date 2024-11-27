@@ -35,8 +35,7 @@ const WorkoutDetailsScreen = ({route}) => {
     const { data: allParticipants, isLoading: allParticipantsLoading, error: allParticipantsError } = allWorkoutParticipants(workout.id);
     const { data: allInvitations, isLoading: allInvitationsLoading, error: allInvitationsError } = allWorkoutInvitations(workout.id);
 
-    console.log ('ap', allParticipants)
-    console.log ('ai', allInvitations)
+
 
     const {data: UserBuddies, isLoading : isLoadingUserBuddies} = userBuddies(session?.user.id);
 
@@ -48,7 +47,7 @@ const WorkoutDetailsScreen = ({route}) => {
         'postgres_changes',
         { event: '*', schema: 'public', table: 'participants' },
         (payload) => {
-          console.log('Change received!', payload)
+          // console.log('Change received!', payload)
         }
       )
       .subscribe()
@@ -95,10 +94,8 @@ const WorkoutDetailsScreen = ({route}) => {
     }
 
     const handleBuddyInviteList = (buddy) => {
-      console.log('bud', buddy)
       setInviteBuddyList(buddy)
       
-    console.log('list', inviteBuddyList)
   };
 
     useEffect(() => {

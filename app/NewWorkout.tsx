@@ -51,11 +51,8 @@ const NewWorkoutScreen = ({route}) => {
   };
 
   const onChangeStart = (event, selectedStart) => {
-    console.log('b',selectedStart)
-
     const start = new Date(inputDate.setHours(selectedStart.getHours(), selectedStart.getMinutes())) || inputStartTime;
     setInputStartTime(start);
-    console.log('a',selectedStart)
     setOpenStart(false)
     
   };

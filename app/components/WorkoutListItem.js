@@ -50,14 +50,7 @@ export default function WorkoutListItem({ workout }) {
 
     const confirmRemove = () => {
     Alert.alert('Confirm', 'Are you sure you want to remove this workout?', [
-        {
-        text: 'Cancel',
-        },
-        {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: onRemove,
-        },
+        {text: 'Cancel',},{text: 'Delete', style: 'destructive',onPress: onRemove,},
     ]);
     };
 

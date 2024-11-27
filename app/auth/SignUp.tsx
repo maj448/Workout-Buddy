@@ -18,7 +18,7 @@ export default function SignUp() {
 
 
     const {data : allUsernames, isLoading, error} = usernameUnique();
-    console.log(allUsernames)
+
 
     // useEffect(() => {
 

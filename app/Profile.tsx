@@ -39,7 +39,6 @@ const ProfileScreen = () => {
 
   const updateProfilePic = async () => {
     const imagePath = await uploadImage();
-    console.log('ip', imagePath)
 
     updatePic({user_id: session?.user.id, image : imagePath})
   }
@@ -79,7 +78,6 @@ const ProfileScreen = () => {
     });
 
 
-    console.log(result);
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);

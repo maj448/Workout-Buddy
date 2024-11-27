@@ -21,14 +21,8 @@ export default function WorkoutBuddyListItem({ buddie }) {
 
     const confirmRemove = () => {
     Alert.alert('Confirm', 'Are you sure you want to remove this buddy?', [
-        {
-        text: 'Cancel',
-        },
-        {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: onRemove,
-        },
+        {text: 'Cancel',},
+        {text: 'Delete',style: 'destructive',onPress: onRemove,},
     ]);
     };
 

@@ -65,7 +65,6 @@ export const invitedWorkouts = (user_id ) => {
   
         if (error) throw new Error(error.message);
 
-        console.log(workouts)
 
       return workouts;
     },
@@ -169,7 +168,6 @@ export const useInsertWorkout = () => {
 
       if(data.inviteBuddyList && data.inviteBuddyList.length > 0){
         for (let buddy of data.inviteBuddyList) {
-          console.log('ivb', buddy)
           const { error: inviteError } = await supabase.from('invitations').insert({
             // from_user_id: data.user_id,
             workout_id: workoutData[0].id,
@@ -246,20 +244,16 @@ export const useRemoveWorkout = () => {
         throw new Error(error.message);
         
       }
-
-      console.log('data', data)
       const { data : anyParticipants, error: anyError } = await supabase.from('participants').select('*')
       .eq('workout_id', data.workout_id);
 
 
-      console.log('anyprt', anyParticipants)
       if (anyError) {
         throw new Error(anyError.message);
       }
 
       if (!anyParticipants || anyParticipants.length === 0)
       {
-        console.log('got to workout delete')
         const { error : workoutError } = await supabase.from('workouts').delete()
         .eq('id', data.workout_id);
 
@@ -300,11 +294,9 @@ export const useUpdateParticipantStatus = () => {
         console.log(error)
         throw new Error(error.message);
       }
-      console.log(updatedStatus)
       return updatedStatus;
     },
     async onSuccess(returnedData) {
-      console.log('on suc', returnedData)
       await queryClient.invalidateQueries(['participants', returnedData.user_id, returnedData.workout_id]);
     },
   });
@@ -315,7 +307,6 @@ export const useAcceptInvite = () => {
 
   return useMutation({
     async mutationFn(data: any) {
-      console.log(data)
       const { error  } = await supabase
         .from('invitations')
         .update({
@@ -354,7 +345,6 @@ export const useDeclineInvite = () => {
 
   return useMutation({
     async mutationFn(data: any) {
-      console.log(data)
       const { error } = await supabase
         .from('invitations')
         .update({

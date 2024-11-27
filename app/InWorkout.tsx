@@ -9,16 +9,48 @@ import StopwatchContainer from './components/Stopwatch.container'
 
 export default function InWorkout({route}) {
   const navigation = useNavigation()
-  const isFocused = useIsFocused();
   const {user_id, workout_id} = route.params;
-  const [isStopwatchStarted, setIsStopwatchStarted] = useState(false);
-  const [duration, setDuration] = useState(0);
 
   const {mutate: updateParticipantStatus} = useUpdateParticipantStatus();
+  const [start, setStart] = useState(false);
+  const [hr, setHr] = useState(0);
+  const [min, setMin] = useState(0);
+  const [sec, setSec] = useState(0);
+  let interval;
+
+  const handleToggle = () => {
+    setStart((prevStart) => !prevStart);
+  };
+
+  const handleStart = () => {
+    if (start) {
+      interval = setInterval(() => {
+        setSec((prevSec) => {
+          if (prevSec !== 59) {
+            return prevSec + 1;
+          } else if (min !== 59) {
+            setMin(min + 1);
+            return 0;
+          } else {
+            setHr(hr + 1);
+            return 0;
+          }
+        });
+      }, 1000);
+    } else {
+      clearInterval(interval);
+    }
+  };
+
+  const formatTime = (hr, min, sec) => {
+    return `${padToTwo(hr)}:${padToTwo(min)}:${padToTwo(sec)}`;
+  };
+
+  const padToTwo = (number) => (number <= 9 ? `0${number}` : number);
 
   const onEnd = () => {
-    //update activity and duration of participant
-    updateParticipantStatus({user_id : user_id, workout_id : workout_id, status : 'complete', duration : duration , activity : 'N/A'},
+    const formattedDuration = formatTime(hr, min, sec); 
+    updateParticipantStatus({user_id : user_id, workout_id : workout_id, status : 'complete', duration : formattedDuration , activity : 'N/A'},
       {
         onSuccess: () => {
           navigation.goBack();
@@ -33,31 +65,12 @@ export default function InWorkout({route}) {
   }
 
 
-
-  // const getFormattedTime = (time: string) => {
-  //   const milliseconds = parseInt(time, 10); 
-  //   setDuration(milliseconds); 
-  // };
-  //console.log(duration)
-
   useEffect(() => {
-    if (!isFocused && isStopwatchStarted) {
-      setIsStopwatchStarted(true); 
-    } 
+    handleStart();
+    return () => clearInterval(interval);
 
-    // const saveTimerState = async (isStopwatchStarted, elapsedTime) => {
-    //   await AsyncStorage.setItem('isTimerRunning', JSON.stringify(isStopwatchStarted));
-    //   await AsyncStorage.setItem('elapsedTime', JSON.stringify(elapsedTime));
-    // };
 
-    // const loadTimerState = async () => {
-    //   const isRunning = JSON.parse(await AsyncStorage.getItem('isTimerRunning')) || false;
-    //   const elapsedTime = JSON.parse(await AsyncStorage.getItem('elapsedTime')) || 0;
-    //   return { isRunning, elapsedTime };
-    // };
-
-    console.log(duration)
-  }, [isFocused, isStopwatchStarted, duration]);
+  }, [start]);
 
   return (
 
@@ -69,12 +82,16 @@ export default function InWorkout({route}) {
 
         <View style={styles.sectionStyle}>
 
-          <StopwatchContainer/>
+        <StopwatchContainer 
+          hr={hr} 
+          min={min} 
+          sec={sec} />
+
           <Pressable
             style={styles.button}
-            onPress={() => {setIsStopwatchStarted(!isStopwatchStarted);}}>
+            onPress={handleToggle}>
             <Text style={styles.buttonText}>
-              {!isStopwatchStarted ? 'Start' : 'Pause'}
+              {!start ? 'Start' : 'Pause'}
             </Text>
           </Pressable>
           <Pressable
@@ -86,28 +103,6 @@ export default function InWorkout({route}) {
         
       </View>
     </SafeAreaView>
-    // <View style={styles.container}>
-
-    //   <View style={styles.stopwatchContainer}>
-    //     <Text style={styles.stopwatchText}></Text>
-    //   </View>
-
-    //   <View style={styles.buddiesContainer}>
-    //     {/* <FlatList
-    //       data={buddies}
-    //       renderItem={renderBuddy}
-    //       keyExtractor={item => item.id.toString()}
-    //       horizontal
-    //       showsHorizontalScrollIndicator={false}
-    //     /> */}
-    //   </View>
-
-    //   {/* Buttons: Pause/End Workout */}
-    //   <View style={styles.buttonsContainer}>
-    //     <Button title={ 'Start'}  />
-    //     <Button title="End Workout"  color="red" />
-    //   </View>
-    // </View>
   );
 };
 
@@ -130,10 +125,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  // buttonText: {
-  //   fontSize: 20,
-  //   marginTop: 10,
-  // },
+
   button: {
     width: 100,
     height: 40,
