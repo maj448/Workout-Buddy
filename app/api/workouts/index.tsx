@@ -3,39 +3,6 @@ import { supabase } from '@/app/utils/supabase';
 
 
 
-// export const participantWorkouts = (user_id ) => {
-    
-//   return useQuery({
-//     queryKey : ['participants', user_id], 
-//     queryFn: async () => {
-//       const { data : participants, error : participantsError } = await supabase
-//         .from('participants')
-//         .select('workout_id')
-//         .eq('user_id', user_id); 
-
-//       if (participantsError) 
-//         throw new Error(participantsError.message);
-
-      
-
-//       if (!participants || participants.length === 0) return [];
-
-//       const { data : workouts, error } = await supabase
-//           .from('workouts')
-//           .select('*')
-//           .in('id', participants.map((p) => p.workout_id))
-//           .order('workout_status', { ascending: false })
-//           .order('workout_date', { ascending: false }); 
-  
-//         if (error) throw new Error(error.message);
-
-
-//       return workouts;
-//     },
-//     });
-  
-// }
-
 export const participantWorkouts = (user_id ) => {
     
   return useQuery({
@@ -49,26 +16,9 @@ export const participantWorkouts = (user_id ) => {
       if (participantsError) 
         throw new Error(participantsError.message);
 
-      
-
-      // if (!participants || participants.length === 0) return [];
-
-      // const { data : workouts, error } = await supabase
-      //     .from('workouts')
-      //     .select('*')
-      //     .in('id', participants.map((p) => p.workout_id))
-      //     .order('workout_status', { ascending: false })
-      //     .order('workout_date', { ascending: false }); 
-  
-      //   if (error) throw new Error(error.message);
-
-
       return participants;
     },
-    });
-    
-      
-  
+    }); 
 }
 
 export const invitedWorkouts = (user_id ) => {
@@ -202,7 +152,6 @@ export const useInsertWorkout = () => {
       if(data.inviteBuddyList && data.inviteBuddyList.length > 0){
         for (let buddy of data.inviteBuddyList) {
           const { error: inviteError } = await supabase.from('invitations').insert({
-            // from_user_id: data.user_id,
             workout_id: workoutData[0].id,
             user_id: buddy.id,
             invite_status: 'pending', 
@@ -215,9 +164,7 @@ export const useInsertWorkout = () => {
         }
       }
 
-
       return { user_id : data.user_id };
-
 
     }
     },
@@ -260,7 +207,6 @@ export const useInviteToWorkout = () => {
       console.log(error);
     },
   });
-
 };
 
 export const useRemoveWorkout = () => {

@@ -9,7 +9,6 @@ import { useInviteToWorkout } from "../api/workouts";
 
 export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyToInvites, allParticipants, allInvitations, workout, participantState}){
 
-  console.log('AP', allParticipants)
 
   const [isFocus, setIsFocus] = useState(false);
   const [dropdownData, setDropdownData] = useState([])
@@ -18,36 +17,66 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
 
   const {mutate: inviteToWorkout} = useInviteToWorkout();
 
+  useEffect(() => {
 
-    
-
-    useEffect(() => {
-
-      if(buddies){
+    if(buddies){
       const newDropdownData = buddies.map(buddy => ({
         label: buddy.username, 
         value: buddy        
       }));
 
-
       setDropdownData(newDropdownData)
     }
 
-      if (selected.length > 0) {
-        OnAddBuddyToInvites(selected)
-      }
-    }, [selected, buddies]);
+    if (selected.length > 0) {
+      OnAddBuddyToInvites(selected)
+    }
+  }, [selected, buddies]);
+
+  const checkNewInvites = () => {
+
+    const alreadyInWorkout = [
+      ...allParticipants.map(item => item.profiles.id),
+      ...allInvitations.map(item => item.profiles.id)
+    ];
+  
+    return selected.filter(item => !alreadyInWorkout.includes(item.id));
+      // const onlyNew = []
+      // console.log('ap',allParticipants)
+      // console.log('ai', allInvitations)
 
 
+      // selected.forEach((person) => {
+      //   allParticipants.forEach((participant) =>{
+      //     if(!allParticipants.includes(person))
+      //       {
+        
+      //         if(!allInvitations.includes(person))
+      //           {
+      //             onlyNew.push(person)
+      //           }
+      //       }
+          
+      //   })
+        
+      // })
+
+      // return onlyNew;
+
+      
+  }
   const selectBoxFlex = forNew ? {flex : 1 } : {flex : 6};
 
   const sendInvites = () => {
       let workout_id = workout.id
-      inviteToWorkout({selected, workout_id})
+      let newInvites = checkNewInvites();
+      console.log('s',selected)
+      console.log('ni',newInvites)
+      inviteToWorkout({selected : newInvites, workout_id})
       setSelected([])
   }
 
-  const navigation = useNavigation();
+
 
     return(
     <View style={{backgroundColor: '#6EEB92', padding: 10, gap: 10}}>
