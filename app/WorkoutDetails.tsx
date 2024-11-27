@@ -149,7 +149,7 @@ const WorkoutDetailsScreen = ({route}) => {
         participantState={participantState}/>
 
       <View style={styles.buttonContainer}>
-      {!completed && participantState != 'in workout' && workout.workout_status != 'past' && Date.parse(workout.start_time ) > TEN_MINUTES &&
+      {!completed && participantState != 'in workout' && workout.workout_status != 'past' && Date.parse(workout.start_time ) <= TEN_MINUTES &&
         
           <Pressable onPress= {onCheckIn} style={styles.button}>
               <Text>{ canStart ? 'Leave' : 'Check In'}</Text>

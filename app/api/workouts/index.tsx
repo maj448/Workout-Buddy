@@ -11,7 +11,9 @@ export const participantWorkouts = (user_id ) => {
       const { data : participants, error : participantsError } = await supabase
         .from('participants')
         .select('*, workouts(*)')
-        .eq('user_id', user_id); 
+        .eq('user_id', user_id)
+        .order('workouts(workout_status)',{ ascending: false })
+        .order('workouts(start_time)', { ascending: true }); 
 
       if (participantsError) 
         throw new Error(participantsError.message);
