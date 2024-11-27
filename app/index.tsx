@@ -36,8 +36,7 @@ export default function Index() {
   const {data: updatedOld} = updateOldWorkouts()
   const { data: workoutsWithParticipation, isLoading: isWorkoutsLoading, error: workoutsError} = participantWorkouts(session?.user.id)
   const { data: invited, isLoading: isInvitedLoading, error: invitedError} = invitedWorkouts(session?.user.id)
-  //const { data: workoutsTEST} = participantWorkoutsTEST(session?.user.id)
-  //console.log('wt', workoutsTEST[0].workouts)
+
 
   
   useInviteSubscription(session?.user.id);
