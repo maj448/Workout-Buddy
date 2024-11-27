@@ -3,13 +3,15 @@ import WorkoutListItem from "./WorkoutListItem";
 import React, {useState} from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
-import InvitedWorkoutListItem from './InvitedWorkoutListItem'
+import InvitedWorkoutListItem from './InvitedWorkoutListItem';
+import { format} from 'date-fns';
 
 
 
 export default function WorkoutList({workouts, invitedWorkouts, displayDate, selected}){
 
   const navigation = useNavigation();
+  const today = format(new Date(), 'yyyy-MM-dd');
 
     const [newWorkout, setNewWorkout] = useState('')
 
@@ -35,9 +37,11 @@ export default function WorkoutList({workouts, invitedWorkouts, displayDate, sel
     <View style={{backgroundColor: '#6EEB92', padding: 10, gap: 10, flex: 1}} collapsable={false}>
       <View style ={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 10}}>
         <Text style={{color: 'white', fontWeight: 'bold', fontSize: 24}}>{displayDate}</Text>
+        { today <= selected &&
         <Pressable onPress={createWorkout}>
           <Ionicons name="add-circle-outline" size={24} color="white" />
         </Pressable>
+        }
       </View>
 
         <FlatList

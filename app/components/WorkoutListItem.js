@@ -1,18 +1,15 @@
 import {View, Text, StyleSheet, Pressable, Alert} from 'react-native'
-import AntDesign from '@expo/vector-icons/AntDesign';
-import { format, parseISO} from 'date-fns';
 import { useNavigation } from '@react-navigation/native';
-import { useRemoveWorkout } from './api/workouts';
-import { useAuth } from './providers/AuthProvider';
+import { useRemoveWorkout } from '../api/workouts';
+import { useAuth } from '../providers/AuthProvider';
 
 
 
 
   const workoutStatuses = {
     pending: { backgroundColor: 'blue', },
-    completed: { backgroundColor: 'green', },
+    past: { backgroundColor: 'gray', },
     upcoming: { backgroundColor: 'orange', },
-    missed: { backgroundColor: 'red', },
   };
 
 export default function WorkoutListItem({ workout }) {
@@ -53,14 +50,7 @@ export default function WorkoutListItem({ workout }) {
 
     const confirmRemove = () => {
     Alert.alert('Confirm', 'Are you sure you want to remove this workout?', [
-        {
-        text: 'Cancel',
-        },
-        {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: onRemove,
-        },
+        {text: 'Cancel',},{text: 'Delete', style: 'destructive',onPress: onRemove,},
     ]);
     };
 

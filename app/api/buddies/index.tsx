@@ -32,36 +32,6 @@ export const userBuddies = (user_id : string) => {
 }
 
 
-// export const workoutBuddies = (user_id, workout_id) => {
-
-//   return useQuery({
-//       queryKey : ['buddies', user_id, workout_id], 
-//       queryFn: async () => {
-//         const { data : userData, error : userError } = await supabase
-//           .from('participants')
-//           .select('user_id')
-//           .eq('workout_id', workout_id)
-//           .neq('user_id', user_id)
-
-//           if (userError) 
-//             throw new Error(userError.message);
-  
-//         if(!userData)
-//           return [];
-
-//         const {data: profileData , error : profileError} = await supabase
-//           .from('profiles')
-//           .select('*')
-//           .in('id', userData.map((p) => p.user_id))
-
-//         if (profileError) 
-//           throw new Error(profileError.message);
-
-//         return profileData ;
-//       },
-//   });
-          
-// }
 
 export const useAddBuddy = () => {
 
@@ -117,52 +87,41 @@ export const useAddBuddy = () => {
 
 };
 
-export const useInviteBuddies = () => {
 
+export const useRemoveBuddie = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    async mutationFn(data : any) {
-      const { data: workoutData, error: workoutError } = await supabase.from('workouts').insert({
-        title: data.inputTitle,
-        notes: data.inputNotes,
-        workout_date: data.inputDate.toISOString(),
-        workout_status:  'upcoming',
-        start_time: data.inputStartTime.toISOString(),
-        end_time: data.inputEndTime.toISOString(),
-      }).select('id');
+    async mutationFn(data :any) {
 
-      if (workoutError) {
-        console.log(workoutError)
-        throw workoutError;
+      const { error } = await supabase.from('buddies').delete()
+      .eq('user_id', data.user_id)
+      .eq('buddy_user_id', data.buddy_id);
+
+      if (error) {
+        console.log(error)
+        throw new Error(error.message);
+        
       }
+
+
+      const { error: buddyError} = await supabase.from('buddies').delete()
+      .eq('user_id', data.buddy_id)
+      .eq('buddy_user_id', data.user_id);
       
-      //return workoutData
 
-      if(workoutData && workoutData.length > 0){
-      const { error: participantError } = await supabase.from('participants').insert({
-        user_id: data.user_id,
-        workout_id: workoutData[0].id
-      });
-
-      if (participantError) {
-        console.log(participantError)
-        throw participantError;
+      if (buddyError) {
+        console.log(buddyError)
+        throw new Error(buddyError.message);
+        
       }
+
 
       return { user_id : data.user_id };
-
-    }
     },
     async onSuccess(returnedData) {
-      console.log('Mutation successful:', returnedData);
-      await queryClient.invalidateQueries(['participants', returnedData?.user_id]);
-      //await queryClient.invalidateQueries(['workouts', {participants: [...returnedData.old_workouts, { workout_id: returnedData.workout_id } ]}]);
-      console.log('Queries invalidated successfully');
-    },
-    onError(error) {
-      //console.log(error);
+      await queryClient.invalidateQueries(['buddies', returnedData?.user_id]);
     },
   });
-
 };
+

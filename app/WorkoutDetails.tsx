@@ -2,12 +2,14 @@ import { View, Text, StyleSheet, Button, Alert, Pressable } from 'react-native';
 import { format, formatDate, parseISO} from 'date-fns';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import InternalWorkoutBuddiesList from './InternalWorkoutBuddiesList'
+import InternalWorkoutBuddiesList from './components/InternalWorkoutBuddiesList'
 import { ScrollView } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import { allWorkoutInvitations, allWorkoutParticipants, participantWorkoutInfo, useUpdateParticipantStatus } from './api/workouts';
 import { useAuth } from './providers/AuthProvider';
 import { userBuddies } from './api/buddies';
+import { supabase } from './utils/supabase';
+
 
 
 const WorkoutDetailsScreen = ({route}) => {
@@ -33,18 +35,31 @@ const WorkoutDetailsScreen = ({route}) => {
     const { data: allParticipants, isLoading: allParticipantsLoading, error: allParticipantsError } = allWorkoutParticipants(workout.id);
     const { data: allInvitations, isLoading: allInvitationsLoading, error: allInvitationsError } = allWorkoutInvitations(workout.id);
 
-    console.log ('ap', allParticipants)
-    console.log ('ai', allInvitations)
+
 
     const {data: UserBuddies, isLoading : isLoadingUserBuddies} = userBuddies(session?.user.id);
 
+
+    useEffect(() => {
+      
+      const channels = supabase.channel('custom-all-channel')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'participants' },
+        (payload) => {
+          // console.log('Change received!', payload)
+        }
+      )
+      .subscribe()
+
+  }, []);
     const {mutate: updateParticipantStatus} = useUpdateParticipantStatus();
 
     const onStart = () => {
-      updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'complete'},
+      updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'in workout'},
         {
           onSuccess: () => {
-            navigation.navigate('In Workout');
+            navigation.navigate('In Workout', {user_id : session?.user.id, workout_id : workout.id });
           },
         }
       )
@@ -65,32 +80,34 @@ const WorkoutDetailsScreen = ({route}) => {
     //console.log('og state', participantState)
     const onCheckIn = () => {
       
-      if(participantState == 'checkedIn')
+      if(participantState == 'checked in')
       {
         
-        updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'waiting'})
+        updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'waiting', duration : '0', activity : 'N/A'})
       
       }
       if(participantState == 'waiting')
       {
-        updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'checkedIn'})
+        updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'checked in', duration : '0', activity : 'N/A'})
       }
 
     }
 
     const handleBuddyInviteList = (buddy) => {
-      console.log('bud', buddy)
       setInviteBuddyList(buddy)
       
-    console.log('list', inviteBuddyList)
   };
 
     useEffect(() => {
       if (participationInfo)
         setParticipantState(participationInfo.status)
-      if(participantState == 'checkedIn')
+      if(participantState == 'checked in')
       {
         setCanStart(true)
+      }
+      else if (participantState == 'in workout'){
+        setCanStart(true)
+        setCompleted(false)
       }
       else if (participantState == 'complete'){
         setCanStart(false)
@@ -120,14 +137,15 @@ const WorkoutDetailsScreen = ({route}) => {
           //<Text style= {styles.text}>Activity: {workout.activity}</Text>
           <Text style= {styles.text}>Duration: {participationInfo.duration}</Text>
         }
-        <Text style= {styles.text}>Notes: {workout.notes}</Text>
+        <Text style= {styles.text}>Notes: </Text>
+        <Text style= {styles.text}>{workout.notes}</Text>
 
       </View>
 
-      <InternalWorkoutBuddiesList buddies={UserBuddies} forNew={false} OnAddBuddyToInvites={handleBuddyInviteList} allParticipants={allParticipants} allInvitations={allInvitations}/>
+      <InternalWorkoutBuddiesList buddies={UserBuddies} forNew={false} OnAddBuddyToInvites={handleBuddyInviteList} allParticipants={allParticipants} allInvitations={allInvitations} workout_id= {workout.id}/>
 
       <View style={styles.buttonContainer}>
-      {!completed &&
+      {!completed && participantState != 'in workout' &&
         
           <Pressable onPress= {onCheckIn} style={styles.button}>
               <Text>{ canStart ? 'Leave' : 'Check In'}</Text>
@@ -140,7 +158,7 @@ const WorkoutDetailsScreen = ({route}) => {
         { canStart && !completed &&
 
             <Pressable onPress={onStart}  style={styles.button}>
-                <Text style={styles.buttonText}>Start!</Text>
+                <Text style={styles.buttonText}>{participantState == 'in workout' ? 'Resume' : 'Start!'} </Text>
             </Pressable>
         }
         </View>

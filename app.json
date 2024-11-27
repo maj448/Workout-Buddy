@@ -51,8 +51,9 @@
         }
       ],
       "expo-build-properties",
-
-      ["@morrowdigital/watermelondb-expo-plugin"],
+      [
+        "@morrowdigital/watermelondb-expo-plugin"
+      ],
       [
         "expo-build-properties",
         {
@@ -65,7 +66,8 @@
             }
           }
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true

@@ -1,70 +1,108 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button, Image, FlatList } from 'react-native';
-import { TouchableHighlight } from 'react-native-gesture-handler';
+import React, { useState, useEffect, useRef} from 'react';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {Stopwatch} from 'react-native-stopwatch-timer';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useIsFocused} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useUpdateParticipantStatus } from './api/workouts';
+import StopwatchContainer from './components/Stopwatch.container'
 
 
-export default function InWorkout() {
+export default function InWorkout({route}) {
   const navigation = useNavigation()
+  const {user_id, workout_id} = route.params;
 
-  const gotoDetails = () => {
-    navigation.navigate('Workout Details');
+  const {mutate: updateParticipantStatus} = useUpdateParticipantStatus();
+  const [start, setStart] = useState(false);
+  const [hr, setHr] = useState(0);
+  const [min, setMin] = useState(0);
+  const [sec, setSec] = useState(0);
+  let interval;
+
+  const handleToggle = () => {
+    setStart((prevStart) => !prevStart);
   };
-  const [isStopwatchStart, setIsStopwatchStart] = useState(false);
+
+  const handleStart = () => {
+    if (start) {
+      interval = setInterval(() => {
+        setSec((prevSec) => {
+          if (prevSec !== 59) {
+            return prevSec + 1;
+          } else if (min !== 59) {
+            setMin(min + 1);
+            return 0;
+          } else {
+            setHr(hr + 1);
+            return 0;
+          }
+        });
+      }, 1000);
+    } else {
+      clearInterval(interval);
+    }
+  };
+
+  const formatTime = (hr, min, sec) => {
+    return `${padToTwo(hr)}:${padToTwo(min)}:${padToTwo(sec)}`;
+  };
+
+  const padToTwo = (number) => (number <= 9 ? `0${number}` : number);
+
+  const onEnd = () => {
+    const formattedDuration = formatTime(hr, min, sec); 
+    updateParticipantStatus({user_id : user_id, workout_id : workout_id, status : 'complete', duration : formattedDuration , activity : 'N/A'},
+      {
+        onSuccess: () => {
+          navigation.goBack();
+        },
+      }
+    )
+    
+  }
+
+  const returnToDetails = () => {
+    navigation.goBack()
+  }
+
+
+  useEffect(() => {
+    handleStart();
+    return () => clearInterval(interval);
+
+
+  }, [start]);
 
   return (
 
     <SafeAreaView style={styles.container}>
+      <Pressable onPress={returnToDetails}  style={styles.button}>
+        <Text style={styles.buttonText}>Return to Details </Text>
+      </Pressable>
       <View style={styles.container}>
 
         <View style={styles.sectionStyle}>
-          <Stopwatch
-            start={isStopwatchStart}
 
-            options={options}
-            // Options for the styling
-          />
-          <TouchableHighlight
-            onPress={() => {
-              setIsStopwatchStart(!isStopwatchStart);
-            }}>
+        <StopwatchContainer 
+          hr={hr} 
+          min={min} 
+          sec={sec} />
+
+          <Pressable
+            style={styles.button}
+            onPress={handleToggle}>
             <Text style={styles.buttonText}>
-              {!isStopwatchStart ? 'Start' : 'Pause'}
+              {!start ? 'Start' : 'Pause'}
             </Text>
-          </TouchableHighlight>
-          <TouchableHighlight
-            onPress={() => {
-              //setIsStopwatchStart(false);gotoDetails
-              navigation.goBack()}}>
+          </Pressable>
+          <Pressable
+            style={styles.button}
+            onPress={onEnd}>
             <Text style={styles.buttonText}>End</Text>
-          </TouchableHighlight>
+          </Pressable>
         </View>
+        
       </View>
     </SafeAreaView>
-    // <View style={styles.container}>
-
-    //   <View style={styles.stopwatchContainer}>
-    //     <Text style={styles.stopwatchText}></Text>
-    //   </View>
-
-    //   <View style={styles.buddiesContainer}>
-    //     {/* <FlatList
-    //       data={buddies}
-    //       renderItem={renderBuddy}
-    //       keyExtractor={item => item.id.toString()}
-    //       horizontal
-    //       showsHorizontalScrollIndicator={false}
-    //     /> */}
-    //   </View>
-
-    //   {/* Buttons: Pause/End Workout */}
-    //   <View style={styles.buttonsContainer}>
-    //     <Button title={ 'Start'}  />
-    //     <Button title="End Workout"  color="red" />
-    //   </View>
-    // </View>
   );
 };
 
@@ -87,9 +125,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  buttonText: {
-    fontSize: 20,
-    marginTop: 10,
+
+  button: {
+    width: 100,
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 2,
+    backgroundColor: 'lightgray',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 10,
+    borderRadius: 10,
+
+  },
+  buttonText : {
+    fontSize: 16,
+    color: '#3D3D3D',
+    fontFamily: 'fantasy'
+  },
+  buttonContainer : {
+    flex:2, 
+    alignItems: 'center',
+    justifyContent: 'flex-start',
   },
 });
 

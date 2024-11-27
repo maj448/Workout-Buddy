@@ -3,12 +3,12 @@ import InternalWorkoutBuddyListItem from "./InternalWorkoutBuddyListItem";
 import React, {useEffect, useState} from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
-import { Dropdown, MultiSelect } from 'react-native-element-dropdown';
+import { MultiSelect } from 'react-native-element-dropdown';
+import { useInviteToWorkout } from "../api/workouts";
 
 
 
-export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyToInvites, allParticipants, allInvitations}){
-
+export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyToInvites, allParticipants, allInvitations, workout_id}){
 
 
   const [value, setValue] = useState(null);
@@ -17,6 +17,8 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
   const [dropdownData, setDropdownData] = useState([])
   const [selected, setSelected] = useState([])
 
+
+  const {mutate: inviteToWorkout} = useInviteToWorkout();
 
 
     
@@ -33,7 +35,6 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
       setDropdownData(newDropdownData)
     }
 
-      console.log('sel',selected)
       if (selected.length > 0) {
         OnAddBuddyToInvites(selected)
       }
@@ -41,6 +42,12 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
 
 
   const selectBoxFlex = forNew ? {flex : 1 } : {flex : 6};
+
+  const sendInvites = () => {
+
+      inviteToWorkout({selected, workout_id})
+      setSelected([])
+  }
 
   const navigation = useNavigation();
 
@@ -75,7 +82,7 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
 
 
         {!forNew && 
-          <Pressable onPress={() => {if (value) OnAddBuddy(value)}} style={styles.button}>
+          <Pressable onPress={sendInvites} style={styles.button}>
             <Text style={styles.buttonText}>Invite</Text> 
           </Pressable>}
       </View>

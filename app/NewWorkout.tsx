@@ -1,12 +1,11 @@
-import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, Button, Pressable, ActivityIndicator, ScrollView} from 'react-native';
+import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, Button, Pressable, ActivityIndicator, ScrollView, Alert} from 'react-native';
 import {useState, useEffect} from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { useAuth } from './providers/AuthProvider';
 import { useInsertWorkout} from './api/workouts';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { format, parseISO, startOfSecond} from 'date-fns';
 import { useNavigation } from '@react-navigation/native';
-import InternalWorkoutBuddiesList from './InternalWorkoutBuddiesList';
+import InternalWorkoutBuddiesList from './components/InternalWorkoutBuddiesList';
 import { userBuddies } from './api/buddies';
 import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
 
@@ -22,8 +21,8 @@ const NewWorkoutScreen = ({route}) => {
   const [inputNotes, setInputNotes] = useState('');
   const today = new Date();
   const [inputDate, setInputDate] = useState(new Date(parseISO(selected)));
-  const [inputStartTime, setInputStartTime] = useState(new Date());
-  const [inputEndTime, setInputEndTime] = useState(new Date());
+  const [inputStartTime, setInputStartTime] = useState(new Date(parseISO(selected)));
+  const [inputEndTime, setInputEndTime] = useState(new Date(parseISO(selected)));
   const [open, setOpen] = useState(false)
   const [openStart, setOpenStart] = useState(false)
   const [openEnd, setOpenEnd] = useState(false)
@@ -46,12 +45,13 @@ const NewWorkoutScreen = ({route}) => {
   const onChangeDate = (event, selectedDate) => {
     const currentDate = selectedDate || inputDate;
     setInputDate(currentDate);
+    setInputStartTime(new Date(currentDate.setHours(inputStartTime.getHours(), inputStartTime.getMinutes())));
+    setInputEndTime(new Date(currentDate.setHours(inputEndTime.getHours(), inputEndTime.getMinutes())));
     setOpen(false)
   };
 
   const onChangeStart = (event, selectedStart) => {
-
-    const start = new Date(selectedStart) || inputStartTime;
+    const start = new Date(inputDate.setHours(selectedStart.getHours(), selectedStart.getMinutes())) || inputStartTime;
     setInputStartTime(start);
     setOpenStart(false)
     
@@ -59,7 +59,7 @@ const NewWorkoutScreen = ({route}) => {
 
 
   const onChangeEnd = (event, selectedEnd) => {
-    const end = new Date(selectedEnd) || inputEndTime;
+    const end = new Date(inputDate.setHours(selectedEnd.getHours(), selectedEnd.getMinutes())) || inputEndTime;
     setInputEndTime(end);
     setOpenEnd(false)
   };
@@ -94,26 +94,21 @@ const NewWorkoutScreen = ({route}) => {
           resetFields();
           navigation.navigate('Tabs');
         },
-      }
-
-    )
-    setLoading(false)
-    
-  }
-  if (loading) {
-    return <ActivityIndicator />;
-  }
-
-  const handleBuddyInviteList = (buddy) => {
-      console.log('bud', buddy)
-      setInviteBuddyList(buddy)
-      
-    console.log('list', inviteBuddyList)
+        onError: (error) => {
+          Alert.alert('Error', error.message );
+          setLoading(false);
+        },
+      });  
   };
 
-  useEffect(() => {
-    console.log('Updated inviteBuddyList:', inviteBuddyList);
-  }, [inviteBuddyList]);
+  // if (loading) {
+  //   return <ActivityIndicator />;
+  // }
+
+  const handleBuddyInviteList = (buddy) => {
+      setInviteBuddyList(buddy)
+      
+  };
 
 
   return (
@@ -198,10 +193,10 @@ const NewWorkoutScreen = ({route}) => {
 
         </View>
       </KeyboardAvoidingView>
-      <InternalWorkoutBuddiesList buddies={buddies} forNew={true} OnAddBuddyToInvites ={handleBuddyInviteList} allParticipants={[]} allInvitations={[]}/>
+      <InternalWorkoutBuddiesList buddies={buddies} forNew={true} OnAddBuddyToInvites ={handleBuddyInviteList} allParticipants={[]} allInvitations={[]} workout_id={null}/>
       <View style={styles.buttonContainer}>
             <Pressable onPress={onSubmitHandler} disabled={loading} style={styles.button}>
-                <Text style={styles.buttonText}>{loading ? 'Creating workout...' : 'Create Workout'} </Text>
+                <Text style={styles.buttonText}>{loading ? 'Creating Workout...' : 'Create Workout'} </Text>
             </Pressable>
             </View>
   
