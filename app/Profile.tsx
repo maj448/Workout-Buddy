@@ -39,7 +39,6 @@ const ProfileScreen = () => {
 
   const updateProfilePic = async () => {
     const imagePath = await uploadImage();
-
     updatePic({user_id: session?.user.id, image : imagePath})
   }
 
@@ -100,7 +99,7 @@ const ProfileScreen = () => {
     <View style={styles.container}>
       <View style={styles.infoContainer}>
       <RemoteImage
-        path={profile.avatar_url}
+        path={userProfileAvatar}
         fallback='https://img.icons8.com/nolan/64/user-default.png'
         style={styles.image}
         resizeMode="contain"
