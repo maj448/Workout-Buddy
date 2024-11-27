@@ -39,3 +39,30 @@ export const usernameUnique = () => {
 }
 
 
+export const useUpdateProfilePic = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    async mutationFn(data: any) {
+      console.log(data)
+      const { error, } = await supabase
+        .from('profiles')
+        .update({
+          avatar_url : data.image,
+
+        })
+        .eq('id', data.user_id)
+
+      if (error) {
+        console.log(error)
+        throw new Error(error.message);
+      }
+
+      return {user_id : data.user_id};
+    },
+    async onSuccess(returnedData) {
+
+      await queryClient.invalidateQueries(['profiles', returnedData?.user_id]);
+    },
+  });
+};
