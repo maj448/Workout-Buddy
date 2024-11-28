@@ -4,14 +4,12 @@ import { View, Text, TouchableOpacity, ScrollView, Button } from 'react-native';
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 import { format, parseISO} from 'date-fns';
 import WorkoutList from "./components/WorkoutList"
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { useState, useEffect, useCallback } from 'react'
-import { supabase } from './utils/supabase';
-import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
+import {  useNavigation } from '@react-navigation/native';
+import { useState, useEffect} from 'react'
 import { useAuth } from './providers/AuthProvider';
 import { participantWorkouts, invitedWorkouts, updateOldWorkouts} from './api/workouts';
 import { ActivityIndicator } from 'react-native';
-import {  Gesture, GestureDetector, Directions, GestureHandlerRootView } from 'react-native-gesture-handler';
+import {  Gesture, GestureDetector, Directions} from 'react-native-gesture-handler';
 import moment from 'moment'
 import { useInviteSubscription } from './api/subscriptions';
 

@@ -39,14 +39,20 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     text: {
-        color: 'white',
-        fontSize: 16,
+        fontSize: 20,
+        color: '#3D3D3D',
+        fontFamily: 'fantasy',
+        // color: 'white',
+        // fontSize: 16,
         textAlign: 'center',
         padding: 10
     },
     time: {
-        fontSize: 14,
-        color: 'white',
+        fontSize: 20,
+        color: '#3D3D3D',
+        
+        // fontSize: 14,
+        // color: 'white',
       },
     image: {
         width: '15%',

@@ -84,6 +84,7 @@ const styles = StyleSheet.create({
     text: {
         color: 'white',
         fontSize: 16,
+        maxWidth: '50%'
     },
     time: {
         fontSize: 14,

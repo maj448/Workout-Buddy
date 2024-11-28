@@ -39,7 +39,7 @@ export default function WorkoutList({workouts, invitedWorkouts, displayDate, sel
         <Text style={{color: 'white', fontWeight: 'bold', fontSize: 24}}>{displayDate}</Text>
         { today <= selected &&
         <Pressable onPress={createWorkout}>
-          <Ionicons name="add-circle-outline" size={24} color="white" />
+          <Ionicons name="add-circle-outline" size={35} color="white" />
         </Pressable>
         }
       </View>

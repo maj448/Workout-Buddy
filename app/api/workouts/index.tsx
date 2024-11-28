@@ -367,8 +367,7 @@ export const updateOldWorkouts = () => {
         .lt('end_time', currentTime)
         .neq('workout_status', 'past')
         .select();
-
-      console.log(data)
+        
       if (error) 
         throw new Error(error.message);
 

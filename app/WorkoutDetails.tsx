@@ -1,15 +1,14 @@
 import { View, Text, StyleSheet, Button, Alert, Pressable } from 'react-native';
-import { format, formatDate, parseISO} from 'date-fns';
 import { useNavigation } from '@react-navigation/native';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import InternalWorkoutBuddiesList from './components/InternalWorkoutBuddiesList'
 import { ScrollView } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import { allWorkoutInvitations, allWorkoutParticipants, participantWorkoutInfo, useUpdateParticipantStatus } from './api/workouts';
 import { useAuth } from './providers/AuthProvider';
 import { userBuddies } from './api/buddies';
-import { supabase } from './utils/supabase';
-import moment from 'moment';
+import { useParticipantSubscription, useInvitationsSubscription } from './api/subscriptions';
+
+
 
 
 
@@ -23,6 +22,8 @@ const WorkoutDetailsScreen = ({route}) => {
       return null;  
     }
 
+    useParticipantSubscription( workout.id )
+    useInvitationsSubscription( workout.id )
     const displayDate = workout.workout_date.split('T')[0]
     const [participantState, setParticipantState] = useState('waiting')
     const [canStart, setCanStart] = useState(false)
@@ -42,19 +43,6 @@ const WorkoutDetailsScreen = ({route}) => {
 
     const {data: UserBuddies, isLoading : isLoadingUserBuddies} = userBuddies(session?.user.id);
 
-
-    useEffect(() => {
-      const channels = supabase.channel('custom-all-channel')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'participants' },
-        (payload) => {
-          // console.log('Change received!', payload)
-        }
-      )
-      .subscribe()
-
-  }, []);
     const {mutate: updateParticipantStatus} = useUpdateParticipantStatus();
 
     const onStart = () => {
@@ -77,14 +65,14 @@ const WorkoutDetailsScreen = ({route}) => {
 
     };
 
-    const formatDate= (date) => {
+    // const formatDate= (date) => {
 
-      date = `${date}Z`
-      date = new Date(date);
-      return date;
+    //   date = `${date}Z`
+    //   date = new Date(date);
+    //   return date;
 
 
-    };
+    // };
 
     const onCheckIn = () => {
       
@@ -206,6 +194,7 @@ const styles = StyleSheet.create({
   text: {
     color: 'black',
     fontSize: 20,
+    
   },
   button: {
     width: 100,
