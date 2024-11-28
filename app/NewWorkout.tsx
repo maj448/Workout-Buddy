@@ -7,9 +7,6 @@ import { format, parseISO, startOfSecond} from 'date-fns';
 import { useNavigation } from '@react-navigation/native';
 import InternalWorkoutBuddiesList from './components/InternalWorkoutBuddiesList';
 import { userBuddies } from './api/buddies';
-import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
-
-
 
 const NewWorkoutScreen = ({route}) => {
   const { session } = useAuth();
@@ -28,6 +25,8 @@ const NewWorkoutScreen = ({route}) => {
   const [openEnd, setOpenEnd] = useState(false)
   const [loading, setLoading] = useState(false)
   const [inviteBuddyList, setInviteBuddyList] = useState('')
+  const [textHeight,setTextHeight] = useState(40);
+  const [noteHeight,setNoteHeight] = useState(40);
 
   const {data: buddies, isLoading : isLoadingBuddies} = userBuddies(session?.user.id);
 
@@ -42,13 +41,6 @@ const NewWorkoutScreen = ({route}) => {
 
   };
 
-  // const onChangeDate = (event, selectedDate) => {
-  //   const currentDate = selectedDate || inputDate;
-  //   setInputDate(currentDate);
-  //   setInputStartTime(new Date(currentDate.setHours(inputStartTime.getHours(), inputStartTime.getMinutes())));
-  //   setInputEndTime(new Date(currentDate.setHours(inputEndTime.getHours(), inputEndTime.getMinutes())));
-  //   setOpen(false)
-  // };
   const onChangeDate = (event, selectedDate) => {
     const currentDate = selectedDate || inputDate; // default to inputDate if selectedDate is null
     const date = new Date(currentDate); // Create a new date object to avoid modifying the original
@@ -61,14 +53,6 @@ const NewWorkoutScreen = ({route}) => {
     setOpen(false);
   };
 
-  // const onChangeStart = (event, selectedStart) => {
-  //   console.log('id',inputDate)
-  //   const start = new Date(inputDate.setHours(selectedStart.getHours(), selectedStart.getMinutes())) || inputStartTime;
-  //   setInputStartTime(start);
-  //   setOpenStart(false)
-  //   console.log('s',start)
-    
-  // };
   const onChangeStart = (event, selectedStart) => {
     // Ensure selectedStart is not null, fallback to the previous value if it's null
     const start = new Date(inputDate); // Copy the current inputDate
@@ -80,14 +64,6 @@ const NewWorkoutScreen = ({route}) => {
   };
   
 
-  // const onChangeEnd = (event, selectedEnd) => {
-  //   console.log('id',inputDate)
-  //   const end = new Date(inputDate.setHours(selectedEnd.getHours(), selectedEnd.getMinutes())) || inputEndTime;
-  //   setInputEndTime(end);
-  //   setOpenEnd(false)
-  //   console.log('e',end)
-  // };
-  
   const onChangeEnd = (event, selectedEnd) => {
     // Ensure selectedEnd is not null, fallback to the previous value if it's null
     const end = new Date(inputDate); // Copy the current inputDate
@@ -144,19 +120,33 @@ const NewWorkoutScreen = ({route}) => {
       
   };
 
+  // const handleContentSizeChange = (contentWidth, contentHeight) => {
+  //   // console.log(contentHeight)
+  //   // if(contentHeight){
+  //     console.log(inputTitle)
+  //     console.log(contentHeight)
+  //     const newHeight = inputTitle === '' ||  contentHeight < 40? 40 : Math.min(contentHeight, 200); 
+  //     setTextHeight(newHeight);
+  //   // }else{
+  //   //   setTextHeight(40)
+  //   // }
+  // };
 
+ //console.log(textHeight)
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
     <KeyboardAvoidingView style={styles.container}>
 
         <View style={styles.inputArea}>
           <Text style={styles.label}>Title:</Text>
-          <AutoGrowingTextInput
-              style={styles.inputBox}
+          <TextInput
+              style={[styles.inputBox, {height:textHeight, maxHeight:200}]}
               placeholder={'(Required) Add a title ex. Walk'}
               keyboardType="default"
               value={inputTitle}
               onChangeText={setInputTitle}
+              multiline
+              onContentSizeChange={e => setTextHeight(e.nativeEvent.contentSize.height)}
           />
         </View>
         <View style={styles.inputArea}>
@@ -215,13 +205,13 @@ const NewWorkoutScreen = ({route}) => {
 
         <View style={styles.inputArea}>
         <Text style={styles.label}>Notes:</Text>
-        <AutoGrowingTextInput 
-        style={styles.inputBox} 
+        <TextInput 
+        style={[styles.inputBox, {height:noteHeight}]} 
         placeholder={'(Optional) Add Notes'}
         keyboardType="default"
         value={inputNotes}
-        multiline = {true}
-        numberOfLines={10}
+        multiline
+        onContentSizeChange={e => setNoteHeight(e.nativeEvent.contentSize.height)}
         onChangeText={setInputNotes}
          />
 
@@ -307,6 +297,7 @@ inputBoxBig: {
 },
 inputBox: {
   //width: 200,
+  minHeight: 40, 
   height: 40,
   borderColor: 'lightgray',
   backgroundColor: 'white',

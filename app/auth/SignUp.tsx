@@ -132,7 +132,7 @@ export default function SignUp() {
                 <Text style={styles.label}>Email:</Text>
                 <TextInput
                 style={styles.inputBox}
-                keyboardType="default"
+                keyboardType="email-address"
                 value={inputEmail}
                 placeholder="abc123@email.com"
                 onChangeText={setInputEmail}/>

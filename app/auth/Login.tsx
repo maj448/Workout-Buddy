@@ -53,7 +53,7 @@ export default function Login() {
                 <Text style={styles.label}>Email:</Text>
                 <TextInput
                 style={styles.inputBox}
-                keyboardType="default"
+                keyboardType="email-address"
                 value={inputEmail}
                 onChangeText={setInputEmail}/>
 
