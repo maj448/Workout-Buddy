@@ -9,6 +9,7 @@ import { allWorkoutInvitations, allWorkoutParticipants, participantWorkoutInfo, 
 import { useAuth } from './providers/AuthProvider';
 import { userBuddies } from './api/buddies';
 import { supabase } from './utils/supabase';
+import moment from 'moment';
 
 
 
@@ -28,7 +29,9 @@ const WorkoutDetailsScreen = ({route}) => {
     const [completed, setCompleted] = useState(false)
     const navigation = useNavigation()
     const [inviteBuddyList, setInviteBuddyList] = useState([])
-    let TEN_MINUTES = Date.now() + 600000;
+    const [timeNow, setTimeNow] = useState(new Date());
+    const timePlus10Minutes = new Date(workout.start_time);
+    timePlus10Minutes.setMinutes(timePlus10Minutes.getMinutes() - 10);
 
     const { data: participationInfo, isLoading: isParticipationLoading, error: participationError } = participantWorkoutInfo(session?.user.id, workout.id);
     //const { data: BuddiesInfo, isLoading: isBuddiesLoading, error: BuddiesError } = workoutBuddies(session?.user.id, workout.id);
@@ -41,7 +44,6 @@ const WorkoutDetailsScreen = ({route}) => {
 
 
     useEffect(() => {
-      
       const channels = supabase.channel('custom-all-channel')
       .on(
         'postgres_changes',
@@ -71,6 +73,15 @@ const WorkoutDetailsScreen = ({route}) => {
       date = `${date}Z`
       date = new Date(date);
       return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: true});
+
+
+    };
+
+    const formatDate= (date) => {
+
+      date = `${date}Z`
+      date = new Date(date);
+      return date;
 
 
     };
@@ -118,6 +129,7 @@ const WorkoutDetailsScreen = ({route}) => {
 
   }, [participantState, participationInfo ]);
 
+
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
     {/* <View style={styles.container}> */}
@@ -149,7 +161,7 @@ const WorkoutDetailsScreen = ({route}) => {
         participantState={participantState}/>
 
       <View style={styles.buttonContainer}>
-      {!completed && participantState != 'in workout' && workout.workout_status != 'past' && Date.parse(workout.start_time ) <= TEN_MINUTES &&
+      {!completed && participantState != 'in workout' && workout.workout_status != 'past' && timeNow <= timePlus10Minutes &&
         
           <Pressable onPress= {onCheckIn} style={styles.button}>
               <Text>{ canStart ? 'Leave' : 'Check In'}</Text>
