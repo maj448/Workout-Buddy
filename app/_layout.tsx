@@ -104,7 +104,7 @@ export default function RootLayout() {
             <Stack.Screen 
                 name="In Workout" 
                 component={InWorkout} 
-                options={{ headerShown: false }} 
+                //options={{ headerShown: false }} 
             />
             <Stack.Screen name="Sign Up" component={SignUp} />
             <Stack.Screen name="New Workout" component={NewWorkoutScreen} />
