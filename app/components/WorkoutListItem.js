@@ -9,6 +9,7 @@ import { useAuth } from '../providers/AuthProvider';
   const workoutStatuses = {
     pending: { backgroundColor: 'blue', },
     past: { backgroundColor: 'gray', },
+    complete: { backgroundColor:  'limegreen' },
     upcoming: { backgroundColor: 'orange', },
   };
 
@@ -35,7 +36,7 @@ export default function WorkoutListItem({ workout }) {
 
     const gotoDetailsScreen = () => {
         if (workout) {
-            navigation.navigate('Workout Details', {workout: workout });
+            navigation.navigate('Workout Details', {workout: workout.workouts });
         } else {
             alert('No workout data available');
         }
@@ -43,7 +44,7 @@ export default function WorkoutListItem({ workout }) {
 
     const onRemove = () => {
         //const data = [{user_id : session.user.id}, {workout_id : workout.id}]
-        removeWorkout({user_id : session.user.id, workout_id : workout.id});
+        removeWorkout({user_id : session.user.id, workout_id : workout.workouts.id});
 
     
       };
@@ -54,17 +55,19 @@ export default function WorkoutListItem({ workout }) {
     ]);
     };
 
-    const backgroundColorOnStatus = workoutStatuses[workout.workout_status]
+    let backgroundColorOnStatus
+    if(workout.status == 'complete')
+        backgroundColorOnStatus = workoutStatuses['complete']
+    else
+        backgroundColorOnStatus = workoutStatuses[workout.workouts.workout_status]
 
     return(
         <Pressable onPress={gotoDetailsScreen} onLongPress={confirmRemove}>
         <View style= {[styles.container, backgroundColorOnStatus]}>
             <Text style= {styles.text}>
-                {workout.title}
+                {workout.workouts.title}
             </Text>
-            {/* <Text style={styles.time}>Start: {displayStartTime}</Text>
-            <Text style={styles.time}>End: {displayEndTime}</Text> */}
-            <Text style={styles.time}>{formatTime(workout.start_time)} to {formatTime(workout.end_time)}</Text>
+            <Text style={styles.time}>{formatTime(workout.workouts.start_time)} to {formatTime(workout.workouts.end_time)}</Text>
         </View>
         </Pressable>
 
@@ -81,6 +84,7 @@ const styles = StyleSheet.create({
     text: {
         color: 'white',
         fontSize: 16,
+        maxWidth: '50%'
     },
     time: {
         fontSize: 14,

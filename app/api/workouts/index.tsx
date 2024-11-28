@@ -6,36 +6,21 @@ import { supabase } from '@/app/utils/supabase';
 export const participantWorkouts = (user_id ) => {
     
   return useQuery({
-    queryKey : ['participants', user_id], 
+    queryKey : ['participants'], 
     queryFn: async () => {
       const { data : participants, error : participantsError } = await supabase
         .from('participants')
-        .select('workout_id')
-        .eq('user_id', user_id); 
+        .select('*, workouts(*)')
+        .eq('user_id', user_id)
+        .order('workouts(workout_status)',{ ascending: false })
+        .order('workouts(start_time)', { ascending: true }); 
 
       if (participantsError) 
         throw new Error(participantsError.message);
 
-      
-
-      if (!participants || participants.length === 0) return [];
-
-      const { data : workouts, error } = await supabase
-          .from('workouts')
-          .select('*')
-          .in('id', participants.map((p) => p.workout_id))
-          .order('workout_status', { ascending: false })
-          .order('workout_date', { ascending: false }); 
-  
-        if (error) throw new Error(error.message);
-
-
-      return workouts;
+      return participants;
     },
-    });
-    
-      
-  
+    }); 
 }
 
 export const invitedWorkouts = (user_id ) => {
@@ -140,6 +125,11 @@ export const useInsertWorkout = () => {
 
   return useMutation({
     async mutationFn(data : any) {
+      // console.log('f',data)
+      // console.log('d',data.inputDate.toISOString())
+      // console.log('s',data.inputStartTime.toISOString())
+      // console.log('e',data.inputEndTime.toISOString())
+
       const { data: workoutData, error: workoutError } = await supabase.from('workouts').insert({
         title: data.inputTitle,
         notes: data.inputNotes,
@@ -169,7 +159,6 @@ export const useInsertWorkout = () => {
       if(data.inviteBuddyList && data.inviteBuddyList.length > 0){
         for (let buddy of data.inviteBuddyList) {
           const { error: inviteError } = await supabase.from('invitations').insert({
-            // from_user_id: data.user_id,
             workout_id: workoutData[0].id,
             user_id: buddy.id,
             invite_status: 'pending', 
@@ -182,9 +171,7 @@ export const useInsertWorkout = () => {
         }
       }
 
-
       return { user_id : data.user_id };
-
 
     }
     },
@@ -227,7 +214,6 @@ export const useInviteToWorkout = () => {
       console.log(error);
     },
   });
-
 };
 
 export const useRemoveWorkout = () => {
@@ -379,11 +365,22 @@ export const updateOldWorkouts = () => {
         .from('workouts')
         .update({ workout_status: 'past' })
         .lt('end_time', currentTime)
-        .neq('workout_status', 'past');
-
-
+        .neq('workout_status', 'past')
+        .select();
+        
       if (error) 
         throw new Error(error.message);
+
+      if (data){
+        const { data: deleteInvitations, error: deleteError } = await supabase
+          .from('invitations')
+          .delete()
+          .in('workout_id', data.map(workout => workout.id));
+
+          if (deleteError) 
+            throw new Error(deleteError.message);
+
+      }
       return 'updated';
     },
     });

@@ -30,3 +30,60 @@ export const useInviteSubscription = (user_id) => {
       }, []);
 
 }
+
+
+export const useParticipantSubscription = ( workout_id) => {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+  
+    const participantSubscription = supabase.channel('custom-filter-channel')
+    .on(
+      'postgres_changes',
+      { event: '*', 
+        schema: 'public', 
+        table: 'participants', 
+        filter: `workout_id=eq.${workout_id}` },
+      (payload) => {
+        console.log('Change received!', payload)
+        queryClient.invalidateQueries(['participants', workout_id])
+      }
+    )
+    .subscribe()
+    
+      return () => {
+        participantSubscription.unsubscribe();
+      }
+       
+    }, []);
+
+}
+
+
+export const useInvitationsSubscription = (workout_id) => {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+  
+    const invitationsSubscription = supabase.channel('custom-filter-channel')
+  .on(
+    'postgres_changes',
+    { event: '*', 
+      schema: 'public', 
+      table: 'invitations', 
+      filter: `workout_id=eq.${workout_id}` },
+    (payload) => {
+      console.log('Change received!', payload)
+      queryClient.invalidateQueries(['invitations', workout_id])
+    }
+  )
+  .subscribe()
+    
+      return () => {
+        invitationsSubscription.unsubscribe();
+      }
+       
+    }, []);
+
+}
+

@@ -150,7 +150,7 @@ export default function SignUp() {
 
             </View>
             <View style={styles.inputArea}>
-                <Text style={styles.label}>Confirm Pwd:</Text>
+                <Text style={styles.label}>Confirm Password:</Text>
                 <TextInput
                 style={styles.inputBox}
                 secureTextEntry
@@ -191,7 +191,8 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 20,
         color: '#3D3D3D',
-        fontFamily: 'fantasy'
+        fontFamily: 'fantasy',
+        maxWidth: '50%'
       },
     inputArea:{
         flexDirection: 'row',

@@ -4,20 +4,19 @@ import { View, Text, TouchableOpacity, ScrollView, Button } from 'react-native';
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 import { format, parseISO} from 'date-fns';
 import WorkoutList from "./components/WorkoutList"
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { useState, useEffect, useCallback } from 'react'
-import { supabase } from './utils/supabase';
-import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
+import {  useNavigation } from '@react-navigation/native';
+import { useState, useEffect} from 'react'
 import { useAuth } from './providers/AuthProvider';
 import { participantWorkouts, invitedWorkouts, updateOldWorkouts} from './api/workouts';
 import { ActivityIndicator } from 'react-native';
-import {  Gesture, GestureDetector, Directions, GestureHandlerRootView } from 'react-native-gesture-handler';
+import {  Gesture, GestureDetector, Directions} from 'react-native-gesture-handler';
 import moment from 'moment'
 import { useInviteSubscription } from './api/subscriptions';
 
 const workoutStatuses = {
   pending: { key: 'pending', color: 'blue' },
   past: { key: 'past', color: 'gray' },
+  complete: { key: 'complete', color: 'limegreen' },
   upcoming: { key: 'upcoming', color: 'orange' },
 };
 
@@ -33,8 +32,9 @@ export default function Index() {
   const [markedDates, setMarkedDates] = useState({});
 
   const {data: updatedOld} = updateOldWorkouts()
-  const { data: workouts, isLoading: isWorkoutsLoading, error: workoutsError} = participantWorkouts(session?.user.id)
+  const { data: workoutsWithParticipation, isLoading: isWorkoutsLoading, error: workoutsError} = participantWorkouts(session?.user.id)
   const { data: invited, isLoading: isInvitedLoading, error: invitedError} = invitedWorkouts(session?.user.id)
+
   
   useInviteSubscription(session?.user.id);
   
@@ -65,19 +65,27 @@ export default function Index() {
 
   useEffect(() => {
     const newMarkedDates = {};
-    if (workouts || workouts == '') {
+
+    if (workoutsWithParticipation || workoutsWithParticipation == '') {
       
-      workouts.forEach((workout) => {
-        const workoutDate = workout.workout_date.split('T')[0];
+      workoutsWithParticipation.forEach((workout) => {
+        let colorValue
+
+        const workoutDate = workout.workouts.workout_date.split('T')[0];
 
         if (!newMarkedDates[workoutDate]) {
           newMarkedDates[workoutDate] = { dots: [] };
         }
 
-        const dotKey = `${workout.id}-${workout.workout_status}`;
+        const dotKey = `${workout.workouts.id}-${workout.workouts.workout_status}`;
+
+        if (workout.status == 'complete')
+          colorValue = workoutStatuses['complete']?.color
+        else
+          colorValue = workoutStatuses[workout.workouts.workout_status]?.color
         newMarkedDates[workoutDate].dots.push({
           key: dotKey, 
-          color: workoutStatuses[workout.workout_status]?.color,
+          color: colorValue,
         });
       });
 
@@ -99,19 +107,21 @@ export default function Index() {
 
 
 
-        const filteredInvites = invited.filter((invite) => {
-          const workoutDate = invite.workout_date.split('T')[0];
+        const fInvites = invited.filter((invite) => {
+          let convertToLocal = format(new Date(invite.workout_date), 'yyyy-MM-dd')
+          const workoutDate = convertToLocal.toLocaleString().split('T')[0];
           return workoutDate === selected;
         });
 
-        setFilteredInvites(filteredInvites);
+        setFilteredInvites(fInvites);
 
       }
 
       setMarkedDates(newMarkedDates);
 
-      const filtered = workouts.filter((workout) => {
-        const workoutDate = workout.workout_date.split('T')[0];
+      const filtered = workoutsWithParticipation.filter((workout) => {
+        let convertToLocal = format(new Date(workout.workouts.workout_date), 'yyyy-MM-dd')
+        const workoutDate = convertToLocal.toLocaleString().split('T')[0];
         return workoutDate === selected;
       });
 
@@ -120,7 +130,7 @@ export default function Index() {
       setFilteredWorkouts(filtered);
     
   }
-}, [workouts, invited, selected, updatedOld]);
+}, [workoutsWithParticipation, invited, selected, updatedOld]);
 
   if ( isWorkoutsLoading || isInvitedLoading) {
     return <ActivityIndicator />;
@@ -148,6 +158,8 @@ export default function Index() {
   };
 
 
+  
+  
   
   const displayDate = format(parseISO(selected), 'MMM dd');
 

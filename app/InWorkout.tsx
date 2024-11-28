@@ -4,12 +4,21 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useIsFocused} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useUpdateParticipantStatus } from './api/workouts';
-import StopwatchContainer from './components/Stopwatch.container'
+import StopwatchContainer from './components/Stopwatch.container';
+import InWorkoutBuddiesList from './components/InWorkoutBuddiesList';
+import { useAuth } from './providers/AuthProvider';
+import { useParticipantSubscription } from './api/subscriptions';
+import { allWorkoutParticipants} from './api/workouts';
+
 
 
 export default function InWorkout({route}) {
-  const navigation = useNavigation()
+  const navigation = useNavigation();
+  const { session } = useAuth();
   const {user_id, workout_id} = route.params;
+  const { data: allParticipants, isLoading: allParticipantsLoading, error: allParticipantsError } = allWorkoutParticipants(workout_id);
+
+  useParticipantSubscription( workout_id )
 
   const {mutate: updateParticipantStatus} = useUpdateParticipantStatus();
   const [start, setStart] = useState(false);
@@ -72,20 +81,28 @@ export default function InWorkout({route}) {
 
   }, [start]);
 
+
+  let buddyparticipants = allParticipants.filter((participant) => {
+    if(session?.user.id != participant.profiles.id && participant.status != 'waiting')
+    return participant});
+
   return (
 
     <SafeAreaView style={styles.container}>
-      <Pressable onPress={returnToDetails}  style={styles.button}>
+      {/* <Pressable onPress={returnToDetails}  style={styles.button}>
         <Text style={styles.buttonText}>Return to Details </Text>
-      </Pressable>
-      <View style={styles.container}>
-
-        <View style={styles.sectionStyle}>
-
+      </Pressable> */}
         <StopwatchContainer 
           hr={hr} 
           min={min} 
           sec={sec} />
+
+        <InWorkoutBuddiesList  allParticipants={buddyparticipants}/>
+
+
+        <View style={styles.sectionStyle}>
+
+        
 
           <Pressable
             style={styles.button}
@@ -101,7 +118,7 @@ export default function InWorkout({route}) {
           </Pressable>
         </View>
         
-      </View>
+
     </SafeAreaView>
   );
 };
@@ -109,9 +126,6 @@ export default function InWorkout({route}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   title: {
     textAlign: 'center',
@@ -121,9 +135,13 @@ const styles = StyleSheet.create({
   },
   sectionStyle: {
     flex: 1,
-    marginTop: 32,
+    //marginTop: 32,
+    backgroundColor: 'darkgray',
+    // borderColor: 'black',
+    // borderWidth: 2,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-evenly',
+    flexDirection: 'row'
   },
 
   button: {
@@ -134,7 +152,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'lightgray',
     alignItems: 'center',
     justifyContent: 'center',
-    margin: 10,
+   // margin: 10,
     borderRadius: 10,
 
   },
@@ -143,26 +161,12 @@ const styles = StyleSheet.create({
     color: '#3D3D3D',
     fontFamily: 'fantasy'
   },
-  buttonContainer : {
-    flex:2, 
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-  },
+  // buttonContainer : {
+  //   //flex:2, 
+  //   alignItems: 'center',
+  //   justifyContent: 'flex-start',
+  // },
 });
 
-const options = {
-  container: {
-    backgroundColor: 'black',
-    padding: 5,
-    borderRadius: 5,
-    //flex: 1,
-    alignItems: 'center',
-  },
-  text: {
-    fontSize: 25,
-    color: '#FFF',
-    marginLeft: 7,
-  },
-};
 
 

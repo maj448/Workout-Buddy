@@ -1,60 +1,79 @@
-import { View, Text, FlatList, TextInput, Button, Pressable, StyleSheet } from "react-native"
+import { View, Text, Pressable, StyleSheet } from "react-native"
 import InternalWorkoutBuddyListItem from "./InternalWorkoutBuddyListItem";
 import React, {useEffect, useState} from 'react';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import { MultiSelect } from 'react-native-element-dropdown';
 import { useInviteToWorkout } from "../api/workouts";
 
 
 
-export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyToInvites, allParticipants, allInvitations, workout_id}){
+export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyToInvites, allParticipants, allInvitations, workout, participantState}){
 
 
-  const [value, setValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
-  const [inviteBuddyList, setInviteBuddyList] = useState([])
   const [dropdownData, setDropdownData] = useState([])
   const [selected, setSelected] = useState([])
+  let TEN_MINUTES = Date.now() + 600000;
+  const [workoutStatus, setWorkoutStatus] = useState('new')
 
 
   const {mutate: inviteToWorkout} = useInviteToWorkout();
 
+  useEffect(() => {
+    if(workout)
+      setWorkoutStatus(workout.workout_status)
 
-    
-
-    useEffect(() => {
-
-      if(buddies){
+    if(buddies){
       const newDropdownData = buddies.map(buddy => ({
         label: buddy.username, 
         value: buddy        
       }));
 
-
       setDropdownData(newDropdownData)
     }
 
-      if (selected.length > 0) {
-        OnAddBuddyToInvites(selected)
-      }
-    }, [selected, buddies]);
+    if (selected.length > 0) {
+      OnAddBuddyToInvites(selected)
+    }
+  }, [selected, buddies]);
 
+  const checkNewInvites = () => {
 
+    const alreadyInWorkout = [
+      ...allParticipants.map(item => item.profiles.id),
+      ...allInvitations.map(item => item.profiles.id)
+    ];
+  
+    return selected.filter(item => !alreadyInWorkout.includes(item.id));
+      
+  }
   const selectBoxFlex = forNew ? {flex : 1 } : {flex : 6};
 
   const sendInvites = () => {
-
-      inviteToWorkout({selected, workout_id})
+      let workout_id = workout.id
+      let newInvites = checkNewInvites();
+      // console.log('s',selected)
+      // console.log('ni',newInvites)
+      inviteToWorkout({selected : newInvites, workout_id})
       setSelected([])
   }
 
-  const navigation = useNavigation();
+
 
     return(
     <View style={{backgroundColor: '#6EEB92', padding: 10, gap: 10}}>
-      <Text style={{color: 'white', fontWeight: 'bold', fontSize: 24, }}>Buddies</Text>
+
+      { participantState != 'complete' && 
+      <Text style={{color: 'white', fontWeight: 'bold', fontSize: 24, }}>Buddies:</Text>
+      }
+
+      { participantState == 'complete' &&
+      <Text style={{color: 'white', fontWeight: 'bold', fontSize: 24, }}>Completed with Buddies:</Text>
+      }
+
+      { participantState != 'complete' && workoutStatus != 'past' &&
       <View style ={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 10}}>
+
         <View style={[selectBoxFlex]}>
         <MultiSelect
           style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
@@ -87,6 +106,8 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
           </Pressable>}
       </View>
 
+       
+      }
       <View style={styles.listGap}>
 
 

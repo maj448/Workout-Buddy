@@ -1,6 +1,6 @@
 
 import {SafeAreaView} from 'react-native-safe-area-context';
-import { View, Text, TextInput, StyleSheet, Pressable } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Pressable, Alert} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { supabase } from './utils/supabase';
 import { useQuery } from '@tanstack/react-query';
@@ -25,9 +25,20 @@ export default function Buddy() {
     const navigation = useNavigation();
     const onAddBuddy = () => {
         //call function to add buddy
-        insertBuddy({user_id : user_id, username : inputUsername})
+        insertBuddy({user_id : user_id, username : inputUsername},
+          {
+            onSuccess: () => {
+              //resetFields();
+              navigation.goBack();
+            },
+            onError: (error) => {
+              //Alert.alert('Error', error.message );
+              Alert.alert('Error', 'Cannot find user with that username.' );
+              //setLoading(false);
+            },
+      })
         
-        navigation.goBack();
+       
       };
 
     return (
@@ -41,16 +52,17 @@ export default function Buddy() {
               value={inputUsername}
               onChangeText={setInputUsername}
           />
-        </View>
-        <View style={{flex:6}}>
-
-        </View>
-
-        <View style={styles.buttonContainer}>
+          <View style={styles.buttonContainer}>
             <Pressable onPress={onAddBuddy}  style={styles.button}>
                 <Text style={styles.buttonText}>Add </Text>
             </Pressable>
+          </View>
         </View>
+        {/* <KeyboardAvoidingView style={{flex:6}}>
+
+        </KeyboardAvoidingView> */}
+
+        
       </View>
     );
   }
@@ -61,7 +73,8 @@ export default function Buddy() {
     fontSize: 20,
     color: '#3D3D3D',
     fontFamily: 'fantasy',
-    flex: 2,
+    //flex: 1,
+    margin: 10,
   
   },
 inputArea:{
@@ -69,18 +82,19 @@ inputArea:{
     justifyContent: 'flex-start',
     alignItems: 'center',
     //gap: 10,
-    flex: 2
+    //flex: 2
 
 },
 inputBox: {
-  height: 40,
+  height: 50,
   borderColor: 'lightgray',
   backgroundColor: 'white',
   borderWidth: 2,
   justifyContent: 'flex-start',
   alignItems: 'flex-start',
   padding: 10,
-  flex: 1,
+  //flex: 1,
+  width: '90%'
 },
 button: {
     width: 200,
@@ -102,11 +116,14 @@ button: {
   buttonContainer : { 
     alignItems: 'center',
     justifyContent: 'flex-start',
+    padding: 10
+    //flex: 1
   },
   container: {
     flex: 1,
     padding: 10,
-    backgroundColor: '#A4F39C', 
+    backgroundColor: '#6EEB92'
+    //backgroundColor: '#A4F39C', 
     //justifyContent: 'center',
     //alignItems: 'center',
   },

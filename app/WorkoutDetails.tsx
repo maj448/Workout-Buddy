@@ -1,14 +1,14 @@
 import { View, Text, StyleSheet, Button, Alert, Pressable } from 'react-native';
-import { format, formatDate, parseISO} from 'date-fns';
 import { useNavigation } from '@react-navigation/native';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import InternalWorkoutBuddiesList from './components/InternalWorkoutBuddiesList'
 import { ScrollView } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import { allWorkoutInvitations, allWorkoutParticipants, participantWorkoutInfo, useUpdateParticipantStatus } from './api/workouts';
 import { useAuth } from './providers/AuthProvider';
 import { userBuddies } from './api/buddies';
-import { supabase } from './utils/supabase';
+import { useParticipantSubscription, useInvitationsSubscription } from './api/subscriptions';
+
+
 
 
 
@@ -22,13 +22,17 @@ const WorkoutDetailsScreen = ({route}) => {
       return null;  
     }
 
+    useParticipantSubscription( workout.id )
+    useInvitationsSubscription( workout.id )
     const displayDate = workout.workout_date.split('T')[0]
-    const [newWorkout, setNewWorkout] = useState('')
     const [participantState, setParticipantState] = useState('waiting')
     const [canStart, setCanStart] = useState(false)
     const [completed, setCompleted] = useState(false)
     const navigation = useNavigation()
     const [inviteBuddyList, setInviteBuddyList] = useState([])
+    const [timeNow, setTimeNow] = useState(new Date());
+    const timePlus10Minutes = new Date(workout.start_time);
+    timePlus10Minutes.setMinutes(timePlus10Minutes.getMinutes() - 10);
 
     const { data: participationInfo, isLoading: isParticipationLoading, error: participationError } = participantWorkoutInfo(session?.user.id, workout.id);
     //const { data: BuddiesInfo, isLoading: isBuddiesLoading, error: BuddiesError } = workoutBuddies(session?.user.id, workout.id);
@@ -39,27 +43,13 @@ const WorkoutDetailsScreen = ({route}) => {
 
     const {data: UserBuddies, isLoading : isLoadingUserBuddies} = userBuddies(session?.user.id);
 
-
-    useEffect(() => {
-      
-      const channels = supabase.channel('custom-all-channel')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'participants' },
-        (payload) => {
-          // console.log('Change received!', payload)
-        }
-      )
-      .subscribe()
-
-  }, []);
     const {mutate: updateParticipantStatus} = useUpdateParticipantStatus();
 
     const onStart = () => {
       updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'in workout'},
         {
           onSuccess: () => {
-            navigation.navigate('In Workout', {user_id : session?.user.id, workout_id : workout.id });
+            navigation.navigate('In Workout', {user_id : session?.user.id, workout_id : workout.id});
           },
         }
       )
@@ -74,10 +64,16 @@ const WorkoutDetailsScreen = ({route}) => {
 
 
     };
-    //console.log(workout.end_time)
-    //console.log(displayEndTime)
 
-    //console.log('og state', participantState)
+    // const formatDate= (date) => {
+
+    //   date = `${date}Z`
+    //   date = new Date(date);
+    //   return date;
+
+
+    // };
+
     const onCheckIn = () => {
       
       if(participantState == 'checked in')
@@ -121,6 +117,7 @@ const WorkoutDetailsScreen = ({route}) => {
 
   }, [participantState, participationInfo ]);
 
+
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
     {/* <View style={styles.container}> */}
@@ -142,10 +139,17 @@ const WorkoutDetailsScreen = ({route}) => {
 
       </View>
 
-      <InternalWorkoutBuddiesList buddies={UserBuddies} forNew={false} OnAddBuddyToInvites={handleBuddyInviteList} allParticipants={allParticipants} allInvitations={allInvitations} workout_id= {workout.id}/>
+      <InternalWorkoutBuddiesList 
+        buddies={UserBuddies} 
+        forNew={false} 
+        OnAddBuddyToInvites={handleBuddyInviteList} 
+        allParticipants={allParticipants} 
+        allInvitations={allInvitations} 
+        workout= {workout} 
+        participantState={participantState}/>
 
       <View style={styles.buttonContainer}>
-      {!completed && participantState != 'in workout' &&
+      {!completed && participantState != 'in workout' && workout.workout_status != 'past' && timeNow <= timePlus10Minutes &&
         
           <Pressable onPress= {onCheckIn} style={styles.button}>
               <Text>{ canStart ? 'Leave' : 'Check In'}</Text>
@@ -155,14 +159,14 @@ const WorkoutDetailsScreen = ({route}) => {
 
       }
         
-        { canStart && !completed &&
+        { canStart && !completed && 
 
             <Pressable onPress={onStart}  style={styles.button}>
                 <Text style={styles.buttonText}>{participantState == 'in workout' ? 'Resume' : 'Start!'} </Text>
             </Pressable>
         }
         </View>
-      {/* </View> */}
+
       </ScrollView>
   );
 };
@@ -190,6 +194,7 @@ const styles = StyleSheet.create({
   text: {
     color: 'black',
     fontSize: 20,
+    
   },
   button: {
     width: 100,

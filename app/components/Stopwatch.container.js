@@ -21,9 +21,14 @@ const styles = StyleSheet.create({
 	stopwatchContainer: {
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'black',
+        flex: 3,
+        width: '100%',
+
       },
       timeText: {
         fontSize: 50,
-        color: '#C89933',
+        color: 'white',
       },
 });

@@ -10,6 +10,8 @@ import { format} from 'date-fns';
 
 export default function WorkoutList({workouts, invitedWorkouts, displayDate, selected}){
 
+
+
   const navigation = useNavigation();
   const today = format(new Date(), 'yyyy-MM-dd');
 
@@ -21,6 +23,7 @@ export default function WorkoutList({workouts, invitedWorkouts, displayDate, sel
     };
 
     const showInvitedWorkouts = () => {
+
       return (
         <FlatList
           data={invitedWorkouts}
@@ -39,7 +42,7 @@ export default function WorkoutList({workouts, invitedWorkouts, displayDate, sel
         <Text style={{color: 'white', fontWeight: 'bold', fontSize: 24}}>{displayDate}</Text>
         { today <= selected &&
         <Pressable onPress={createWorkout}>
-          <Ionicons name="add-circle-outline" size={24} color="white" />
+          <Ionicons name="add-circle-outline" size={35} color="white" />
         </Pressable>
         }
       </View>
