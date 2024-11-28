@@ -9,6 +9,7 @@ import InWorkoutBuddiesList from './components/InWorkoutBuddiesList';
 import { useAuth } from './providers/AuthProvider';
 import { useParticipantSubscription } from './api/subscriptions';
 import { allWorkoutParticipants} from './api/workouts';
+import { useStopWatch } from './components/StopWatch';
 
 
 
@@ -21,45 +22,64 @@ export default function InWorkout({route}) {
   useParticipantSubscription( workout_id )
 
   const {mutate: updateParticipantStatus} = useUpdateParticipantStatus();
-  const [start, setStart] = useState(false);
-  const [hr, setHr] = useState(0);
-  const [min, setMin] = useState(0);
-  const [sec, setSec] = useState(0);
-  let interval;
+  //const [start, setStart] = useState(false);
+  // const [hr, setHr] = useState(0);
+  // const [min, setMin] = useState(0);
+  // const [sec, setSec] = useState(0);
+  // let interval;
+
+  const {
+    // actions
+    start,
+    stop,
+    end,
+    // data
+    isRunning,
+    time,
+    dataLoaded,
+
+  } = useStopWatch()
+
+  if (!dataLoaded) {
+    return null
+  }
 
   const handleToggle = () => {
-    setStart((prevStart) => !prevStart);
+    isRunning ? stop() : start();
+    //setStart((prevStart) => !prevStart);
   };
 
-  const handleStart = () => {
-    if (start) {
-      interval = setInterval(() => {
-        setSec((prevSec) => {
-          if (prevSec !== 59) {
-            return prevSec + 1;
-          } else if (min !== 59) {
-            setMin(min + 1);
-            return 0;
-          } else {
-            setHr(hr + 1);
-            return 0;
-          }
-        });
-      }, 1000);
-    } else {
-      clearInterval(interval);
-    }
-  };
+  // const handleStart = () => {
+  //   if (start) {
+  //     interval = setInterval(() => {
+  //       setSec((prevSec) => {
+  //         if (prevSec !== 59) {
+  //           return prevSec + 1;
+  //         } else if (min !== 59) {
+  //           setMin(min + 1);
+  //           return 0;
+  //         } else {
+  //           setHr(hr + 1);
+  //           return 0;
+  //         }
+  //       });
+  //     }, 1000);
+  //   } else {
+  //     clearInterval(interval);
+  //   }
+  // };
 
-  const formatTime = (hr, min, sec) => {
-    return `${padToTwo(hr)}:${padToTwo(min)}:${padToTwo(sec)}`;
-  };
+  // const formatTime = () => {
+  //   // return `${padToTwo(hr)}:${padToTwo(min)}:${padToTwo(sec)}`;
+  //   return time;
+  // };
 
-  const padToTwo = (number) => (number <= 9 ? `0${number}` : number);
+  // const padToTwo = (number) => (number <= 9 ? `0${number}` : number);
 
   const onEnd = () => {
-    const formattedDuration = formatTime(hr, min, sec); 
-    updateParticipantStatus({user_id : user_id, workout_id : workout_id, status : 'complete', duration : formattedDuration , activity : 'N/A'},
+    end()
+    // const formattedDuration = formatTime(); 
+    updateParticipantStatus({user_id : user_id, workout_id : workout_id, status : 'complete', duration : time , activity : 'N/A'},
       {
         onSuccess: () => {
           navigation.goBack();
@@ -69,17 +89,17 @@ export default function InWorkout({route}) {
     
   }
 
-  const returnToDetails = () => {
-    navigation.goBack()
-  }
+  // const returnToDetails = () => {
+  //   navigation.goBack()
+  // }
 
 
-  useEffect(() => {
-    handleStart();
-    return () => clearInterval(interval);
+  // useEffect(() => {
+  //   handleStart();
+  //   return () => clearInterval(interval);
 
 
-  }, [start]);
+  // }, [start]);
 
 
   let buddyparticipants = allParticipants.filter((participant) => {
@@ -93,22 +113,22 @@ export default function InWorkout({route}) {
         <Text style={styles.buttonText}>Return to Details </Text>
       </Pressable> */}
         <StopwatchContainer 
-          hr={hr} 
-          min={min} 
-          sec={sec} />
+          // hr={hr} 
+          // min={min} 
+          // sec={sec} 
+          time={time}/>
 
         <InWorkoutBuddiesList  allParticipants={buddyparticipants}/>
 
 
         <View style={styles.sectionStyle}>
 
-        
 
           <Pressable
             style={styles.button}
             onPress={handleToggle}>
             <Text style={styles.buttonText}>
-              {!start ? 'Start' : 'Pause'}
+              {!isRunning ? 'Start' : 'Pause'}
             </Text>
           </Pressable>
           <Pressable
