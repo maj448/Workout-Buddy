@@ -2,8 +2,7 @@ package com.maj448.Workout_Buddy
 
 
 import android.app.Application
-import com.nozbe.watermelondb.jsi.WatermelonDBJSIPackage;
-import com.facebook.react.bridge.JSIModulePackage;        
+      
 
 import android.content.res.Configuration
 
@@ -43,9 +42,6 @@ class MainApplication : Application(), ReactApplication {
           override val isNewArchEnabled: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
           
         override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
-        override fun getJSIModulePackage(): JSIModulePackage {
-        return WatermelonDBJSIPackage()
-        }
       }
   )
 

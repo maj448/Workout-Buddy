@@ -50,23 +50,6 @@
           }
         }
       ],
-      "expo-build-properties",
-      [
-        "@morrowdigital/watermelondb-expo-plugin"
-      ],
-      [
-        "expo-build-properties",
-        {
-          "android": {
-            "kotlinVersion": "1.6.10",
-            "packagingOptions": {
-              "pickFirst": [
-                "**/libc++_shared.so"
-              ]
-            }
-          }
-        }
-      ],
       "expo-secure-store"
     ],
     "experiments": {
