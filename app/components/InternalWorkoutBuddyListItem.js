@@ -1,4 +1,5 @@
-import {View, Text, StyleSheet} from 'react-native'
+import {View, Text, StyleSheet} from 'react-native';
+import RemoteImage from './RemoteImage';
 
 
 export default function InternalWorkoutBuddyListItem({ buddie, forNew}) {
@@ -10,6 +11,13 @@ export default function InternalWorkoutBuddyListItem({ buddie, forNew}) {
     return(
 
         <View style= {styles.container}>
+            <RemoteImage
+                path={buddie.profiles.avatar_url}
+                fallback='https://img.icons8.com/nolan/64/user-default.png'
+                style={styles.image}
+                resizeMode="contain"
+            />
+
             <Text style= {styles.text}>
                {buddie.profiles.username}
             </Text>
@@ -26,15 +34,27 @@ const styles = StyleSheet.create({
         padding: 15,
         borderRadius: 5,
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        //justifyContent: 'space-between',
         backgroundColor: 'lightblue',
+        alignItems: 'center'
     },
     text: {
         color: 'white',
         fontSize: 16,
+        textAlign: 'center',
+        padding: 10
     },
     time: {
         fontSize: 14,
         color: 'white',
       },
+    image: {
+        width: '15%',
+        aspectRatio: 1,
+        alignSelf: 'center',
+        borderRadius: 100,
+        borderColor: 'black',
+        borderWidth: 2,
+        //margin: 10
+    },
 })

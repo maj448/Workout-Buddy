@@ -365,11 +365,23 @@ export const updateOldWorkouts = () => {
         .from('workouts')
         .update({ workout_status: 'past' })
         .lt('end_time', currentTime)
-        .neq('workout_status', 'past');
+        .neq('workout_status', 'past')
+        .select();
 
-
+      console.log(data)
       if (error) 
         throw new Error(error.message);
+
+      if (data){
+        const { data: deleteInvitations, error: deleteError } = await supabase
+          .from('invitations')
+          .delete()
+          .in('workout_id', data.map(workout => workout.id));
+
+          if (deleteError) 
+            throw new Error(deleteError.message);
+
+      }
       return 'updated';
     },
     });
