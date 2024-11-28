@@ -49,7 +49,7 @@ const WorkoutDetailsScreen = ({route}) => {
       updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'in workout'},
         {
           onSuccess: () => {
-            navigation.navigate('In Workout', {user_id : session?.user.id, workout_id : workout.id });
+            navigation.navigate('In Workout', {user_id : session?.user.id, workout_id : workout.id});
           },
         }
       )

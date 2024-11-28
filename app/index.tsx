@@ -35,7 +35,6 @@ export default function Index() {
   const { data: workoutsWithParticipation, isLoading: isWorkoutsLoading, error: workoutsError} = participantWorkouts(session?.user.id)
   const { data: invited, isLoading: isInvitedLoading, error: invitedError} = invitedWorkouts(session?.user.id)
 
-
   
   useInviteSubscription(session?.user.id);
   
@@ -66,6 +65,7 @@ export default function Index() {
 
   useEffect(() => {
     const newMarkedDates = {};
+
     if (workoutsWithParticipation || workoutsWithParticipation == '') {
       
       workoutsWithParticipation.forEach((workout) => {
@@ -107,22 +107,21 @@ export default function Index() {
 
 
 
-        const filteredInvites = invited.filter((invite) => {
-          let convertToLocal = new Date(invite.workout_date)
-          const workoutDate = convertToLocal.toLocaleDateString().split('T')[0];
+        const fInvites = invited.filter((invite) => {
+          let convertToLocal = format(new Date(invite.workout_date), 'yyyy-MM-dd')
+          const workoutDate = convertToLocal.toLocaleString().split('T')[0];
           return workoutDate === selected;
         });
 
-        setFilteredInvites(filteredInvites);
+        setFilteredInvites(fInvites);
 
       }
 
       setMarkedDates(newMarkedDates);
 
       const filtered = workoutsWithParticipation.filter((workout) => {
-        let convertToLocal = new Date(workout.workouts.workout_date)
-    
-        const workoutDate = convertToLocal.toLocaleDateString().split('T')[0];
+        let convertToLocal = format(new Date(workout.workouts.workout_date), 'yyyy-MM-dd')
+        const workoutDate = convertToLocal.toLocaleString().split('T')[0];
         return workoutDate === selected;
       });
 
@@ -159,6 +158,8 @@ export default function Index() {
   };
 
 
+  
+  
   
   const displayDate = format(parseISO(selected), 'MMM dd');
 

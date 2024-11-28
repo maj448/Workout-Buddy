@@ -23,9 +23,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: 'black',
-        flex: 2,
+        flex: 3,
         width: '100%',
-        borderRadius: 2
+
       },
       timeText: {
         fontSize: 50,

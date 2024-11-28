@@ -4,12 +4,21 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useIsFocused} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useUpdateParticipantStatus } from './api/workouts';
-import StopwatchContainer from './components/Stopwatch.container'
+import StopwatchContainer from './components/Stopwatch.container';
+import InWorkoutBuddiesList from './components/InWorkoutBuddiesList';
+import { useAuth } from './providers/AuthProvider';
+import { useParticipantSubscription } from './api/subscriptions';
+import { allWorkoutParticipants} from './api/workouts';
+
 
 
 export default function InWorkout({route}) {
-  const navigation = useNavigation()
+  const navigation = useNavigation();
+  const { session } = useAuth();
   const {user_id, workout_id} = route.params;
+  const { data: allParticipants, isLoading: allParticipantsLoading, error: allParticipantsError } = allWorkoutParticipants(workout_id);
+
+  useParticipantSubscription( workout_id )
 
   const {mutate: updateParticipantStatus} = useUpdateParticipantStatus();
   const [start, setStart] = useState(false);
@@ -72,6 +81,11 @@ export default function InWorkout({route}) {
 
   }, [start]);
 
+
+  let buddyparticipants = allParticipants.filter((participant) => {
+    if(session?.user.id != participant.profiles.id && participant.status != 'waiting')
+    return participant});
+
   return (
 
     <SafeAreaView style={styles.container}>
@@ -83,9 +97,8 @@ export default function InWorkout({route}) {
           min={min} 
           sec={sec} />
 
-        <View style={{flex : 2}}>
+        <InWorkoutBuddiesList  allParticipants={buddyparticipants}/>
 
-        </View>
 
         <View style={styles.sectionStyle}>
 
@@ -113,9 +126,6 @@ export default function InWorkout({route}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    //padding: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   title: {
     textAlign: 'center',
@@ -126,9 +136,11 @@ const styles = StyleSheet.create({
   sectionStyle: {
     flex: 1,
     //marginTop: 32,
+    backgroundColor: 'darkgray',
+    // borderColor: 'black',
+    // borderWidth: 2,
     alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 60,
+    justifyContent: 'space-evenly',
     flexDirection: 'row'
   },
 

@@ -10,6 +10,8 @@ import { format} from 'date-fns';
 
 export default function WorkoutList({workouts, invitedWorkouts, displayDate, selected}){
 
+
+
   const navigation = useNavigation();
   const today = format(new Date(), 'yyyy-MM-dd');
 
@@ -21,6 +23,7 @@ export default function WorkoutList({workouts, invitedWorkouts, displayDate, sel
     };
 
     const showInvitedWorkouts = () => {
+
       return (
         <FlatList
           data={invitedWorkouts}
