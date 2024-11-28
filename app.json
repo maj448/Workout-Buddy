@@ -50,27 +50,18 @@
           }
         }
       ],
-      "expo-build-properties",
-      [
-        "@morrowdigital/watermelondb-expo-plugin"
-      ],
-      [
-        "expo-build-properties",
-        {
-          "android": {
-            "kotlinVersion": "1.6.10",
-            "packagingOptions": {
-              "pickFirst": [
-                "**/libc++_shared.so"
-              ]
-            }
-          }
-        }
-      ],
       "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "8cc5c92f-1e01-4dfa-b4ac-ed18867ad8dd"
+      }
     }
   }
 }
