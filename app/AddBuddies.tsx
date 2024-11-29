@@ -1,16 +1,13 @@
 
-import {SafeAreaView} from 'react-native-safe-area-context';
-import { View, Text, TextInput, StyleSheet, Pressable, Alert} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { supabase } from './utils/supabase';
-import { useQuery } from '@tanstack/react-query';
-import { useAuth } from './providers/AuthProvider';
-import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
 
+import { View, Text, TextInput, StyleSheet, Pressable, Alert, TouchableOpacity} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+
+import { useAuth } from './providers/AuthProvider';
 
 import {useState, useEffect} from 'react';
 
-import { ActivityIndicator } from 'react-native';
+
 import { useAddBuddy } from './api/buddies';
 
 
@@ -45,7 +42,7 @@ export default function Buddy() {
       <View style={styles.container}>
         <View style={styles.inputArea}>
           <Text style={styles.label}>Add Buddy with Username:</Text>
-          <AutoGrowingTextInput
+          <TextInput
               style={styles.inputBox}
               placeholder={'(Required) username'}
               keyboardType="default"
@@ -53,9 +50,9 @@ export default function Buddy() {
               onChangeText={setInputUsername}
           />
           <View style={styles.buttonContainer}>
-            <Pressable onPress={onAddBuddy}  style={styles.button}>
+            <TouchableOpacity onPress={onAddBuddy}  style={styles.button}>
                 <Text style={styles.buttonText}>Add </Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
         </View>
         {/* <KeyboardAvoidingView style={{flex:6}}>

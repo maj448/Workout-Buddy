@@ -1,14 +1,13 @@
-import React, { useState, useEffect, useRef} from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation, useIsFocused} from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation} from '@react-navigation/native';
 import { useUpdateParticipantStatus } from './api/workouts';
 import StopwatchContainer from './components/Stopwatch.container';
 import InWorkoutBuddiesList from './components/InWorkoutBuddiesList';
 import { useAuth } from './providers/AuthProvider';
 import { useParticipantSubscription } from './api/subscriptions';
 import { allWorkoutParticipants} from './api/workouts';
+import { useStopWatch } from './components/StopWatch';
 
 
 
@@ -21,45 +20,29 @@ export default function InWorkout({route}) {
   useParticipantSubscription( workout_id )
 
   const {mutate: updateParticipantStatus} = useUpdateParticipantStatus();
-  const [start, setStart] = useState(false);
-  const [hr, setHr] = useState(0);
-  const [min, setMin] = useState(0);
-  const [sec, setSec] = useState(0);
-  let interval;
+
+  const {
+    start,
+    stop,
+    end,
+    isRunning,
+    time,
+    dataLoaded,
+
+  } = useStopWatch()
+
+  if (!dataLoaded) {
+    return null
+  }
 
   const handleToggle = () => {
-    setStart((prevStart) => !prevStart);
+    isRunning ? stop() : start();
   };
 
-  const handleStart = () => {
-    if (start) {
-      interval = setInterval(() => {
-        setSec((prevSec) => {
-          if (prevSec !== 59) {
-            return prevSec + 1;
-          } else if (min !== 59) {
-            setMin(min + 1);
-            return 0;
-          } else {
-            setHr(hr + 1);
-            return 0;
-          }
-        });
-      }, 1000);
-    } else {
-      clearInterval(interval);
-    }
-  };
-
-  const formatTime = (hr, min, sec) => {
-    return `${padToTwo(hr)}:${padToTwo(min)}:${padToTwo(sec)}`;
-  };
-
-  const padToTwo = (number) => (number <= 9 ? `0${number}` : number);
 
   const onEnd = () => {
-    const formattedDuration = formatTime(hr, min, sec); 
-    updateParticipantStatus({user_id : user_id, workout_id : workout_id, status : 'complete', duration : formattedDuration , activity : 'N/A'},
+    end()
+    updateParticipantStatus({user_id : user_id, workout_id : workout_id, status : 'complete', duration : time , activity : 'N/A'},
       {
         onSuccess: () => {
           navigation.goBack();
@@ -69,18 +52,6 @@ export default function InWorkout({route}) {
     
   }
 
-  const returnToDetails = () => {
-    navigation.goBack()
-  }
-
-
-  useEffect(() => {
-    handleStart();
-    return () => clearInterval(interval);
-
-
-  }, [start]);
-
 
   let buddyparticipants = allParticipants.filter((participant) => {
     if(session?.user.id != participant.profiles.id && participant.status != 'waiting')
@@ -89,33 +60,27 @@ export default function InWorkout({route}) {
   return (
 
     <SafeAreaView style={styles.container}>
-      {/* <Pressable onPress={returnToDetails}  style={styles.button}>
-        <Text style={styles.buttonText}>Return to Details </Text>
-      </Pressable> */}
-        <StopwatchContainer 
-          hr={hr} 
-          min={min} 
-          sec={sec} />
 
-        <InWorkoutBuddiesList  allParticipants={buddyparticipants}/>
+      <StopwatchContainer time={time}/>
+
+      <InWorkoutBuddiesList  allParticipants={buddyparticipants}/>
 
 
-        <View style={styles.sectionStyle}>
+      <View style={styles.sectionStyle}>
 
-        
 
-          <Pressable
+          <TouchableOpacity
             style={styles.button}
             onPress={handleToggle}>
             <Text style={styles.buttonText}>
-              {!start ? 'Start' : 'Pause'}
+              {!isRunning ? 'Start' : 'Pause'}
             </Text>
-          </Pressable>
-          <Pressable
+          </TouchableOpacity>
+          <TouchableOpacity
             style={styles.button}
             onPress={onEnd}>
             <Text style={styles.buttonText}>End</Text>
-          </Pressable>
+          </TouchableOpacity>
         </View>
         
 
@@ -127,18 +92,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+
   title: {
     textAlign: 'center',
     fontSize: 20,
     fontWeight: 'bold',
     padding: 20,
   },
+
   sectionStyle: {
     flex: 1,
-    //marginTop: 32,
     backgroundColor: 'darkgray',
-    // borderColor: 'black',
-    // borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'space-evenly',
     flexDirection: 'row'
@@ -152,20 +116,16 @@ const styles = StyleSheet.create({
     backgroundColor: 'lightgray',
     alignItems: 'center',
     justifyContent: 'center',
-   // margin: 10,
     borderRadius: 10,
 
   },
+
   buttonText : {
     fontSize: 16,
     color: '#3D3D3D',
     fontFamily: 'fantasy'
   },
-  // buttonContainer : {
-  //   //flex:2, 
-  //   alignItems: 'center',
-  //   justifyContent: 'flex-start',
-  // },
+
 });
 
 

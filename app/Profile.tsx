@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, TouchableOpacity } from 'react-native';
 import { supabase } from './utils/supabase';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from './providers/AuthProvider';
@@ -97,6 +97,7 @@ const ProfileScreen = () => {
 
   return (
     <View style={styles.container}>
+      <Text style={{color: 'white', fontWeight: 'bold', fontSize: 40}}>Profile</Text>
       <View style={styles.infoContainer}>
       <RemoteImage
         path={userProfileAvatar}
@@ -109,14 +110,14 @@ const ProfileScreen = () => {
       <Text>Username: {userProfileUserame}</Text>
       </View>
       <View style={styles.buttonContainer}>
-        <Pressable onPress={updateProfilePic}  style={styles.button}>
+        <TouchableOpacity onPress={updateProfilePic}  style={styles.button}>
             <Text style={styles.buttonText}>Update Profile</Text>
-        </Pressable>
+        </TouchableOpacity>
       </View>
       <View style={styles.buttonContainer}>
-        <Pressable onPress={handleSignOut} disabled={loading} style={styles.button}>
+        <TouchableOpacity onPress={handleSignOut} disabled={loading} style={styles.button}>
             <Text style={styles.buttonText}>{loading ? 'Logging Out...' : 'Log Out'} </Text>
-        </Pressable>
+        </TouchableOpacity>
       </View>
     </View>
     
@@ -126,11 +127,14 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    //justifyContent: 'center',
+    //alignItems: 'center',
+    padding:10,
+    backgroundColor: '#6EEB92',
   },
+  
   button: {
-    width: 100,
+    width: 200,
     height: 40,
     borderColor: 'gray',
     borderWidth: 2,
@@ -141,21 +145,26 @@ const styles = StyleSheet.create({
     borderRadius: 10,
 
   },
+
   buttonText : {
     fontSize: 16,
     color: '#3D3D3D',
     fontFamily: 'fantasy'
   },
+
   buttonContainer : {
     flex:2, 
     alignItems: 'center',
     justifyContent: 'flex-start',
   },
+
   infoContainer : {
     flex:6, 
     alignItems: 'center',
     justifyContent: 'flex-start',
+    paddingTop: 10
   },
+
   image: {
     width: '50%',
     aspectRatio: 1,
@@ -165,6 +174,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     margin: 10
   },
+
   imageButton: {
 
     alignSelf: 'center',

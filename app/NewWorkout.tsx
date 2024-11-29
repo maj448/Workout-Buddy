@@ -1,15 +1,12 @@
-import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, Button, Pressable, ActivityIndicator, ScrollView, Alert} from 'react-native';
-import {useState, useEffect} from 'react';
+import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, TouchableOpacity, Pressable, ActivityIndicator, ScrollView, Alert} from 'react-native';
+import {useState} from 'react';
 import { useAuth } from './providers/AuthProvider';
 import { useInsertWorkout} from './api/workouts';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { format, parseISO, startOfSecond} from 'date-fns';
+import {parseISO} from 'date-fns';
 import { useNavigation } from '@react-navigation/native';
 import InternalWorkoutBuddiesList from './components/InternalWorkoutBuddiesList';
 import { userBuddies } from './api/buddies';
-import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
-
-
 
 const NewWorkoutScreen = ({route}) => {
   const { session } = useAuth();
@@ -28,6 +25,8 @@ const NewWorkoutScreen = ({route}) => {
   const [openEnd, setOpenEnd] = useState(false)
   const [loading, setLoading] = useState(false)
   const [inviteBuddyList, setInviteBuddyList] = useState('')
+  const [textHeight,setTextHeight] = useState(40);
+  const [noteHeight,setNoteHeight] = useState(40);
 
   const {data: buddies, isLoading : isLoadingBuddies} = userBuddies(session?.user.id);
 
@@ -42,18 +41,14 @@ const NewWorkoutScreen = ({route}) => {
 
   };
 
-  // const onChangeDate = (event, selectedDate) => {
-  //   const currentDate = selectedDate || inputDate;
-  //   setInputDate(currentDate);
-  //   setInputStartTime(new Date(currentDate.setHours(inputStartTime.getHours(), inputStartTime.getMinutes())));
-  //   setInputEndTime(new Date(currentDate.setHours(inputEndTime.getHours(), inputEndTime.getMinutes())));
-  //   setOpen(false)
-  // };
+  if(isLoadingBuddies){
+    return <ActivityIndicator/>
+  }
+
   const onChangeDate = (event, selectedDate) => {
-    const currentDate = selectedDate || inputDate; // default to inputDate if selectedDate is null
-    const date = new Date(currentDate); // Create a new date object to avoid modifying the original
+    const currentDate = selectedDate || inputDate; 
+    const date = new Date(currentDate); 
   
-    // Set the start and end times to the selected date
     setInputDate(date); 
     setInputStartTime(new Date(date.setHours(inputStartTime.getHours(), inputStartTime.getMinutes())));
     setInputEndTime(new Date(date.setHours(inputEndTime.getHours(), inputEndTime.getMinutes())));
@@ -61,18 +56,9 @@ const NewWorkoutScreen = ({route}) => {
     setOpen(false);
   };
 
-  // const onChangeStart = (event, selectedStart) => {
-  //   console.log('id',inputDate)
-  //   const start = new Date(inputDate.setHours(selectedStart.getHours(), selectedStart.getMinutes())) || inputStartTime;
-  //   setInputStartTime(start);
-  //   setOpenStart(false)
-  //   console.log('s',start)
-    
-  // };
   const onChangeStart = (event, selectedStart) => {
-    // Ensure selectedStart is not null, fallback to the previous value if it's null
-    const start = new Date(inputDate); // Copy the current inputDate
-    start.setHours(selectedStart.getHours(), selectedStart.getMinutes()); // Set the start time
+    const start = new Date(inputDate); 
+    start.setHours(selectedStart.getHours(), selectedStart.getMinutes()); 
   
     setInputStartTime(start); 
     setOpenStart(false); 
@@ -80,18 +66,9 @@ const NewWorkoutScreen = ({route}) => {
   };
   
 
-  // const onChangeEnd = (event, selectedEnd) => {
-  //   console.log('id',inputDate)
-  //   const end = new Date(inputDate.setHours(selectedEnd.getHours(), selectedEnd.getMinutes())) || inputEndTime;
-  //   setInputEndTime(end);
-  //   setOpenEnd(false)
-  //   console.log('e',end)
-  // };
-  
   const onChangeEnd = (event, selectedEnd) => {
-    // Ensure selectedEnd is not null, fallback to the previous value if it's null
-    const end = new Date(inputDate); // Copy the current inputDate
-    end.setHours(selectedEnd.getHours(), selectedEnd.getMinutes()); // Set the end time
+    const end = new Date(inputDate); 
+    end.setHours(selectedEnd.getHours(), selectedEnd.getMinutes()); 
   
     setInputEndTime(end); 
     setOpenEnd(false); 
@@ -135,9 +112,6 @@ const NewWorkoutScreen = ({route}) => {
       });  
   };
 
-  // if (loading) {
-  //   return <ActivityIndicator />;
-  // }
 
   const handleBuddyInviteList = (buddy) => {
       setInviteBuddyList(buddy)
@@ -151,19 +125,21 @@ const NewWorkoutScreen = ({route}) => {
 
         <View style={styles.inputArea}>
           <Text style={styles.label}>Title:</Text>
-          <AutoGrowingTextInput
-              style={styles.inputBox}
+          <TextInput
+              style={[styles.inputBox, {height:textHeight, maxHeight:200}]}
               placeholder={'(Required) Add a title ex. Walk'}
               keyboardType="default"
               value={inputTitle}
               onChangeText={setInputTitle}
+              multiline
+              onContentSizeChange={e => setTextHeight(e.nativeEvent.contentSize.height)}
           />
         </View>
         <View style={styles.inputArea}>
           <Text style={styles.label}>Date:</Text>
-        <Pressable onPress={showDatepicker} style={styles.inputBox}>
+        <TouchableOpacity onPress={showDatepicker} style={styles.inputBox}>
           <Text >{inputDate.toLocaleDateString()}</Text>
-        </Pressable>
+        </TouchableOpacity>
 
         {open && (
           <DateTimePicker
@@ -179,10 +155,10 @@ const NewWorkoutScreen = ({route}) => {
  
         <View style={styles.inputArea}>
           <Text style={styles.labelSmall}>Start:</Text>
-        <Pressable onPress={showStartpicker} style={styles.inputBoxSmall}>
+        <TouchableOpacity onPress={showStartpicker} style={styles.inputBoxSmall}>
           <Text >{formatTime(inputStartTime)}</Text>
 
-        </Pressable>
+        </TouchableOpacity>
 
         {openStart && (
           <DateTimePicker
@@ -196,10 +172,10 @@ const NewWorkoutScreen = ({route}) => {
         )}
 
         <Text style={styles.labelSmall}>End:</Text>
-        <Pressable onPress={showEndpicker} style={styles.inputBoxSmall}>
+        <TouchableOpacity onPress={showEndpicker} style={styles.inputBoxSmall}>
           <Text >{formatTime(inputEndTime)}</Text>
 
-        </Pressable>
+        </TouchableOpacity>
         {openEnd && (
           <DateTimePicker
             testID="dateTimePicker"
@@ -215,13 +191,13 @@ const NewWorkoutScreen = ({route}) => {
 
         <View style={styles.inputArea}>
         <Text style={styles.label}>Notes:</Text>
-        <AutoGrowingTextInput 
-        style={styles.inputBox} 
+        <TextInput 
+        style={[styles.inputBox, {height:noteHeight}]} 
         placeholder={'(Optional) Add Notes'}
         keyboardType="default"
         value={inputNotes}
-        multiline = {true}
-        numberOfLines={10}
+        multiline
+        onContentSizeChange={e => setNoteHeight(e.nativeEvent.contentSize.height)}
         onChangeText={setInputNotes}
          />
 
@@ -229,9 +205,9 @@ const NewWorkoutScreen = ({route}) => {
       </KeyboardAvoidingView>
       <InternalWorkoutBuddiesList buddies={buddies} forNew={true} OnAddBuddyToInvites ={handleBuddyInviteList} allParticipants={[]} allInvitations={[]} workout={null} participantState={null}/>
       <View style={styles.buttonContainer}>
-            <Pressable onPress={onSubmitHandler} disabled={loading} style={styles.button}>
+            <TouchableOpacity onPress={onSubmitHandler} disabled={loading} style={styles.button}>
                 <Text style={styles.buttonText}>{loading ? 'Creating Workout...' : 'Create Workout'} </Text>
-            </Pressable>
+            </TouchableOpacity>
             </View>
   
   </ScrollView>
@@ -245,8 +221,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#6EEB92', 
     gap: 10, 
   },
+
   container: {
-    //flex: 1,
+
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#6EEB92',
@@ -266,77 +243,72 @@ const styles = StyleSheet.create({
     borderRadius: 10,
 
   },
+
   buttonText : {
     fontSize: 16,
     color: '#3D3D3D',
     fontFamily: 'fantasy'
   },
+
   buttonContainer : {
-    //flex:3, 
     alignItems: 'center',
     justifyContent: 'flex-start',
   },
+
   label: {
     fontSize: 20,
     color: '#3D3D3D',
     fontFamily: 'fantasy',
     flex: 2
   },
-inputArea:{
+
+  inputArea:{
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    
-    //padding: 20,
     gap: 10,
     flex: 1
 
-},
+  },
 
-inputBoxBig: {
-  //width: 200,
-  height: 100,
-  borderColor: 'lightgray',
-  backgroundColor: 'white',
-  //justifyContent: 'flex-start',
-  //alignItems: 'flex-start',
-  borderWidth: 2,
-  marginBottom: 15,
-  paddingHorizontal: 10,
-  flex: 6,
-},
-inputBox: {
-  //width: 200,
-  height: 40,
-  borderColor: 'lightgray',
-  backgroundColor: 'white',
-  borderWidth: 2,
-  justifyContent: 'center',
-  alignItems: 'center',
-  //marginBottom: 15,
-  paddingHorizontal: 10,
-  //marginBottom: 15,
-  //paddingHorizontal: 10,
-  flex: 6,
-},
-labelSmall: {
-  fontSize: 20,
-  color: '#3D3D3D',
-  fontFamily: 'fantasy',
-  flex: 3
-},
-inputBoxSmall: {
-  //width: 200,
-  height: 40,
-  borderColor: 'lightgray',
-  backgroundColor: 'white',
-  borderWidth: 2,
-  justifyContent: 'center',
-  alignItems: 'center',
-  //marginBottom: 15,
-  //paddingHorizontal: 5,
-  flex: 5,
-},
+  inputBoxBig: {
+    height: 100,
+    borderColor: 'lightgray',
+    backgroundColor: 'white',
+    borderWidth: 2,
+    marginBottom: 15,
+    paddingHorizontal: 10,
+    flex: 6,
+  },
+
+  inputBox: {
+    minHeight: 40, 
+    height: 40,
+    borderColor: 'lightgray',
+    backgroundColor: 'white',
+    borderWidth: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    flex: 6,
+  },
+
+  labelSmall: {
+    fontSize: 20,
+    color: '#3D3D3D',
+    fontFamily: 'fantasy',
+    flex: 3
+  },
+
+  inputBoxSmall: {
+    height: 40,
+    borderColor: 'lightgray',
+    backgroundColor: 'white',
+    borderWidth: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 5,
+  },
 
 
 });

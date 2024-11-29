@@ -1,10 +1,9 @@
 import {SafeAreaView} from 'react-native-safe-area-context';
-import { View, Text, TextInput, Button, StyleSheet, Alert, Pressable, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert, Pressable, KeyboardAvoidingView, Platform, TouchableOpacity} from 'react-native';
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { supabase } from '../utils/supabase';
 import { useAuth } from '../providers/AuthProvider';
-import { useQuery } from '@tanstack/react-query';
 
 
 
@@ -15,7 +14,6 @@ export default function Login() {
     const [inputPassword, setInputPassword] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const {session} = useAuth();
 
   
 
@@ -28,9 +26,10 @@ export default function Login() {
     async function signInWithEmail()
     {
         setLoading(true);
-       const {error} = await supabase.auth.signInWithPassword({ email: inputEmail, password : inputPassword});
+        const {error} = await supabase.auth.signInWithPassword({ email: inputEmail, password : inputPassword});
 
-       if (error) Alert.alert(error.message)
+
+        if (error) Alert.alert(error.message)
         else navigation.navigate('Tabs');
         setLoading(false);
 
@@ -53,7 +52,7 @@ export default function Login() {
                 <Text style={styles.label}>Email:</Text>
                 <TextInput
                 style={styles.inputBox}
-                keyboardType="default"
+                keyboardType="email-address"
                 value={inputEmail}
                 onChangeText={setInputEmail}/>
 
@@ -73,12 +72,12 @@ export default function Login() {
 
             <KeyboardAvoidingView style={{ flex: 3 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
             <View style={styles.buttonContainer}>
-            <Pressable onPress={signInWithEmail} disabled={loading} style={styles.button}>
+            <TouchableOpacity onPress={signInWithEmail} disabled={loading} style={styles.button}>
                 <Text style={styles.buttonText}>{loading ? 'Logging in...' : 'Login'} </Text>
-            </Pressable>
-            <Pressable onPress={gotoSignUpScreen} style={styles.button}>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={gotoSignUpScreen} style={styles.button}>
                 <Text style={styles.buttonText}>Sign Up</Text> 
-            </Pressable>
+            </TouchableOpacity>
             </View>
             </KeyboardAvoidingView>
             
@@ -129,7 +128,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
       },
       button: {
-        width: 100,
+        width: 200,
         height: 40,
         borderColor: 'gray',
         borderWidth: 2,

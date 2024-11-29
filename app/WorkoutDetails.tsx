@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Button, Alert, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Button, Alert, Pressable, TouchableOpacity} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import InternalWorkoutBuddiesList from './components/InternalWorkoutBuddiesList'
 import { ScrollView } from 'react-native';
@@ -65,14 +65,6 @@ const WorkoutDetailsScreen = ({route}) => {
 
     };
 
-    // const formatDate= (date) => {
-
-    //   date = `${date}Z`
-    //   date = new Date(date);
-    //   return date;
-
-
-    // };
 
     const onCheckIn = () => {
       
@@ -120,22 +112,27 @@ const WorkoutDetailsScreen = ({route}) => {
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
-    {/* <View style={styles.container}> */}
       <View style ={styles.staticInfo}>
-        <Text style= {styles.text}>Title: {workout.title}</Text>
+        <Text style= {styles.title}>{workout.title}</Text>
         <Text style= {styles.text}>Date: {displayDate}</Text>
-        <Text style= {styles.text}>Start: {formatTime(workout.start_time)}</Text>
-        <Text style= {styles.text}>End: {formatTime(workout.end_time)}</Text>
+        <View style={styles.timeContainer}>
+          <Text style= {styles.text}>Time : {formatTime(workout.start_time)}</Text>
+          <Text style= {styles.text}> to {formatTime(workout.end_time)}</Text>
+        </View>
         { participantState == 'complete' &&
-          <Text style= {styles.text}>Activity: {participationInfo.activity}</Text>
-          // <Text style= {styles.text}>Duration: {workout.duration}</Text>
+          <Text style= {styles.textCompleted}>Completed duration: {participationInfo.duration}</Text>
         }
         { participantState == 'complete' &&
-          //<Text style= {styles.text}>Activity: {workout.activity}</Text>
-          <Text style= {styles.text}>Duration: {participationInfo.duration}</Text>
+          <Text style= {styles.textCompleted}>Activity: {participationInfo.activity}</Text>
         }
+        {/* <View>
+          <Text style= {styles.text}>Notes: </Text>
+        </View> */}
+        
+        <View style= {styles.noteArea}>
         <Text style= {styles.text}>Notes: </Text>
-        <Text style= {styles.text}>{workout.notes}</Text>
+          <Text style= {styles.text}>{workout.notes ? workout.notes : 'N/A' }</Text>
+        </View>
 
       </View>
 
@@ -151,9 +148,9 @@ const WorkoutDetailsScreen = ({route}) => {
       <View style={styles.buttonContainer}>
       {!completed && participantState != 'in workout' && workout.workout_status != 'past' && timeNow <= timePlus10Minutes &&
         
-          <Pressable onPress= {onCheckIn} style={styles.button}>
-              <Text>{ canStart ? 'Leave' : 'Check In'}</Text>
-          </Pressable>
+        <TouchableOpacity onPress= {onCheckIn} style={styles.button}>
+            <Text>{ canStart ? 'Leave' : 'Check In'}</Text>
+        </TouchableOpacity>
        
 
 
@@ -161,9 +158,9 @@ const WorkoutDetailsScreen = ({route}) => {
         
         { canStart && !completed && 
 
-            <Pressable onPress={onStart}  style={styles.button}>
-                <Text style={styles.buttonText}>{participantState == 'in workout' ? 'Resume' : 'Start!'} </Text>
-            </Pressable>
+          <TouchableOpacity onPress={onStart}  style={styles.startButton}>
+              <Text style={styles.startButtonText}>{participantState == 'in workout' ? 'Resume' : 'Start!'} </Text>
+          </TouchableOpacity>
         }
         </View>
 
@@ -178,26 +175,51 @@ const styles = StyleSheet.create({
     backgroundColor: '#6EEB92', 
     gap: 10, 
   },
+
   container: {
-    // flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
     backgroundColor: '#6EEB92',
     padding: 10, 
     gap: 10, 
   },
+
   staticInfo: {
-    // flex: 2,
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
   },
+
+  title: {
+    color: 'black',
+    fontSize: 30,
+    fontWeight : 'bold', 
+    paddingBottom: 15
+  },
+
   text: {
     color: 'black',
-    fontSize: 20,
-    
+    fontSize: 22,
   },
+
+  textCompleted: {
+    color: 'black',
+    fontSize: 22,
+    fontWeight: '600'
+  },
+
+  timeContainer : {
+    flexDirection: 'row',
+  },
+
+  noteArea : {
+    backgroundColor: '#DDF8D3',
+    borderRadius: 10,
+    width: '100%', 
+    padding: 10, 
+    marginTop: 5
+
+  },
+
   button: {
-    width: 100,
+    width: 150,
     height: 40,
     borderColor: 'gray',
     borderWidth: 2,
@@ -208,17 +230,37 @@ const styles = StyleSheet.create({
     borderRadius: 10,
 
   },
+
   buttonText : {
     fontSize: 16,
     color: '#3D3D3D',
     fontFamily: 'fantasy'
   },
-  buttonContainer : {
-    // flex:1, 
+
+  buttonContainer : { 
     alignItems: 'center',
     justifyContent: 'flex-start',
   }, 
 
+  startButton: {
+    width: '100%',
+    height: 70,
+    borderColor: 'gray',
+    borderWidth: 2,
+    backgroundColor: 'lightgray',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 10,
+    borderRadius: 10,
+
+  },
+
+  startButtonText : {
+    fontSize: 20,
+    color: '#3D3D3D',
+    fontWeight: 'bold',
+    fontFamily: 'fantasy'
+  },
 
 });
 

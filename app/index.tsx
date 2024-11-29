@@ -163,34 +163,31 @@ export default function Index() {
   
   const displayDate = format(parseISO(selected), 'MMM dd');
 
-    return (
-      <SafeAreaView style= {{flex:1}}>
+  return (
+    <SafeAreaView style= {{flex:1}}>
+      <Calendar
+        onDayPress={day => {
+          setSelected(day.dateString);
+        }}
+        onDayLongPress={day => {
+          setSelected(day.dateString);
 
-        <Calendar
-          onDayPress={day => {
-            setSelected(day.dateString);
+          createWorkout(day.dateString);
           }}
-          onDayLongPress={day => {
-            setSelected(day.dateString);
+        markingType="multi-dot"
+        markedDates={{
+          ...markedDates,
+          [selected]: {
+            selected: true, 
+            disableTouchEvent: true, 
+            selectedColor: '#6EEB92'}
+        }}
+        enableSwipeMonths={true}
 
-            createWorkout(day.dateString);
-            }}
-          markingType="multi-dot"
-          markedDates={{
-            ...markedDates,
-            [selected]: {
-              selected: true, 
-              disableTouchEvent: true, 
-              selectedColor: '#6EEB92'}
-          }}
-          enableSwipeMonths={true}
-
-        />
-    <GestureDetector gesture={combinedGesture} >
-    {/* <View collapsable={false}> */}
-    <WorkoutList workouts={filteredWorkouts} invitedWorkouts={filteredInvites} displayDate ={displayDate} selected={selected}/>
-    {/* </View> */}
-    </GestureDetector>
+      />
+      <GestureDetector gesture={combinedGesture} >
+        <WorkoutList workouts={filteredWorkouts} invitedWorkouts={filteredInvites} displayDate ={displayDate} selected={selected}/>
+      </GestureDetector>
     </SafeAreaView>
-    );
-  }
+  );
+}

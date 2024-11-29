@@ -1,7 +1,6 @@
-import { View, Text, Pressable, StyleSheet } from "react-native"
+import { View, Text, Pressable, StyleSheet, TouchableOpacity} from "react-native"
 import InternalWorkoutBuddyListItem from "./InternalWorkoutBuddyListItem";
 import React, {useEffect, useState} from 'react';
-import { useNavigation } from '@react-navigation/native';
 import { MultiSelect } from 'react-native-element-dropdown';
 import { useInviteToWorkout } from "../api/workouts";
 
@@ -13,7 +12,6 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
   const [isFocus, setIsFocus] = useState(false);
   const [dropdownData, setDropdownData] = useState([])
   const [selected, setSelected] = useState([])
-  let TEN_MINUTES = Date.now() + 600000;
   const [workoutStatus, setWorkoutStatus] = useState('new')
 
 
@@ -52,8 +50,6 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
   const sendInvites = () => {
       let workout_id = workout.id
       let newInvites = checkNewInvites();
-      // console.log('s',selected)
-      // console.log('ni',newInvites)
       inviteToWorkout({selected : newInvites, workout_id})
       setSelected([])
   }
@@ -61,7 +57,7 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
 
 
     return(
-    <View style={{backgroundColor: '#6EEB92', padding: 10, gap: 10}}>
+    <View style={styles.container}>
 
       { participantState != 'complete' && 
       <Text style={{color: 'white', fontWeight: 'bold', fontSize: 24, }}>Buddies:</Text>
@@ -101,9 +97,9 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
 
 
         {!forNew && 
-          <Pressable onPress={sendInvites} style={styles.button}>
+          <TouchableOpacity onPress={sendInvites} style={styles.button}>
             <Text style={styles.buttonText}>Invite</Text> 
-          </Pressable>}
+          </TouchableOpacity>}
       </View>
 
        
@@ -132,50 +128,59 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
-    padding: 16,
+    backgroundColor: 'gray', 
+    padding: 10, 
+    gap: 10,
+    borderRadius: 10
   },
+
   dropdown: {
     height: 50,
-    //width: '100%',
     borderColor: 'gray',
     backgroundColor: 'lightgray',
     borderWidth: 0.5,
     borderRadius: 8,
     paddingHorizontal: 8,
     marginRight: 20,
-    //flex: 6
   },
+
   icon: {
     marginRight: 5,
   },
-  label: {
-    position: 'absolute',
-    backgroundColor: 'white',
-    left: 22,
-    top: 8,
-    zIndex: 999,
-    paddingHorizontal: 8,
-    fontSize: 14,
-  },
+
+  // label: {
+  //   position: 'absolute',
+  //   backgroundColor: '#DDF8D6',
+  //   left: 22,
+  //   top: 8,
+  //   zIndex: 999,
+  //   paddingHorizontal: 8,
+  //   fontSize: 14,
+  // },
+
   placeholderStyle: {
     fontSize: 16,
   },
+
   selectedTextStyle: {
     fontSize: 16,
   },
+
   iconStyle: {
     width: 20,
     height: 20,
   },
+
   inputSearchStyle: {
     height: 40,
     fontSize: 16,
   },
+
   selectedStyle: {
     borderRadius: 12,
-    backgroundColor: 'blue'
+    backgroundColor: '#DDF8D6'
   },
+
   button: {
     width: 100,
     height: 40,
@@ -189,16 +194,19 @@ const styles = StyleSheet.create({
     flex: 2
 
   },
+
   buttonText : {
     fontSize: 16,
     color: '#3D3D3D',
     fontFamily: 'fantasy'
   },
+
   buttonContainer : {
     flex:3, 
     alignItems: 'center',
     justifyContent: 'flex-start',
   },
+  
   listGap: {
     gap: 5
   }

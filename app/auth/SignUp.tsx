@@ -1,5 +1,5 @@
 import {SafeAreaView} from 'react-native-safe-area-context';
-import { View, Text, TextInput, Button, StyleSheet, Alert, Pressable, KeyboardAvoidingView, Platform} from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert, Pressable, KeyboardAvoidingView, Platform, TouchableOpacity} from 'react-native';
 import { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { supabase } from '../utils/supabase';
@@ -20,12 +20,6 @@ export default function SignUp() {
     const {data : allUsernames, isLoading, error} = usernameUnique();
 
 
-    // useEffect(() => {
-
-
-
-    // }, [inputUsername]);
-
     const validation = async() => {
 
         if (!inputFullName.trim()) {
@@ -38,6 +32,11 @@ export default function SignUp() {
         if (!inputUsername || inputUsername.trim() === '') {
             Alert.alert("Username is required.");
             setLoading(false);
+            return;
+        }
+
+        if (inputPassword || inputPassword.trim() === '') {
+            Alert.alert("Password cannot be blank");
             return;
         }
 
@@ -132,7 +131,7 @@ export default function SignUp() {
                 <Text style={styles.label}>Email:</Text>
                 <TextInput
                 style={styles.inputBox}
-                keyboardType="default"
+                keyboardType="email-address"
                 value={inputEmail}
                 placeholder="abc123@email.com"
                 onChangeText={setInputEmail}/>
@@ -162,9 +161,9 @@ export default function SignUp() {
 
             <KeyboardAvoidingView style={{ flex:3}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
             <View style={styles.buttonContainer}>
-            <Pressable onPress={validation} disabled={loading} style={styles.button}>
+            <TouchableOpacity onPress={validation} disabled={loading} style={styles.button}>
                 <Text style={styles.buttonText}>{loading ? 'Creating account...' : 'Create Account'} </Text>
-            </Pressable>
+            </TouchableOpacity>
             </View>
             </KeyboardAvoidingView>
 
@@ -192,7 +191,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: '#3D3D3D',
         fontFamily: 'fantasy',
-        maxWidth: '50%'
+        maxWidth: '40%'
       },
     inputArea:{
         flexDirection: 'row',

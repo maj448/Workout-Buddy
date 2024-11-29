@@ -17,7 +17,6 @@ export const useInviteSubscription = (user_id) => {
             table: 'invitations', 
             filter: `user_id=eq.${user_id}`},
           (payload) => {
-            console.log('query success', payload)
             queryClient.invalidateQueries(['invitations', user_id])
           }
         )
@@ -45,7 +44,6 @@ export const useParticipantSubscription = ( workout_id) => {
         table: 'participants', 
         filter: `workout_id=eq.${workout_id}` },
       (payload) => {
-        console.log('Change received!', payload)
         queryClient.invalidateQueries(['participants', workout_id])
       }
     )
@@ -73,7 +71,6 @@ export const useInvitationsSubscription = (workout_id) => {
       table: 'invitations', 
       filter: `workout_id=eq.${workout_id}` },
     (payload) => {
-      console.log('Change received!', payload)
       queryClient.invalidateQueries(['invitations', workout_id])
     }
   )
