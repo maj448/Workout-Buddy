@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Pressable, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Pressable, TouchableOpacity, TextInput } from 'react-native';
 import { supabase } from './utils/supabase';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from './providers/AuthProvider';
@@ -8,16 +8,18 @@ import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import { decode } from 'base64-arraybuffer';
 import { randomUUID } from 'expo-crypto';
-import RemoteImage from './components/RemoteImage'
+import RemoteImage from './components/RemoteImage';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
 const ProfileScreen = () => {
   const { session } = useAuth();
   const navigation = useNavigation();
-  const [userProfileFullName, setUserProfileFullName] = useState()
-  const [userProfileUserame, setUserProfileUserame] = useState()
-  const [userProfileAvatar, setUserProfileAvatar] = useState()
+  const [userProfileFullName, setUserProfileFullName] = useState('')
+  const [userProfileUserame, setUserProfileUserame] = useState('')
+  const [userProfileAvatar, setUserProfileAvatar] = useState('')
   const [loading, setLoading] = useState(false)
   const [image, setImage] = useState("https://img.icons8.com/nolan/64/user-default.png");
+  const [editView, setEditView] = useState(false)
 
   if(!session){
     navigation.navigate("Login");
@@ -40,6 +42,7 @@ const ProfileScreen = () => {
   const updateProfilePic = async () => {
     const imagePath = await uploadImage();
     updatePic({user_id: session?.user.id, image : imagePath})
+    setEditView(false)
   }
 
   const uploadImage = async () => {
@@ -84,6 +87,10 @@ const ProfileScreen = () => {
     }
   };
 
+  const editProfile = () => {
+      setEditView(!editView)
+  }
+
   
  
   useEffect(() => {
@@ -97,7 +104,12 @@ const ProfileScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={{color: 'white', fontWeight: 'bold', fontSize: 40}}>Profile</Text>
+      <View style ={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 10}}>
+        <Text style={{color: 'white', fontWeight: 'bold', fontSize: 40}}>Profile</Text>
+        <TouchableOpacity onPress={editProfile}>
+        <FontAwesome6 name="edit" size={30} color="white" />
+        </TouchableOpacity>
+        </View>
       <View style={styles.infoContainer}>
       <RemoteImage
         path={userProfileAvatar}
@@ -105,15 +117,34 @@ const ProfileScreen = () => {
         style={styles.image}
         resizeMode="contain"
       />
-      <Text  onPress= {pickImage} style={styles.imageButton}>Change Profile Picture</Text>
-      <Text>Full name: {userProfileFullName}</Text>
-      <Text>Username: {userProfileUserame}</Text>
+      { editView &&
+        <TouchableOpacity  onPress= {pickImage} style={styles.imageButton}>
+          <Text style={styles.label}>Change Profile Picture</Text>
+          </TouchableOpacity>
+      }
+
+  { !editView &&
+      <View>
+        <Text style={styles.label}>Full name: {userProfileFullName}</Text>
+        <Text style={styles.label}>Username: {userProfileUserame}</Text>
+
       </View>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={updateProfilePic}  style={styles.button}>
+}
+
+
+
+
+      { editView &&
+        <View style={styles.buttonContainer}>
+          
+          <TouchableOpacity onPress={updateProfilePic}  style={styles.button}>
             <Text style={styles.buttonText}>Update Profile</Text>
-        </TouchableOpacity>
+          </TouchableOpacity>
+          <Text>*To save the changed profile picture you must Update profile</Text>
+        </View>
+      }
       </View>
+
       <View style={styles.buttonContainer}>
         <TouchableOpacity onPress={handleSignOut} disabled={loading} style={styles.button}>
             <Text style={styles.buttonText}>{loading ? 'Logging Out...' : 'Log Out'} </Text>
@@ -127,8 +158,6 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    //justifyContent: 'center',
-    //alignItems: 'center',
     padding:10,
     backgroundColor: '#6EEB92',
   },
@@ -179,6 +208,24 @@ const styles = StyleSheet.create({
 
     alignSelf: 'center',
   },
+
+  label: {
+    fontSize: 20,
+    color: '#3D3D3D',
+    marginVertical: 5,
+  },
+
+  inputArea:{
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    gap: 10,
+    flex: 1
+
+  },
+
+
+
 });
 
 export default ProfileScreen;
