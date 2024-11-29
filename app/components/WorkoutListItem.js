@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet, Pressable, Alert} from 'react-native'
+import {View, Text, StyleSheet, Pressable, Alert, TouchableOpacity} from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import { useRemoveWorkout } from '../api/workouts';
 import { useAuth } from '../providers/AuthProvider';
@@ -43,11 +43,8 @@ export default function WorkoutListItem({ workout }) {
 	};
 
     const onRemove = () => {
-        //const data = [{user_id : session.user.id}, {workout_id : workout.id}]
         removeWorkout({user_id : session.user.id, workout_id : workout.workouts.id});
-
-    
-      };
+    };
 
     const confirmRemove = () => {
     Alert.alert('Confirm', 'Are you sure you want to remove this workout?', [
@@ -62,14 +59,14 @@ export default function WorkoutListItem({ workout }) {
         backgroundColorOnStatus = workoutStatuses[workout.workouts.workout_status]
 
     return(
-        <Pressable onPress={gotoDetailsScreen} onLongPress={confirmRemove}>
+        <TouchableOpacity onPress={gotoDetailsScreen} onLongPress={confirmRemove}>
         <View style= {[styles.container, backgroundColorOnStatus]}>
             <Text style= {styles.text}>
                 {workout.workouts.title}
             </Text>
             <Text style={styles.time}>{formatTime(workout.workouts.start_time)} to {formatTime(workout.workouts.end_time)}</Text>
         </View>
-        </Pressable>
+        </TouchableOpacity>
 
     )
 }

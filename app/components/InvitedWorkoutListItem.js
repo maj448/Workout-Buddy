@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet, Pressable, Alert} from 'react-native'
+import {View, Text, StyleSheet, Pressable, TouchableOpacity} from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import { useAcceptInvite, useDeclineInvite } from '../api/workouts';
 import { useAuth } from '../providers/AuthProvider';
@@ -48,7 +48,7 @@ export default function InvitedWorkoutListItem({ workout }) {
 
 
     return(
-        <Pressable onPress={gotoDetailsScreen} style={styles.fullContainer} >
+        <TouchableOpacity onPress={gotoDetailsScreen} style={styles.fullContainer} >
         <View style= {styles.container}>
             <Text style= {styles.text}>
                 {workout.title}
@@ -59,14 +59,14 @@ export default function InvitedWorkoutListItem({ workout }) {
 
         </View>
         <View style={styles.buttonContainer}>
-            <Pressable onPress={acceptInvite}  style={styles.button}>
+            <TouchableOpacity onPress={acceptInvite}  style={styles.button}>
                 <Text style={styles.buttonText}>Accept </Text>
-            </Pressable>
-            <Pressable onPress={decilneInvite} style={styles.button}>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={decilneInvite} style={styles.button}>
                 <Text style={styles.buttonText}>Decline</Text> 
-            </Pressable>
+            </TouchableOpacity>
             </View>
-        </Pressable>
+        </TouchableOpacity>
 
     )
 }
@@ -78,15 +78,18 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
+
     text: {
         color: 'white',
         fontSize: 16,
     },
+
     time: {
         fontSize: 14,
         color: 'white',
       },
-      button: {
+
+    button: {
         width: 100,
         height: 40,
         borderColor: 'gray',
@@ -97,19 +100,22 @@ const styles = StyleSheet.create({
         margin: 10,
         borderRadius: 10,
 
-      },
-      buttonText : {
+    },
+
+    buttonText : {
         fontSize: 16,
         color: '#3D3D3D',
         fontFamily: 'fantasy'
-      },
-      buttonContainer : {
+    },
+
+    buttonContainer : {
         flex:3, 
         alignItems: 'center',
         justifyContent: 'space-evenly',
         flexDirection: 'row'
-      },
-      fullContainer: {
+    },
+    
+    fullContainer: {
         borderRadius: 5,
         backgroundColor: 'blue',
         marginBottom: 5

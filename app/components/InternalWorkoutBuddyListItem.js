@@ -34,26 +34,23 @@ const styles = StyleSheet.create({
         padding: 15,
         borderRadius: 5,
         flexDirection: 'row',
-        //justifyContent: 'space-between',
         backgroundColor: 'lightblue',
         alignItems: 'center'
     },
+
     text: {
         fontSize: 20,
         color: '#3D3D3D',
         fontFamily: 'fantasy',
-        // color: 'white',
-        // fontSize: 16,
         textAlign: 'center',
         padding: 10
     },
+
     time: {
         fontSize: 20,
         color: '#3D3D3D',
-        
-        // fontSize: 14,
-        // color: 'white',
-      },
+    },
+
     image: {
         width: '15%',
         aspectRatio: 1,
@@ -61,6 +58,6 @@ const styles = StyleSheet.create({
         borderRadius: 100,
         borderColor: 'black',
         borderWidth: 2,
-        //margin: 10
     },
+
 })

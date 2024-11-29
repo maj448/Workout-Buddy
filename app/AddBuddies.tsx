@@ -1,6 +1,6 @@
 
 
-import { View, Text, TextInput, StyleSheet, Pressable, Alert} from 'react-native';
+import { View, Text, TextInput, StyleSheet, Pressable, Alert, TouchableOpacity} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 import { useAuth } from './providers/AuthProvider';
@@ -50,9 +50,9 @@ export default function Buddy() {
               onChangeText={setInputUsername}
           />
           <View style={styles.buttonContainer}>
-            <Pressable onPress={onAddBuddy}  style={styles.button}>
+            <TouchableOpacity onPress={onAddBuddy}  style={styles.button}>
                 <Text style={styles.buttonText}>Add </Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
         </View>
         {/* <KeyboardAvoidingView style={{flex:6}}>

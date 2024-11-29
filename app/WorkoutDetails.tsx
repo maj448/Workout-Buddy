@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Button, Alert, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Button, Alert, Pressable, TouchableOpacity} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import InternalWorkoutBuddiesList from './components/InternalWorkoutBuddiesList'
 import { ScrollView } from 'react-native';
@@ -65,14 +65,6 @@ const WorkoutDetailsScreen = ({route}) => {
 
     };
 
-    // const formatDate= (date) => {
-
-    //   date = `${date}Z`
-    //   date = new Date(date);
-    //   return date;
-
-
-    // };
 
     const onCheckIn = () => {
       
@@ -120,7 +112,6 @@ const WorkoutDetailsScreen = ({route}) => {
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
-    {/* <View style={styles.container}> */}
       <View style ={styles.staticInfo}>
         <Text style= {styles.text}>Title: {workout.title}</Text>
         <Text style= {styles.text}>Date: {displayDate}</Text>
@@ -128,10 +119,8 @@ const WorkoutDetailsScreen = ({route}) => {
         <Text style= {styles.text}>End: {formatTime(workout.end_time)}</Text>
         { participantState == 'complete' &&
           <Text style= {styles.text}>Activity: {participationInfo.activity}</Text>
-          // <Text style= {styles.text}>Duration: {workout.duration}</Text>
         }
         { participantState == 'complete' &&
-          //<Text style= {styles.text}>Activity: {workout.activity}</Text>
           <Text style= {styles.text}>Duration: {participationInfo.duration}</Text>
         }
         <Text style= {styles.text}>Notes: </Text>
@@ -151,9 +140,9 @@ const WorkoutDetailsScreen = ({route}) => {
       <View style={styles.buttonContainer}>
       {!completed && participantState != 'in workout' && workout.workout_status != 'past' && timeNow <= timePlus10Minutes &&
         
-          <Pressable onPress= {onCheckIn} style={styles.button}>
-              <Text>{ canStart ? 'Leave' : 'Check In'}</Text>
-          </Pressable>
+        <TouchableOpacity onPress= {onCheckIn} style={styles.button}>
+            <Text>{ canStart ? 'Leave' : 'Check In'}</Text>
+        </TouchableOpacity>
        
 
 
@@ -161,9 +150,9 @@ const WorkoutDetailsScreen = ({route}) => {
         
         { canStart && !completed && 
 
-            <Pressable onPress={onStart}  style={styles.button}>
-                <Text style={styles.buttonText}>{participantState == 'in workout' ? 'Resume' : 'Start!'} </Text>
-            </Pressable>
+          <TouchableOpacity onPress={onStart}  style={styles.button}>
+              <Text style={styles.buttonText}>{participantState == 'in workout' ? 'Resume' : 'Start!'} </Text>
+          </TouchableOpacity>
         }
         </View>
 
@@ -178,24 +167,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#6EEB92', 
     gap: 10, 
   },
+
   container: {
-    // flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
     backgroundColor: '#6EEB92',
     padding: 10, 
     gap: 10, 
   },
+
   staticInfo: {
-    // flex: 2,
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
   },
+
   text: {
     color: 'black',
     fontSize: 20,
-    
   },
+
   button: {
     width: 100,
     height: 40,
@@ -208,13 +196,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
 
   },
+
   buttonText : {
     fontSize: 16,
     color: '#3D3D3D',
     fontFamily: 'fantasy'
   },
-  buttonContainer : {
-    // flex:1, 
+
+  buttonContainer : { 
     alignItems: 'center',
     justifyContent: 'flex-start',
   }, 

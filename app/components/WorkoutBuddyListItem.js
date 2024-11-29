@@ -1,4 +1,4 @@
-import { Text, StyleSheet, Pressable, Alert} from 'react-native'
+import { Text, StyleSheet, Pressable, Alert, TouchableOpacity} from 'react-native'
 import { useRemoveBuddie } from '../api/buddies';
 import { useAuth } from '../providers/AuthProvider';
 
@@ -29,11 +29,11 @@ export default function WorkoutBuddyListItem({ buddie }) {
 
     return(
 
-        <Pressable style= {styles.container} onLongPress={confirmRemove}>
+        <TouchableOpacity style= {styles.container} onLongPress={confirmRemove}>
             <Text style= {styles.text}>
                {buddie.username}
             </Text>
-        </Pressable>
+        </TouchableOpacity>
 
     )
 }
