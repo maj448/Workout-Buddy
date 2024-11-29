@@ -26,9 +26,7 @@ export default function InWorkoutBuddiesList({allParticipants}){
     <FlatList
       data={allParticipants}
       renderItem={({ item }) => <InWorkoutBuddyListItem buddie={item} />}
-      //numColumns={2}
       contentContainerStyle={{flexDirection: 'row'}}
-      //columnWrapperStyle={{ gap: 10 }}
     />
 
         

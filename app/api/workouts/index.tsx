@@ -319,8 +319,9 @@ export const useAcceptInvite = () => {
       return {user_id : data.user_id};
     },
     async onSuccess(returnedData) {
-      await queryClient.invalidateQueries(['participants', returnedData?.user_id]);
       await queryClient.invalidateQueries(['invitations', returnedData?.user_id]);
+      await queryClient.invalidateQueries(['participants', returnedData?.user_id]);
+      
       
     },
   });

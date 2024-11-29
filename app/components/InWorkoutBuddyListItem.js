@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
         
         //justifyContent: 'space-between',
         
-        //alignItems: 'center
+        alignItems: 'center'
     },
     text: {
         fontSize: 20,
@@ -67,16 +67,6 @@ const styles = StyleSheet.create({
         //textAlign: 'center',
         padding: 5
     },
-
-    // image: {
-    //     width: '40%',
-    //     aspectRatio: 1,
-    //    // alignSelf: 'center',
-    //     borderRadius: 100,
-    //     borderColor: 'green',
-    //     borderWidth: 3,
-    //     //margin: 10
-    // },
     imageContainer: {
         position: 'relative',  
         width: '40%',
