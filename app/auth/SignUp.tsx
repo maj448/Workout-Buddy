@@ -234,5 +234,3 @@ const styles = StyleSheet.create({
     
 
 })
-
-// (( SELECT auth.uid() AS uid) = id)

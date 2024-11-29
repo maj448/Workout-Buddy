@@ -97,8 +97,29 @@ const NewWorkoutScreen = ({route}) => {
 
   };
 
+  const validateFields = async() => {
+
+    if (!inputTitle.trim() || inputTitle.length === 0) {
+        Alert.alert("Title is required");
+        setLoading(false);
+        return;
+    }
+
+
+
+    if (inputStartTime >= inputEndTime) {
+        Alert.alert("End time must be later than start time");
+        setLoading(false);
+        return;
+    }
+    
+    setLoading(true);
+    onSubmitHandler()
+
+
+}
+
   const onSubmitHandler = () => {
-    setLoading(true)
     insertWorkout({inputTitle, inputNotes, inputDate, inputStartTime, inputEndTime, user_id, inviteBuddyList},
       {
         onSuccess: () => {
@@ -205,7 +226,7 @@ const NewWorkoutScreen = ({route}) => {
       </KeyboardAvoidingView>
       <InternalWorkoutBuddiesList buddies={buddies} forNew={true} OnAddBuddyToInvites ={handleBuddyInviteList} allParticipants={[]} allInvitations={[]} workout={null} participantState={null}/>
       <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={onSubmitHandler} disabled={loading} style={styles.button}>
+            <TouchableOpacity onPress={validateFields} disabled={loading} style={styles.button}>
                 <Text style={styles.buttonText}>{loading ? 'Creating Workout...' : 'Create Workout'} </Text>
             </TouchableOpacity>
             </View>
