@@ -97,6 +97,7 @@ const ProfileScreen = () => {
 
   return (
     <View style={styles.container}>
+      <Text style={{color: 'white', fontWeight: 'bold', fontSize: 40}}>Profile</Text>
       <View style={styles.infoContainer}>
       <RemoteImage
         path={userProfileAvatar}
@@ -126,12 +127,14 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    //justifyContent: 'center',
+    //alignItems: 'center',
+    padding:10,
+    backgroundColor: '#6EEB92',
   },
   
   button: {
-    width: 100,
+    width: 200,
     height: 40,
     borderColor: 'gray',
     borderWidth: 2,
@@ -159,6 +162,7 @@ const styles = StyleSheet.create({
     flex:6, 
     alignItems: 'center',
     justifyContent: 'flex-start',
+    paddingTop: 10
   },
 
   image: {

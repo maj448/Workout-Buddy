@@ -62,6 +62,7 @@ function MyTabs() {
             <Ionicons name="person" size={24} color="black" />
             ),
             tabBarLabel: 'Profile',
+            headerShown: false,
           }}
         />
       </Tab.Navigator>

@@ -1,6 +1,7 @@
 import { Text, StyleSheet, Pressable, Alert, TouchableOpacity} from 'react-native'
 import { useRemoveBuddie } from '../api/buddies';
 import { useAuth } from '../providers/AuthProvider';
+import RemoteImage from './RemoteImage';
 
 
 
@@ -26,10 +27,18 @@ export default function WorkoutBuddyListItem({ buddie }) {
     ]);
     };
 
+    
+
 
     return(
 
         <TouchableOpacity style= {styles.container} onLongPress={confirmRemove}>
+            <RemoteImage
+                path={buddie.avatar_url}
+                fallback='https://img.icons8.com/nolan/64/user-default.png'
+                style={styles.image}
+                resizeMode="contain"
+            />
             <Text style= {styles.text}>
                {buddie.username}
             </Text>
@@ -43,15 +52,22 @@ const styles = StyleSheet.create({
         padding: 15,
         borderRadius: 5,
         flexDirection: 'row',
-        justifyContent: 'space-between',
-        backgroundColor: 'lightgray'
+        //justifyContent: 'space-between',
+        backgroundColor: '#818181'
     },
     text: {
-        color: 'black',
-        fontSize: 16,
-    },
-    time: {
-        fontSize: 14,
         color: 'white',
-      },
+        fontSize: 30,
+        paddingHorizontal: 10,
+        //maxWidth: '50%',
+       textAlign: 'center'
+    },
+    image: {
+        width: '15%',
+        aspectRatio: 1,
+        alignSelf: 'center',
+        borderRadius: 100,
+        borderColor: 'black',
+        borderWidth: 2,
+    },
 })

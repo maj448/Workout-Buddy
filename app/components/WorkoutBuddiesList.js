@@ -19,9 +19,9 @@ export default function WorkoutBuddiesList({buddies}){
     return(
     <View style={{backgroundColor: '#6EEB92', padding: 10, gap: 10, flex: 2}}>
       <View style ={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 10}}>
-        <Text style={{color: 'white', fontWeight: 'bold', fontSize: 24}}>Buddies</Text>
+        <Text style={{color: 'white', fontWeight: 'bold', fontSize: 40}}>Buddies</Text>
         <TouchableOpacity onPress={inviteFriend}>
-          <Ionicons name="add-circle-outline" size={35} color="white" />
+          <Ionicons name="add-circle-outline" size={40} color="white" />
         </TouchableOpacity>
       </View>
 

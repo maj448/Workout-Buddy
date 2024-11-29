@@ -57,7 +57,7 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
 
 
     return(
-    <View style={{backgroundColor: '#6EEB92', padding: 10, gap: 10}}>
+    <View style={styles.container}>
 
       { participantState != 'complete' && 
       <Text style={{color: 'white', fontWeight: 'bold', fontSize: 24, }}>Buddies:</Text>
@@ -128,8 +128,10 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
-    padding: 16,
+    backgroundColor: 'gray', 
+    padding: 10, 
+    gap: 10,
+    borderRadius: 10
   },
 
   dropdown: {
@@ -146,15 +148,15 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
 
-  label: {
-    position: 'absolute',
-    backgroundColor: 'white',
-    left: 22,
-    top: 8,
-    zIndex: 999,
-    paddingHorizontal: 8,
-    fontSize: 14,
-  },
+  // label: {
+  //   position: 'absolute',
+  //   backgroundColor: '#DDF8D6',
+  //   left: 22,
+  //   top: 8,
+  //   zIndex: 999,
+  //   paddingHorizontal: 8,
+  //   fontSize: 14,
+  // },
 
   placeholderStyle: {
     fontSize: 16,
@@ -176,7 +178,7 @@ const styles = StyleSheet.create({
 
   selectedStyle: {
     borderRadius: 12,
-    backgroundColor: 'blue'
+    backgroundColor: '#DDF8D6'
   },
 
   button: {
