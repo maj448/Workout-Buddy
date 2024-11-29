@@ -38,7 +38,7 @@ export default function WorkoutList({workouts, invitedWorkouts, displayDate, sel
   return(
   <View style={{backgroundColor: '#6EEB92', padding: 10, gap: 10, flex: 1}} collapsable={false}>
     <View style ={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 10}}>
-      <Text style={{color: 'white', fontWeight: 'bold', fontSize: 24}}>{displayDate}</Text>
+      <Text style={{color: 'white', fontWeight: 'bold', fontSize: 30}}>{displayDate}</Text>
       { today <= selected &&
       <TouchableOpacity onPress={createWorkout}>
         <Ionicons name="add-circle-outline" size={35} color="white" />

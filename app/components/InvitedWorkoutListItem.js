@@ -81,13 +81,15 @@ const styles = StyleSheet.create({
 
     text: {
         color: 'white',
-        fontSize: 16,
+        fontSize: 20,
+        maxWidth: '50%',
+        textAlign: 'center'
     },
-
     time: {
-        fontSize: 14,
+        fontSize: 16,
         color: 'white',
-      },
+        alignSelf: 'center'
+    },
 
     button: {
         width: 100,

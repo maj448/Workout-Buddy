@@ -10,7 +10,7 @@ import { useAuth } from '../providers/AuthProvider';
     pending: { backgroundColor: 'blue', },
     past: { backgroundColor: 'gray', },
     complete: { backgroundColor:  'limegreen' },
-    upcoming: { backgroundColor: 'orange', },
+    upcoming: { backgroundColor: '#F39D06', },
   };
 
 export default function WorkoutListItem({ workout }) {
@@ -77,14 +77,17 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         flexDirection: 'row',
         justifyContent: 'space-between',
+        alignContent: 'center', 
     },
     text: {
         color: 'white',
-        fontSize: 16,
-        maxWidth: '50%'
+        fontSize: 20,
+        maxWidth: '50%',
+        textAlign: 'center'
     },
     time: {
-        fontSize: 14,
+        fontSize: 16,
         color: 'white',
-      },
+        alignSelf: 'center'
+    },
 })
