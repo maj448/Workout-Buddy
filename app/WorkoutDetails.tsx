@@ -25,7 +25,7 @@ const WorkoutDetailsScreen = ({route}) => {
     useParticipantSubscription( workout.id )
     useInvitationsSubscription( workout.id )
     const displayDate = workout.workout_date.split('T')[0]
-    const [participantState, setParticipantState] = useState('waiting')
+    const [participantState, setParticipantState] = useState('')
     const [canStart, setCanStart] = useState(false)
     const [completed, setCompleted] = useState(false)
     const navigation = useNavigation()
@@ -44,6 +44,11 @@ const WorkoutDetailsScreen = ({route}) => {
     const {data: UserBuddies, isLoading : isLoadingUserBuddies} = userBuddies(session?.user.id);
 
     const {mutate: updateParticipantStatus} = useUpdateParticipantStatus();
+
+    let isParticipant = allParticipants?.filter((participant) => {
+      if(session?.user.id == participant.profiles.id )
+      return participant})
+    
 
     const onStart = () => {
       updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'in workout'},
@@ -161,7 +166,7 @@ const WorkoutDetailsScreen = ({route}) => {
 
       }
         
-        { canStart && !completed && 
+        { canStart && !completed && isParticipant &&
 
           <TouchableOpacity onPress={onStart}  style={styles.startButton}>
               <Text style={styles.startButtonText}>{participantState == 'in workout' ? 'Resume' : 'Start!'} </Text>

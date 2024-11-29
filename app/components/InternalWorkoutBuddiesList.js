@@ -6,6 +6,7 @@ import { useInviteToWorkout } from "../api/workouts";
 
 
 
+
 export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyToInvites, allParticipants, allInvitations, workout, participantState}){
 
 
@@ -54,8 +55,6 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
       setSelected([])
   }
 
-
-
     return(
     <View style={styles.container}>
 
@@ -67,7 +66,7 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
       <Text style={{color: 'white', fontWeight: 'bold', fontSize: 24, }}>Completed with Buddies:</Text>
       }
 
-      { participantState != 'complete' && workoutStatus != 'past' &&
+      { participantState != 'complete' && workoutStatus != 'past' && participantState &&
       <View style ={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 10}}>
 
         <View style={[selectBoxFlex]}>
