@@ -1,6 +1,5 @@
 
 import {SafeAreaView} from 'react-native-safe-area-context';
-import { View, Text, TouchableOpacity, ScrollView, Button } from 'react-native';
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 import { format, parseISO} from 'date-fns';
 import WorkoutList from "./components/WorkoutList"
@@ -191,3 +190,4 @@ export default function Index() {
     </SafeAreaView>
   );
 }
+

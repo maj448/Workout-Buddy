@@ -109,6 +109,11 @@ const WorkoutDetailsScreen = ({route}) => {
 
   }, [participantState, participationInfo ]);
 
+  let buddyparticipants = []
+  if(allParticipants){
+    buddyparticipants = allParticipants.filter((participant) => {
+    if(session?.user.id != participant.profiles.id )
+    return participant});}
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -140,7 +145,7 @@ const WorkoutDetailsScreen = ({route}) => {
         buddies={UserBuddies} 
         forNew={false} 
         OnAddBuddyToInvites={handleBuddyInviteList} 
-        allParticipants={allParticipants} 
+        allParticipants={buddyparticipants} 
         allInvitations={allInvitations} 
         workout= {workout} 
         participantState={participantState}/>
