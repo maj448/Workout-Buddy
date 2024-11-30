@@ -36,6 +36,8 @@ const WorkoutDetailsScreen = ({route}) => {
     const navigation = useNavigation()
     const [inviteBuddyList, setInviteBuddyList] = useState([])
     const [timeNow, setTimeNow] = useState(new Date());
+    const [loading, setLoading] = useState(false)
+    const [loadingStart, setLoadingStart] = useState(false)
   
 
     const { data: participationInfo,  error: participationError } = participantWorkoutInfo(session?.user.id, workout.id);
@@ -67,9 +69,11 @@ const WorkoutDetailsScreen = ({route}) => {
     
 
     const onStart = () => {
+      setLoadingStart(true)
       updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'in workout'},
         {
           onSuccess: () => {
+            setLoadingStart(false)
             navigation.navigate('In Workout', {user_id : session?.user.id, workout_id : workout.id});
           },
         }
@@ -98,16 +102,32 @@ const WorkoutDetailsScreen = ({route}) => {
 
 
     const onCheckIn = () => {
+
+      setLoading(true)
       
       if(participantState == 'checked in')
       {
         
-        updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'waiting', duration : '0', activity : 'N/A'},)
+        updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'waiting', duration : '0', activity : 'N/A'},{
+          onSuccess: () => {
+            setLoading(false);
+          },
+          onError: (error) => {
+            setLoading(false);
+          },
+        })
       
       }
       if(participantState == 'waiting')
       {
-        updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'checked in', duration : '0', activity : 'N/A'})
+        updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'checked in', duration : '0', activity : 'N/A'},{
+          onSuccess: () => {
+            setLoading(false);
+          },
+          onError: (error) => {
+            setLoading(false);
+          },
+        })
       }
 
     }
@@ -184,7 +204,7 @@ const WorkoutDetailsScreen = ({route}) => {
       {!completed && participantState != 'in workout' && workout.workout_status != 'past' && timeNow.toISOString() >= formatDate(workout.start_time) &&
         
         <TouchableOpacity onPress= {onCheckIn} style={styles.button}>
-            <Text>{ canStart ? 'Leave' : 'Check In'}</Text>
+            <Text>{ canStart ? (!loading ? 'Leave' : 'Leaving...') : (!loading ? 'Check In' : 'Checking in...')}</Text>
         </TouchableOpacity>
        
 
@@ -194,7 +214,7 @@ const WorkoutDetailsScreen = ({route}) => {
         { canStart && !completed && isParticipant &&
 
           <TouchableOpacity onPress={onStart}  style={styles.startButton}>
-              <Text style={styles.startButtonText}>{participantState == 'in workout' ? 'Resume' : 'Start!'} </Text>
+              <Text style={styles.startButtonText}>{participantState == 'in workout' ? (!loadingStart ? 'Resume' : 'Resuming...')  : (!loadingStart ? 'Start!' : 'Starting...')} </Text>
           </TouchableOpacity>
         }
         </View>

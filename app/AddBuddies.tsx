@@ -15,6 +15,7 @@ export default function Buddy() {
 
   const { session } = useAuth();
   const user_id = session?.user.id;
+  const [loading, setLoading] = useState(false)
   const [inputUsername, setInputUsername] = useState('');
   
 
@@ -22,17 +23,17 @@ export default function Buddy() {
  
     const navigation = useNavigation();
     const onAddBuddy = () => {
-        //call function to add buddy
+      setLoading(true);
         insertBuddy({user_id : user_id, username : inputUsername},
           {
             onSuccess: () => {
-              //resetFields();
+              setLoading(false);
               navigation.goBack();
             },
             onError: (error) => {
               //Alert.alert('Error', error.message );
               Alert.alert('Error', 'Cannot find user with that username.' );
-              //setLoading(false);
+              setLoading(false);
             },
       })
         
@@ -51,14 +52,11 @@ export default function Buddy() {
               onChangeText={setInputUsername}
           />
           <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={onAddBuddy}  style={styles.button}>
-                <Text style={styles.buttonText}>Add </Text>
+            <TouchableOpacity onPress={onAddBuddy} disabled={loading} style={styles.button}>
+                <Text style={styles.buttonText} >{ loading ? 'Adding...'  : 'Add' }</Text>
             </TouchableOpacity>
           </View>
         </View>
-        {/* <KeyboardAvoidingView style={{flex:6}}>
-
-        </KeyboardAvoidingView> */}
 
         
       </View>
