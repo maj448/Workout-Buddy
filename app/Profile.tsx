@@ -21,6 +21,8 @@ const ProfileScreen = () => {
   const [image, setImage] = useState("https://img.icons8.com/nolan/64/user-default.png");
   const [editView, setEditView] = useState(false)
 
+  const [loadingUpdate, setLoadingUdate] = useState(false)
+
   if(!session){
     navigation.navigate("Login");
   }
@@ -40,8 +42,14 @@ const ProfileScreen = () => {
   const { data: profile } =  userProfileDetails(session?.user.id)
 
   const updateProfilePic = async () => {
+
+    setLoadingUdate(true)
     const imagePath = await uploadImage();
-    updatePic({user_id: session?.user.id, image : imagePath})
+    updatePic({user_id: session?.user.id, image : imagePath},{
+      onSuccess: () => {
+        setLoadingUdate(false);
+      },
+    })
     setEditView(false)
   }
 
@@ -111,16 +119,19 @@ const ProfileScreen = () => {
         </TouchableOpacity>
         </View>
       <View style={styles.infoContainer}>
-      <RemoteImage
+
+        <TouchableOpacity  onPress= {pickImage}  disabled={!editView} style={styles.imageButton}>
+        <RemoteImage
         path={userProfileAvatar}
         fallback='https://img.icons8.com/nolan/64/user-default.png'
         style={styles.image}
         resizeMode="contain"
-      />
+          />
+      </TouchableOpacity>
       { editView &&
-        <TouchableOpacity  onPress= {pickImage} style={styles.imageButton}>
+        // <TouchableOpacity  onPress= {pickImage} style={styles.imageButton}>
           <Text style={styles.label}>Change Profile Picture</Text>
-          </TouchableOpacity>
+          // {/* </TouchableOpacity> */}
       }
 
   { !editView &&
@@ -138,9 +149,9 @@ const ProfileScreen = () => {
         <View style={styles.buttonContainer}>
           
           <TouchableOpacity onPress={updateProfilePic}  style={styles.button}>
-            <Text style={styles.buttonText}>Update Profile</Text>
+            <Text style={styles.buttonText}>{loadingUpdate ? 'Updating...' : 'Update Profile'}</Text>
           </TouchableOpacity>
-          <Text>*To save the changed profile picture you must Update profile</Text>
+          <Text>*To see and save the changed profile picture you must Update profile</Text>
         </View>
       }
       </View>

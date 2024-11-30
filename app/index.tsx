@@ -11,6 +11,7 @@ import { ActivityIndicator } from 'react-native';
 import {  Gesture, GestureDetector, Directions} from 'react-native-gesture-handler';
 import moment from 'moment'
 import { useInviteSubscription } from './api/subscriptions';
+import { useQueryClient } from '@tanstack/react-query';
 
 const workoutStatuses = {
   pending: { key: 'pending', color: 'blue' },
@@ -23,12 +24,14 @@ const workoutStatuses = {
 export default function Index() {
   const { session } = useAuth();
   const navigation = useNavigation();
+  const queryClient = useQueryClient();
 
   const today = format(new Date(), 'yyyy-MM-dd');
   const [selected, setSelected] = useState(today);
   const [filteredWorkouts, setFilteredWorkouts] = useState([])
   const [filteredInvites, setFilteredInvites] = useState([])
   const [markedDates, setMarkedDates] = useState({});
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const {data: updatedOld} = updateOldWorkouts()
   const { data: workoutsWithParticipation, isLoading: isWorkoutsLoading, error: workoutsError} = participantWorkouts(session?.user.id)
@@ -59,6 +62,22 @@ export default function Index() {
   .runOnJS(true)
   ;
 
+  const refresh = () => {
+    setIsRefreshing(true);
+
+    queryClient.invalidateQueries(['invitations', session?.user.id])
+    .then(() => {setIsRefreshing(false);  })
+    .catch((error) => {
+      console.error("Error invalidating queries", error);
+      setIsRefreshing(false);
+    });
+
+  }
+  const flingGestureDown = Gesture.Fling()
+  .direction(Directions.DOWN)
+  .onEnd(refresh)
+  .runOnJS(true)
+  ;
   const combinedGesture = Gesture.Race(flingGestureLeft, flingGestureRight);
 
 
@@ -131,7 +150,7 @@ export default function Index() {
   }
 }, [workoutsWithParticipation, invited, selected, updatedOld]);
 
-  if ( isWorkoutsLoading || isInvitedLoading) {
+  if ( isWorkoutsLoading || isInvitedLoading || isRefreshing) {
     return <ActivityIndicator />;
   }
 
@@ -163,8 +182,10 @@ export default function Index() {
   const displayDate = format(parseISO(selected), 'MMM dd');
 
   return (
+    <GestureDetector gesture={flingGestureDown}>
     <SafeAreaView style= {{flex:1}}>
       <Calendar
+        initialDate={selected}
         onDayPress={day => {
           setSelected(day.dateString);
         }}
@@ -188,6 +209,7 @@ export default function Index() {
         <WorkoutList workouts={filteredWorkouts} invitedWorkouts={filteredInvites} displayDate ={displayDate} selected={selected}/>
       </GestureDetector>
     </SafeAreaView>
+    </GestureDetector>
   );
 }
 

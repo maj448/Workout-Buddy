@@ -7,6 +7,7 @@ import {parseISO} from 'date-fns';
 import { useNavigation } from '@react-navigation/native';
 import InternalWorkoutBuddiesList from './components/InternalWorkoutBuddiesList';
 import { userBuddies } from './api/buddies';
+import { notifyUserAboutNewInvite } from './utils/notifications';
 
 const NewWorkoutScreen = ({route}) => {
   const { session } = useAuth();
@@ -62,7 +63,6 @@ const NewWorkoutScreen = ({route}) => {
   
     setInputStartTime(start); 
     setOpenStart(false); 
-    console.log('Start time set:', start);
   };
   
 
@@ -72,7 +72,6 @@ const NewWorkoutScreen = ({route}) => {
   
     setInputEndTime(end); 
     setOpenEnd(false); 
-    console.log('End time set:', end);
   };
   
   const showDatepicker = () => {
@@ -122,8 +121,14 @@ const NewWorkoutScreen = ({route}) => {
   const onSubmitHandler = () => {
     insertWorkout({inputTitle, inputNotes, inputDate, inputStartTime, inputEndTime, user_id, inviteBuddyList},
       {
-        onSuccess: () => {
+        onSuccess: async () => {
           resetFields();
+          for (let buddy of inviteBuddyList)
+          {
+            await notifyUserAboutNewInvite(buddy.id)
+          }
+
+
           navigation.navigate('Tabs');
         },
         onError: (error) => {

@@ -17,6 +17,7 @@ import AuthProvider from './providers/AuthProvider';
 import { useAuth } from './providers/AuthProvider';
 import QueryProvider from './providers/QueryProvider';
 import InWorkout from './InWorkout';
+import NotificationProvider from './providers/NotificationProvider';
 
 const Tab = createBottomTabNavigator();
 
@@ -89,6 +90,7 @@ export default function RootLayout() {
     
     <AuthProvider>
       <QueryProvider>
+        <NotificationProvider>
         <NavigationIndependentTree>
           <NavigationContainer>
           <Stack.Navigator initialRouteName= {initialRoute}>  
@@ -115,6 +117,7 @@ export default function RootLayout() {
           
         </NavigationContainer>
       </NavigationIndependentTree>
+      </NotificationProvider>
     </QueryProvider>
   </AuthProvider>
 

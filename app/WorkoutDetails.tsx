@@ -7,6 +7,9 @@ import { allWorkoutInvitations, allWorkoutParticipants, participantWorkoutInfo, 
 import { useAuth } from './providers/AuthProvider';
 import { userBuddies } from './api/buddies';
 import { useParticipantSubscription, useInvitationsSubscription } from './api/subscriptions';
+import { useQueryClient } from '@tanstack/react-query';
+import {  Gesture, GestureDetector, Directions} from 'react-native-gesture-handler';
+import { ActivityIndicator } from 'react-native';
 
 
 
@@ -15,7 +18,8 @@ import { useParticipantSubscription, useInvitationsSubscription } from './api/su
 const WorkoutDetailsScreen = ({route}) => {
 
   const { session } = useAuth();
-    const { workout} = route.params;
+    const { user_id, workout} = route.params;
+    const queryClient = useQueryClient();
 
     if (!workout) {
       Alert.alert('Workout is undefined!')
@@ -24,6 +28,7 @@ const WorkoutDetailsScreen = ({route}) => {
 
     useParticipantSubscription( workout.id )
     useInvitationsSubscription( workout.id )
+
     const displayDate = workout.workout_date.split('T')[0]
     const [participantState, setParticipantState] = useState('')
     const [canStart, setCanStart] = useState(false)
@@ -31,20 +36,31 @@ const WorkoutDetailsScreen = ({route}) => {
     const navigation = useNavigation()
     const [inviteBuddyList, setInviteBuddyList] = useState([])
     const [timeNow, setTimeNow] = useState(new Date());
-   // const timePlus10Minutes = workout.start_time.toLocaleString().setMinutes(workout.start_time.toLocaleString().getMinutes() - 10);
-
+    const [loading, setLoading] = useState(false)
+    const [loadingStart, setLoadingStart] = useState(false)
   
 
-    const { data: participationInfo, isLoading: isParticipationLoading, error: participationError } = participantWorkoutInfo(session?.user.id, workout.id);
-    //const { data: BuddiesInfo, isLoading: isBuddiesLoading, error: BuddiesError } = workoutBuddies(session?.user.id, workout.id);
-    const { data: allParticipants, isLoading: allParticipantsLoading, error: allParticipantsError } = allWorkoutParticipants(workout.id);
-    const { data: allInvitations, isLoading: allInvitationsLoading, error: allInvitationsError } = allWorkoutInvitations(workout.id);
-
-
-
-    const {data: UserBuddies, isLoading : isLoadingUserBuddies} = userBuddies(session?.user.id);
+    const { data: participationInfo,  error: participationError } = participantWorkoutInfo(user_id, workout.id);
+    const { data: allParticipants,  error: allParticipantsError } = allWorkoutParticipants(workout.id);
+    const { data: allInvitations, error: allInvitationsError } = allWorkoutInvitations(workout.id);
+    const {data: UserBuddies} = userBuddies(user_id);
 
     const {mutate: updateParticipantStatus} = useUpdateParticipantStatus();
+
+    
+    const refresh = () => {
+
+      queryClient.invalidateQueries(['participants', workout.id])
+      queryClient.invalidateQueries(['invitations', workout.id])
+
+    }
+    const flingGestureDown = Gesture.Fling()
+    .direction(Directions.DOWN)
+    .onEnd(refresh)
+    .runOnJS(true)
+    ;
+
+
 
     let isParticipant = allParticipants?.filter((participant) => {
       if(session?.user.id == participant.profiles.id )
@@ -52,9 +68,11 @@ const WorkoutDetailsScreen = ({route}) => {
     
 
     const onStart = () => {
+      setLoadingStart(true)
       updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'in workout'},
         {
           onSuccess: () => {
+            setLoadingStart(false)
             navigation.navigate('In Workout', {user_id : session?.user.id, workout_id : workout.id});
           },
         }
@@ -76,23 +94,39 @@ const WorkoutDetailsScreen = ({route}) => {
       date = `${date}Z`
       date = new Date(date);
       date = new Date(date.getTime() - 10 * 60 * 1000); 
-      return date.toLocaleString();
+      return date.toISOString();
 
 
     };
 
 
     const onCheckIn = () => {
+
+      setLoading(true)
       
       if(participantState == 'checked in')
       {
         
-        updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'waiting', duration : '0', activity : 'N/A'},)
+        updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'waiting', duration : '0', activity : 'N/A'},{
+          onSuccess: () => {
+            setLoading(false);
+          },
+          onError: (error) => {
+            setLoading(false);
+          },
+        })
       
       }
       if(participantState == 'waiting')
       {
-        updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'checked in', duration : '0', activity : 'N/A'})
+        updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'checked in', duration : '0', activity : 'N/A'},{
+          onSuccess: () => {
+            setLoading(false);
+          },
+          onError: (error) => {
+            setLoading(false);
+          },
+        })
       }
 
     }
@@ -128,13 +162,11 @@ const WorkoutDetailsScreen = ({route}) => {
   let buddyparticipants = []
   if(allParticipants){
     buddyparticipants = allParticipants.filter((participant) => {
-    if(session?.user.id != participant.profiles.id )
+    if(user_id != participant.profiles.id )
     return participant});}
 
-
-    console.log(timeNow.toLocaleString())
-    console.log(formatDate(workout.start_time))
   return (
+    <GestureDetector gesture={flingGestureDown}>
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style ={styles.staticInfo}>
         <Text style= {styles.title}>{workout.title}</Text>
@@ -168,10 +200,10 @@ const WorkoutDetailsScreen = ({route}) => {
         participantState={participantState}/>
 
       <View style={styles.buttonContainer}>
-      {!completed && participantState != 'in workout' && workout.workout_status != 'past' && timeNow.toLocaleString() >= formatDate(workout.start_time) &&
+      {!completed && participantState != 'in workout' && workout.workout_status != 'past' && timeNow.toISOString() >= formatDate(workout.start_time) &&
         
         <TouchableOpacity onPress= {onCheckIn} style={styles.button}>
-            <Text>{ canStart ? 'Leave' : 'Check In'}</Text>
+            <Text>{ canStart ? (!loading ? 'Leave' : 'Leaving...') : (!loading ? 'Check In' : 'Checking in...')}</Text>
         </TouchableOpacity>
        
 
@@ -181,12 +213,13 @@ const WorkoutDetailsScreen = ({route}) => {
         { canStart && !completed && isParticipant &&
 
           <TouchableOpacity onPress={onStart}  style={styles.startButton}>
-              <Text style={styles.startButtonText}>{participantState == 'in workout' ? 'Resume' : 'Start!'} </Text>
+              <Text style={styles.startButtonText}>{participantState == 'in workout' ? (!loadingStart ? 'Resume' : 'Resuming...')  : (!loadingStart ? 'Start!' : 'Starting...')} </Text>
           </TouchableOpacity>
         }
         </View>
 
       </ScrollView>
+      </GestureDetector>
   );
 };
 

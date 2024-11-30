@@ -15,23 +15,25 @@ export default function Buddy() {
 
   const { session } = useAuth();
   const user_id = session?.user.id;
+  const [loading, setLoading] = useState(false)
   const [inputUsername, setInputUsername] = useState('');
+  
 
   const {mutate: insertBuddy} = useAddBuddy();
  
     const navigation = useNavigation();
     const onAddBuddy = () => {
-        //call function to add buddy
+      setLoading(true);
         insertBuddy({user_id : user_id, username : inputUsername},
           {
             onSuccess: () => {
-              //resetFields();
+              setLoading(false);
               navigation.goBack();
             },
             onError: (error) => {
               //Alert.alert('Error', error.message );
               Alert.alert('Error', 'Cannot find user with that username.' );
-              //setLoading(false);
+              setLoading(false);
             },
       })
         
@@ -44,20 +46,17 @@ export default function Buddy() {
           <Text style={styles.label}>Add Buddy with Username:</Text>
           <TextInput
               style={styles.inputBox}
-              placeholder={'(Required) username'}
+              placeholder={'(Required) case sensitive username '}
               keyboardType="default"
               value={inputUsername}
               onChangeText={setInputUsername}
           />
           <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={onAddBuddy}  style={styles.button}>
-                <Text style={styles.buttonText}>Add </Text>
+            <TouchableOpacity onPress={onAddBuddy} disabled={loading} style={styles.button}>
+                <Text style={styles.buttonText} >{ loading ? 'Adding...'  : 'Add' }</Text>
             </TouchableOpacity>
           </View>
         </View>
-        {/* <KeyboardAvoidingView style={{flex:6}}>
-
-        </KeyboardAvoidingView> */}
 
         
       </View>

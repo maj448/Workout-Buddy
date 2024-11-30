@@ -3,6 +3,8 @@ import InternalWorkoutBuddyListItem from "./InternalWorkoutBuddyListItem";
 import React, {useEffect, useState} from 'react';
 import { MultiSelect } from 'react-native-element-dropdown';
 import { useInviteToWorkout } from "../api/workouts";
+import { notifyUserAboutNewInvite } from "../utils/notifications";
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 
 
@@ -51,9 +53,35 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
   const sendInvites = () => {
       let workout_id = workout.id
       let newInvites = checkNewInvites();
-      inviteToWorkout({selected : newInvites, workout_id})
+      inviteToWorkout({selected : newInvites, workout_id},
+        {
+          onSuccess: async () => {
+            for (let buddy of newInvites)
+            {
+              await notifyUserAboutNewInvite(buddy.id)
+            }
+  
+          },
+        }
+      )
       setSelected([])
   }
+
+    const renderItem = item => {
+      return (
+        <View style={styles.item}>
+          <Text style={styles.textItem}>{item.label}</Text>
+          {selected.some(i => i.id === item.value.id) && (
+            <AntDesign
+              style={styles.icon}
+              color="black"
+              name="checkcircleo"
+              size={20}
+            />
+          )}
+        </View>
+      );
+    };
 
     return(
     <View style={styles.container}>
@@ -91,6 +119,8 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
             setIsFocus(false);
           }}
           selectedStyle={styles.selectedStyle}
+          renderItem={renderItem}
+          
         />
         </View>
 
@@ -107,10 +137,10 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
 
 
         {allInvitations && allInvitations.map((buddie) => (
-          <InternalWorkoutBuddyListItem key={buddie.id} buddie={buddie} forNew={forNew}/>
+          <InternalWorkoutBuddyListItem key={buddie.id} buddie={buddie} forNew={forNew} workout={null}/>
         ))}
         {allParticipants && allParticipants.map((buddie) => (
-          <InternalWorkoutBuddyListItem key={buddie.id} buddie={buddie} forNew={forNew}/>
+          <InternalWorkoutBuddyListItem key={buddie.id} buddie={buddie} forNew={forNew} workout={workout}/>
         ))}
 
 
@@ -147,22 +177,15 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
 
-  // label: {
-  //   position: 'absolute',
-  //   backgroundColor: '#DDF8D6',
-  //   left: 22,
-  //   top: 8,
-  //   zIndex: 999,
-  //   paddingHorizontal: 8,
-  //   fontSize: 14,
-  // },
+
 
   placeholderStyle: {
     fontSize: 16,
+    
   },
 
   selectedTextStyle: {
-    fontSize: 16,
+    fontSize: 16
   },
 
   iconStyle: {
@@ -208,7 +231,18 @@ const styles = StyleSheet.create({
   
   listGap: {
     gap: 5
-  }
+  },
+
+  item: {
+    padding: 17,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  textItem: {
+    flex: 1,
+    fontSize: 16,
+  },
 
 
 });
