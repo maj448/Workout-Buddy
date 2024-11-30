@@ -93,7 +93,6 @@ export default function InWorkout({route}) {
 
     end();
 
-      console.log(currentStepCount, currentStepCount.toString() + ' steps')
     if(currentStepCount > 0)
     {
       updateOnComplete(currentStepCount.toString() + ' steps');

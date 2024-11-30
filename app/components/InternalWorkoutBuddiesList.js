@@ -3,6 +3,7 @@ import InternalWorkoutBuddyListItem from "./InternalWorkoutBuddyListItem";
 import React, {useEffect, useState} from 'react';
 import { MultiSelect } from 'react-native-element-dropdown';
 import { useInviteToWorkout } from "../api/workouts";
+import { notifyUserAboutNewInvite } from "../utils/notifications";
 
 
 
@@ -56,8 +57,7 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
           onSuccess: async () => {
             for (let buddy of newInvites)
             {
-              console.log(buddy)
-              await notifyUserAboutOrderUpdate(buddy.id)
+              await notifyUserAboutNewInvite(buddy.id)
             }
   
           },

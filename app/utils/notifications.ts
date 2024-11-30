@@ -34,7 +34,6 @@ export async function registerForPushNotificationsAsync() {
         projectId: Constants.expoConfig?.extra?.eas.projectId,
       })
     ).data;
-    console.log(token);
   } else {
     // alert('Must use physical device for Push Notifications');
   }
@@ -76,8 +75,8 @@ const getUserToken = async (user_id) => {
   return data?.expo_push_token;
 };
 
-export const notifyUserAboutOrderUpdate = async (user_id) => {
-  console.log('gets HERE', user_id)
+export const notifyUserAboutNewInvite = async (user_id) => {
+
   const token = await getUserToken(user_id);
   const title = `You have been invited to a new workout`;
   const body = `check the app to view`;

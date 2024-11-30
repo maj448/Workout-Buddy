@@ -7,7 +7,7 @@ import {parseISO} from 'date-fns';
 import { useNavigation } from '@react-navigation/native';
 import InternalWorkoutBuddiesList from './components/InternalWorkoutBuddiesList';
 import { userBuddies } from './api/buddies';
-import { notifyUserAboutOrderUpdate } from './utils/notifications';
+import { notifyUserAboutNewInvite } from './utils/notifications';
 
 const NewWorkoutScreen = ({route}) => {
   const { session } = useAuth();
@@ -125,7 +125,7 @@ const NewWorkoutScreen = ({route}) => {
           resetFields();
           for (let buddy of inviteBuddyList)
           {
-            await notifyUserAboutOrderUpdate(buddy.id)
+            await notifyUserAboutNewInvite(buddy.id)
           }
 
 

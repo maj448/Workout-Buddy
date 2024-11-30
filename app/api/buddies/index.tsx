@@ -48,7 +48,6 @@ export const useAddBuddy = () => {
           .eq('username', data.username)
           .single()
 
-          console.log(usernameData)
           if (usernameError) {
             console.log(usernameError)
             throw usernameError;
