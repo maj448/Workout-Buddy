@@ -21,6 +21,8 @@ const ProfileScreen = () => {
   const [image, setImage] = useState("https://img.icons8.com/nolan/64/user-default.png");
   const [editView, setEditView] = useState(false)
 
+  const [loadingUpdate, setLoadingUdate] = useState(false)
+
   if(!session){
     navigation.navigate("Login");
   }
@@ -40,8 +42,14 @@ const ProfileScreen = () => {
   const { data: profile } =  userProfileDetails(session?.user.id)
 
   const updateProfilePic = async () => {
+
+    setLoadingUdate(true)
     const imagePath = await uploadImage();
-    updatePic({user_id: session?.user.id, image : imagePath})
+    updatePic({user_id: session?.user.id, image : imagePath},{
+      onSuccess: () => {
+        setLoadingUdate(false);
+      },
+    })
     setEditView(false)
   }
 
@@ -138,9 +146,9 @@ const ProfileScreen = () => {
         <View style={styles.buttonContainer}>
           
           <TouchableOpacity onPress={updateProfilePic}  style={styles.button}>
-            <Text style={styles.buttonText}>Update Profile</Text>
+            <Text style={styles.buttonText}>{loadingUpdate ? 'Updating...' : 'Update Profile'}</Text>
           </TouchableOpacity>
-          <Text>*To save the changed profile picture you must Update profile</Text>
+          <Text>*To see and save the changed profile picture you must Update profile</Text>
         </View>
       }
       </View>

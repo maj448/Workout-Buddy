@@ -113,67 +113,6 @@ export default function InWorkout({route}) {
     return participant});
 
 
-
-
-
-  //MAY NEED THIS CODE TO ACTUALLY GET PERMISSION
-  
-//  const getMotionPermissionsAsync = async () => {
-//   try {
-//       let res;
-
-//       res = await check(PERMISSIONS.ANDROID.ACTIVITY_RECOGNITION);
-
-//       return res;
-//   } catch (error) {
-//       return Promise.reject();
-//   }
-// };
-
-// const isMotionAvailableAsync = async () => {
-//   try {
-//       return (await getMotionPermissionsAsync()) !== RESULTS.UNAVAILABLE;
-//   } catch (error) {
-//       return false;
-//   }
-// };
-
-// const requestMotionPermissionsAsync = async () => {
-//   try {
-//     console.log('in here')
-//     const rationale = {
-//       title: "We need this permission",
-//       message: "This app requires access to your activity data to track your steps.",
-//       buttonPositive: "Allow",
-//       buttonNegative: "Cancel",
-//     };
-//       let res;
-
-//       res = await request(PERMISSIONS.ANDROID.ACTIVITY_RECOGNITION, rationale);
-//       console.log(res)
-//       return res;
-//   } catch (error) {
-//       return null;
-//   }
-// };
-
-
-
-// const checkActivityRecognitionPermission = async () => {
-//   const permissionStatus = await check(PERMISSIONS.ANDROID.ACTIVITY_RECOGNITION);
-//   console.log("Permission status:", permissionStatus); // Check if available
-//   return permissionStatus;
-// };
-
-// checkActivityRecognitionPermission();
-//console.log(currentStepCount)
-// return (
-//   <View style={styles.container}>
-//   <Text>Pedometer.isAvailableAsync(): { isPedometerAvailable }</Text>
-//   <Text>Walk! And watch this go up: { currentStepCount }</Text>
-//   </View>
-// );
-// }
  
   return (
 

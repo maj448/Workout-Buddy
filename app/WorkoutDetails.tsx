@@ -50,10 +50,9 @@ const WorkoutDetailsScreen = ({route}) => {
     
     const refresh = () => {
 
-      queryClient.invalidateQueries(['participants', session?.user.id, workout.id])
       queryClient.invalidateQueries(['participants', workout.id])
       queryClient.invalidateQueries(['invitations', workout.id])
-      queryClient.invalidateQueries(['buddies', session?.user.id])
+
     }
     const flingGestureDown = Gesture.Fling()
     .direction(Directions.DOWN)
