@@ -32,6 +32,10 @@ export default function WorkoutList({workouts, invitedWorkouts, displayDate, sel
           }
         </View>
         <Text style={styles.text}> No workouts scheduled</Text>
+        {
+          today > selected && 
+          <Text style={styles.text}> Can't schedule workouts for past dates</Text>
+        }
       </View>
     )
   }

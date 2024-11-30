@@ -185,6 +185,7 @@ export default function Index() {
     <GestureDetector gesture={flingGestureDown}>
     <SafeAreaView style= {{flex:1}}>
       <Calendar
+        initialDate={selected}
         onDayPress={day => {
           setSelected(day.dateString);
         }}

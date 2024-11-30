@@ -18,7 +18,7 @@ import { ActivityIndicator } from 'react-native';
 const WorkoutDetailsScreen = ({route}) => {
 
   const { session } = useAuth();
-    const { workout} = route.params;
+    const { user_id, workout} = route.params;
     const queryClient = useQueryClient();
 
     if (!workout) {
@@ -40,10 +40,10 @@ const WorkoutDetailsScreen = ({route}) => {
     const [loadingStart, setLoadingStart] = useState(false)
   
 
-    const { data: participationInfo,  error: participationError } = participantWorkoutInfo(session?.user.id, workout.id);
+    const { data: participationInfo,  error: participationError } = participantWorkoutInfo(user_id, workout.id);
     const { data: allParticipants,  error: allParticipantsError } = allWorkoutParticipants(workout.id);
     const { data: allInvitations, error: allInvitationsError } = allWorkoutInvitations(workout.id);
-    const {data: UserBuddies} = userBuddies(session?.user.id);
+    const {data: UserBuddies} = userBuddies(user_id);
 
     const {mutate: updateParticipantStatus} = useUpdateParticipantStatus();
 
@@ -162,7 +162,7 @@ const WorkoutDetailsScreen = ({route}) => {
   let buddyparticipants = []
   if(allParticipants){
     buddyparticipants = allParticipants.filter((participant) => {
-    if(session?.user.id != participant.profiles.id )
+    if(user_id != participant.profiles.id )
     return participant});}
 
   return (

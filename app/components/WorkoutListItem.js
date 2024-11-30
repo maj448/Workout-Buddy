@@ -36,7 +36,7 @@ export default function WorkoutListItem({ workout }) {
 
     const gotoDetailsScreen = () => {
         if (workout) {
-            navigation.navigate('Workout Details', {workout: workout.workouts });
+            navigation.navigate('Workout Details', {user_id : session.user.id, workout: workout.workouts });
         } else {
             alert('No workout data available');
         }

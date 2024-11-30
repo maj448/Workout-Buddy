@@ -1,12 +1,25 @@
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import RemoteImage from './RemoteImage';
+import { useState, useEffect } from 'react';
+import { useNavigation } from '@react-navigation/native';
 
 
-export default function InternalWorkoutBuddyListItem({ buddie, forNew}) {
+export default function InternalWorkoutBuddyListItem({ buddie, forNew, workout}) {
     if (!buddie) {
         console.error("buddie is undefined", buddie);
         return null;  // Return null or an error message if workout is undefined
       }
+      const navigation = useNavigation();
+      const [workoutComplete, setWorkoutComplete] = useState(false)
+
+
+      useEffect(() => {
+        if( workout && buddie.status == 'complete')
+        {
+            setWorkoutComplete(true)
+        }
+    }, [workout, buddie.status]);
+
 
       let colorOnStatus
       if(buddie.status == 'checked in')
@@ -16,9 +29,15 @@ export default function InternalWorkoutBuddyListItem({ buddie, forNew}) {
       else 
           colorOnStatus = { backgroundColor: 'gray'}
 
+
+        const viewBuddyStats = () => {
+            navigation.push('Workout Details', {user_id : buddie.profiles.id, workout: workout });
+            
+        }
+
     return(
 
-        <View style= {[styles.container, colorOnStatus]}>
+        <TouchableOpacity style= {[styles.container, colorOnStatus]} disabled={!workoutComplete} onPress={viewBuddyStats }>
             <RemoteImage
                 path={buddie.profiles.avatar_url}
                 fallback='https://img.icons8.com/nolan/64/user-default.png'
@@ -32,7 +51,7 @@ export default function InternalWorkoutBuddyListItem({ buddie, forNew}) {
             { !forNew &&
             <Text style={styles.stat}>{buddie.invite_status ? buddie.invite_status : buddie.status}</Text>
             }
-        </View>
+        </TouchableOpacity>
 
     )
 }

@@ -119,16 +119,19 @@ const ProfileScreen = () => {
         </TouchableOpacity>
         </View>
       <View style={styles.infoContainer}>
-      <RemoteImage
+
+        <TouchableOpacity  onPress= {pickImage}  disabled={!editView} style={styles.imageButton}>
+        <RemoteImage
         path={userProfileAvatar}
         fallback='https://img.icons8.com/nolan/64/user-default.png'
         style={styles.image}
         resizeMode="contain"
-      />
+          />
+      </TouchableOpacity>
       { editView &&
-        <TouchableOpacity  onPress= {pickImage} style={styles.imageButton}>
+        // <TouchableOpacity  onPress= {pickImage} style={styles.imageButton}>
           <Text style={styles.label}>Change Profile Picture</Text>
-          </TouchableOpacity>
+          // {/* </TouchableOpacity> */}
       }
 
   { !editView &&
