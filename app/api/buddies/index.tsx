@@ -57,6 +57,23 @@ export const useAddBuddy = () => {
           return [];
 
 
+        const { data : alreadyExist, error : alreadyExistError } = await supabase
+        .from('buddies')
+        .select('id')
+        .eq('user_id', data.user_id)
+        .eq('buddy_user_id', usernameData.id)
+        .single()
+
+
+
+        if (alreadyExistError) {
+          console.log(alreadyExistError)
+          throw alreadyExistError;
+        }
+
+        if(alreadyExist)
+          return data.user_id
+
       const { data: userData, error: userError } = await supabase.from('buddies').insert({
         user_id: data.user_id,
         buddy_user_id: usernameData.id,

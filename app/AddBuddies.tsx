@@ -16,6 +16,7 @@ export default function Buddy() {
   const { session } = useAuth();
   const user_id = session?.user.id;
   const [inputUsername, setInputUsername] = useState('');
+  
 
   const {mutate: insertBuddy} = useAddBuddy();
  
