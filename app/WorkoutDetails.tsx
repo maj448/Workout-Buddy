@@ -62,7 +62,7 @@ const WorkoutDetailsScreen = ({route}) => {
 
 
 
-    let isParticipant = allParticipants?.filter((participant) => {
+    const isParticipant = allParticipants?.filter((participant) => {
       if(session?.user.id == participant.profiles.id )
       return participant})
     
@@ -200,7 +200,7 @@ const WorkoutDetailsScreen = ({route}) => {
         participantState={participantState}/>
 
       <View style={styles.buttonContainer}>
-      {!completed && participantState != 'in workout' && workout.workout_status != 'past' && timeNow.toISOString() >= formatDate(workout.start_time) &&
+      {!completed && isParticipant?.length > 0 && participantState != 'in workout' && workout.workout_status != 'past' && timeNow.toISOString() >= formatDate(workout.start_time) &&
         
         <TouchableOpacity onPress= {onCheckIn} style={styles.button}>
             <Text>{ canStart ? (!loading ? 'Leave' : 'Leaving...') : (!loading ? 'Check In' : 'Checking in...')}</Text>
