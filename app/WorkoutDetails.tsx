@@ -7,6 +7,9 @@ import { allWorkoutInvitations, allWorkoutParticipants, participantWorkoutInfo, 
 import { useAuth } from './providers/AuthProvider';
 import { userBuddies } from './api/buddies';
 import { useParticipantSubscription, useInvitationsSubscription } from './api/subscriptions';
+import { useQueryClient } from '@tanstack/react-query';
+import {  Gesture, GestureDetector, Directions} from 'react-native-gesture-handler';
+import { ActivityIndicator } from 'react-native';
 
 
 
@@ -16,6 +19,7 @@ const WorkoutDetailsScreen = ({route}) => {
 
   const { session } = useAuth();
     const { workout} = route.params;
+    const queryClient = useQueryClient();
 
     if (!workout) {
       Alert.alert('Workout is undefined!')
@@ -23,7 +27,8 @@ const WorkoutDetailsScreen = ({route}) => {
     }
 
     useParticipantSubscription( workout.id )
-    //useInvitationsSubscription( workout.id )
+    useInvitationsSubscription( workout.id )
+
     const displayDate = workout.workout_date.split('T')[0]
     const [participantState, setParticipantState] = useState('')
     const [canStart, setCanStart] = useState(false)
@@ -31,19 +36,30 @@ const WorkoutDetailsScreen = ({route}) => {
     const navigation = useNavigation()
     const [inviteBuddyList, setInviteBuddyList] = useState([])
     const [timeNow, setTimeNow] = useState(new Date());
-
   
 
-    const { data: participationInfo, isLoading: isParticipationLoading, error: participationError } = participantWorkoutInfo(session?.user.id, workout.id);
-    //const { data: BuddiesInfo, isLoading: isBuddiesLoading, error: BuddiesError } = workoutBuddies(session?.user.id, workout.id);
-    const { data: allParticipants, isLoading: allParticipantsLoading, error: allParticipantsError } = allWorkoutParticipants(workout.id);
-    const { data: allInvitations, isLoading: allInvitationsLoading, error: allInvitationsError } = allWorkoutInvitations(workout.id);
-
-
-
-    const {data: UserBuddies, isLoading : isLoadingUserBuddies} = userBuddies(session?.user.id);
+    const { data: participationInfo,  error: participationError } = participantWorkoutInfo(session?.user.id, workout.id);
+    const { data: allParticipants,  error: allParticipantsError } = allWorkoutParticipants(workout.id);
+    const { data: allInvitations, error: allInvitationsError } = allWorkoutInvitations(workout.id);
+    const {data: UserBuddies} = userBuddies(session?.user.id);
 
     const {mutate: updateParticipantStatus} = useUpdateParticipantStatus();
+
+    
+    const refresh = () => {
+
+      queryClient.invalidateQueries(['participants', session?.user.id, workout.id])
+      queryClient.invalidateQueries(['participants', workout.id])
+      queryClient.invalidateQueries(['invitations', workout.id])
+      queryClient.invalidateQueries(['buddies', session?.user.id])
+    }
+    const flingGestureDown = Gesture.Fling()
+    .direction(Directions.DOWN)
+    .onEnd(refresh)
+    .runOnJS(true)
+    ;
+
+
 
     let isParticipant = allParticipants?.filter((participant) => {
       if(session?.user.id == participant.profiles.id )
@@ -131,6 +147,7 @@ const WorkoutDetailsScreen = ({route}) => {
     return participant});}
 
   return (
+    <GestureDetector gesture={flingGestureDown}>
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style ={styles.staticInfo}>
         <Text style= {styles.title}>{workout.title}</Text>
@@ -183,6 +200,7 @@ const WorkoutDetailsScreen = ({route}) => {
         </View>
 
       </ScrollView>
+      </GestureDetector>
   );
 };
 

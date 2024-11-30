@@ -62,7 +62,6 @@ const NewWorkoutScreen = ({route}) => {
   
     setInputStartTime(start); 
     setOpenStart(false); 
-    console.log('Start time set:', start);
   };
   
 
@@ -72,7 +71,6 @@ const NewWorkoutScreen = ({route}) => {
   
     setInputEndTime(end); 
     setOpenEnd(false); 
-    console.log('End time set:', end);
   };
   
   const showDatepicker = () => {
