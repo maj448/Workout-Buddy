@@ -46,7 +46,7 @@ export default function Buddy() {
           <Text style={styles.label}>Add Buddy with Username:</Text>
           <TextInput
               style={styles.inputBox}
-              placeholder={'(Required) username'}
+              placeholder={'(Required) case sensitive username '}
               keyboardType="default"
               value={inputUsername}
               onChangeText={setInputUsername}
