@@ -16,7 +16,10 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.maj448.Workout_Buddy"
+      "package": "com.maj448.Workout_Buddy",
+      "permissions": [
+        "android.permission.ACTIVITY_RECOGNITION"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -50,7 +53,8 @@
           }
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      "./android-manifest.plugin.js"
     ],
     "experiments": {
       "typedRoutes": true

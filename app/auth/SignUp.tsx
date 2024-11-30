@@ -35,7 +35,7 @@ export default function SignUp() {
             return;
         }
 
-        if (inputPassword || inputPassword.trim() === '') {
+        if (!inputPassword || inputPassword.trim() === '') {
             Alert.alert("Password cannot be blank");
             return;
         }

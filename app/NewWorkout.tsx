@@ -224,7 +224,7 @@ const NewWorkoutScreen = ({route}) => {
 
         </View>
       </KeyboardAvoidingView>
-      <InternalWorkoutBuddiesList buddies={buddies} forNew={true} OnAddBuddyToInvites ={handleBuddyInviteList} allParticipants={[]} allInvitations={[]} workout={null} participantState={null}/>
+      <InternalWorkoutBuddiesList buddies={buddies} forNew={true} OnAddBuddyToInvites ={handleBuddyInviteList} allParticipants={[]} allInvitations={[]} workout={null} participantState={'new'}/>
       <View style={styles.buttonContainer}>
             <TouchableOpacity onPress={validateFields} disabled={loading} style={styles.button}>
                 <Text style={styles.buttonText}>{loading ? 'Creating Workout...' : 'Create Workout'} </Text>
