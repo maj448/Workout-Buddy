@@ -31,8 +31,9 @@ const WorkoutDetailsScreen = ({route}) => {
     const navigation = useNavigation()
     const [inviteBuddyList, setInviteBuddyList] = useState([])
     const [timeNow, setTimeNow] = useState(new Date());
-    const timePlus10Minutes = new Date(workout.start_time);
-    timePlus10Minutes.setMinutes(timePlus10Minutes.getMinutes() - 10);
+   // const timePlus10Minutes = workout.start_time.toLocaleString().setMinutes(workout.start_time.toLocaleString().getMinutes() - 10);
+
+  
 
     const { data: participationInfo, isLoading: isParticipationLoading, error: participationError } = participantWorkoutInfo(session?.user.id, workout.id);
     //const { data: BuddiesInfo, isLoading: isBuddiesLoading, error: BuddiesError } = workoutBuddies(session?.user.id, workout.id);
@@ -70,13 +71,23 @@ const WorkoutDetailsScreen = ({route}) => {
 
     };
 
+    const formatDate = (date) => {
+
+      date = `${date}Z`
+      date = new Date(date);
+      date = new Date(date.getTime() - 10 * 60 * 1000); 
+      return date.toLocaleString();
+
+
+    };
+
 
     const onCheckIn = () => {
       
       if(participantState == 'checked in')
       {
         
-        updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'waiting', duration : '0', activity : 'N/A'})
+        updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'waiting', duration : '0', activity : 'N/A'},)
       
       }
       if(participantState == 'waiting')
@@ -120,6 +131,9 @@ const WorkoutDetailsScreen = ({route}) => {
     if(session?.user.id != participant.profiles.id )
     return participant});}
 
+
+    console.log(timeNow.toLocaleString())
+    console.log(formatDate(workout.start_time))
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style ={styles.staticInfo}>
@@ -135,9 +149,7 @@ const WorkoutDetailsScreen = ({route}) => {
         { participantState == 'complete' &&
           <Text style= {styles.textCompleted}>Activity: {participationInfo.activity}</Text>
         }
-        {/* <View>
-          <Text style= {styles.text}>Notes: </Text>
-        </View> */}
+
         
         <View style= {styles.noteArea}>
         <Text style= {styles.text}>Notes: </Text>
@@ -156,7 +168,7 @@ const WorkoutDetailsScreen = ({route}) => {
         participantState={participantState}/>
 
       <View style={styles.buttonContainer}>
-      {!completed && participantState != 'in workout' && workout.workout_status != 'past' && timeNow <= timePlus10Minutes &&
+      {!completed && participantState != 'in workout' && workout.workout_status != 'past' && timeNow.toLocaleString() >= formatDate(workout.start_time) &&
         
         <TouchableOpacity onPress= {onCheckIn} style={styles.button}>
             <Text>{ canStart ? 'Leave' : 'Check In'}</Text>

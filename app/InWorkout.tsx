@@ -59,7 +59,7 @@ export default function InWorkout({route}) {
             setCurrentStepCount(result.steps);
         });
     } else {
-        alert("Permission denied");
+        //alert("Permission denied");
     return;
     }
 };
