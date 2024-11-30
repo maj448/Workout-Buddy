@@ -22,7 +22,8 @@ export const userBuddies = (user_id : string) => {
           const { data, error } = await supabase
             .from('profiles')
             .select('*')
-            .in('id', buddie_ids.map((p) => p.buddy_user_id)); 
+            .in('id', buddie_ids.map((p) => p.buddy_user_id))
+            .order('username', { ascending: true }); 
     
           if (error) throw new Error(error.message);
           return data;

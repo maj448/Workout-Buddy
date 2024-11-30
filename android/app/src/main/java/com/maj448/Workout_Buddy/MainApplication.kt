@@ -1,9 +1,6 @@
 package com.maj448.Workout_Buddy
 
-
 import android.app.Application
-      
-
 import android.content.res.Configuration
 
 import com.facebook.react.PackageList
@@ -19,9 +16,6 @@ import com.facebook.soloader.SoLoader
 import expo.modules.ApplicationLifecycleDispatcher
 import expo.modules.ReactNativeHostWrapper
 
-
-
-
 class MainApplication : Application(), ReactApplication {
 
   override val reactNativeHost: ReactNativeHost = ReactNativeHostWrapper(
@@ -31,7 +25,6 @@ class MainApplication : Application(), ReactApplication {
             val packages = PackageList(this).packages
             // Packages that cannot be autolinked yet can be added manually here, for example:
             // packages.add(new MyReactNativePackage());
-            //packages.add(new WatermelonDBPackage());
             return packages
           }
 
@@ -40,8 +33,7 @@ class MainApplication : Application(), ReactApplication {
           override fun getUseDeveloperSupport(): Boolean = BuildConfig.DEBUG
 
           override val isNewArchEnabled: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
-          
-        override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
+          override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
       }
   )
 
