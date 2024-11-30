@@ -23,7 +23,7 @@ const WorkoutDetailsScreen = ({route}) => {
     }
 
     useParticipantSubscription( workout.id )
-    useInvitationsSubscription( workout.id )
+    //useInvitationsSubscription( workout.id )
     const displayDate = workout.workout_date.split('T')[0]
     const [participantState, setParticipantState] = useState('')
     const [canStart, setCanStart] = useState(false)
@@ -31,7 +31,6 @@ const WorkoutDetailsScreen = ({route}) => {
     const navigation = useNavigation()
     const [inviteBuddyList, setInviteBuddyList] = useState([])
     const [timeNow, setTimeNow] = useState(new Date());
-   // const timePlus10Minutes = workout.start_time.toLocaleString().setMinutes(workout.start_time.toLocaleString().getMinutes() - 10);
 
   
 
@@ -76,7 +75,7 @@ const WorkoutDetailsScreen = ({route}) => {
       date = `${date}Z`
       date = new Date(date);
       date = new Date(date.getTime() - 10 * 60 * 1000); 
-      return date.toLocaleString();
+      return date.toISOString();
 
 
     };
@@ -131,9 +130,6 @@ const WorkoutDetailsScreen = ({route}) => {
     if(session?.user.id != participant.profiles.id )
     return participant});}
 
-
-    console.log(timeNow.toLocaleString())
-    console.log(formatDate(workout.start_time))
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style ={styles.staticInfo}>
@@ -168,7 +164,7 @@ const WorkoutDetailsScreen = ({route}) => {
         participantState={participantState}/>
 
       <View style={styles.buttonContainer}>
-      {!completed && participantState != 'in workout' && workout.workout_status != 'past' && timeNow.toLocaleString() >= formatDate(workout.start_time) &&
+      {!completed && participantState != 'in workout' && workout.workout_status != 'past' && timeNow.toISOString() >= formatDate(workout.start_time) &&
         
         <TouchableOpacity onPress= {onCheckIn} style={styles.button}>
             <Text>{ canStart ? 'Leave' : 'Check In'}</Text>
