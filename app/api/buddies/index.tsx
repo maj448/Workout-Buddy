@@ -48,6 +48,7 @@ export const useAddBuddy = () => {
           .eq('username', data.username)
           .single()
 
+          console.log(usernameData)
           if (usernameError) {
             console.log(usernameError)
             throw usernameError;
@@ -66,10 +67,10 @@ export const useAddBuddy = () => {
 
 
 
-        if (alreadyExistError) {
-          console.log(alreadyExistError)
-          throw alreadyExistError;
-        }
+        // if (alreadyExistError) {
+        //   console.log(alreadyExistError)
+        //   throw alreadyExistError;
+        // }
 
         if(alreadyExist)
           return data.user_id

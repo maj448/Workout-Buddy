@@ -19,7 +19,8 @@
       "package": "com.maj448.Workout_Buddy",
       "permissions": [
         "android.permission.ACTIVITY_RECOGNITION"
-      ]
+      ],
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "bundler": "metro",

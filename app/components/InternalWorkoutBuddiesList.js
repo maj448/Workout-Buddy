@@ -51,7 +51,18 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
   const sendInvites = () => {
       let workout_id = workout.id
       let newInvites = checkNewInvites();
-      inviteToWorkout({selected : newInvites, workout_id})
+      inviteToWorkout({selected : newInvites, workout_id},
+        {
+          onSuccess: async () => {
+            for (let buddy of newInvites)
+            {
+              console.log(buddy)
+              await notifyUserAboutOrderUpdate(buddy.id)
+            }
+  
+          },
+        }
+      )
       setSelected([])
   }
 

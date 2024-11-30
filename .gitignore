@@ -36,4 +36,5 @@ yarn-error.*
 *.tsbuildinfo
 
 app-example
-
+google-services.json
+workoutbuddy-8ec05-firebase-adminsdk-uk14m-664df3dbb7.json

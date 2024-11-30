@@ -7,6 +7,7 @@ import {parseISO} from 'date-fns';
 import { useNavigation } from '@react-navigation/native';
 import InternalWorkoutBuddiesList from './components/InternalWorkoutBuddiesList';
 import { userBuddies } from './api/buddies';
+import { notifyUserAboutOrderUpdate } from './utils/notifications';
 
 const NewWorkoutScreen = ({route}) => {
   const { session } = useAuth();
@@ -120,8 +121,14 @@ const NewWorkoutScreen = ({route}) => {
   const onSubmitHandler = () => {
     insertWorkout({inputTitle, inputNotes, inputDate, inputStartTime, inputEndTime, user_id, inviteBuddyList},
       {
-        onSuccess: () => {
+        onSuccess: async () => {
           resetFields();
+          for (let buddy of inviteBuddyList)
+          {
+            await notifyUserAboutOrderUpdate(buddy.id)
+          }
+
+
           navigation.navigate('Tabs');
         },
         onError: (error) => {
