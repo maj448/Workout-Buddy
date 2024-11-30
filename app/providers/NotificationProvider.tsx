@@ -70,6 +70,7 @@ const NotificationProvider = ({ children }: PropsWithChildren) => {
   }, [profile]);
 
 
+
   return <>{children}</>;
 };
 
