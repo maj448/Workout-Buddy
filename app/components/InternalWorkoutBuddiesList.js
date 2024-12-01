@@ -1,4 +1,5 @@
-import { View, Text, Pressable, StyleSheet, TouchableOpacity} from "react-native"
+//This file contains the list container for listing buddies inside the new workout and workout details screens
+import { View, Text, StyleSheet, TouchableOpacity} from "react-native"
 import InternalWorkoutBuddyListItem from "./InternalWorkoutBuddyListItem";
 import React, {useEffect, useState} from 'react';
 import { MultiSelect } from 'react-native-element-dropdown';
@@ -17,13 +18,14 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
   const [selected, setSelected] = useState([])
   const [workoutStatus, setWorkoutStatus] = useState('new')
 
-
+  //get the database function to invite a buddy to a workout
   const {mutate: inviteToWorkout} = useInviteToWorkout();
 
   useEffect(() => {
     if(workout)
       setWorkoutStatus(workout.workout_status)
 
+    //put all buddies in a format that can be used by a multiselcet dropdown box
     if(buddies){
       const newDropdownData = buddies.map(buddy => ({
         label: buddy.username, 
@@ -33,11 +35,13 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
       setDropdownData(newDropdownData)
     }
 
+    //send the selected buddies back to the page that called this code
     if (selected.length > 0) {
       OnAddBuddyToInvites(selected)
     }
   }, [selected, buddies]);
 
+  //Make sure to not reinvite someone in the workout
   const checkNewInvites = () => {
 
     const alreadyInWorkout = [
@@ -48,8 +52,11 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
     return selected.filter(item => !alreadyInWorkout.includes(item.id));
       
   }
+
+  //change styling based on which page called this code
   const selectBoxFlex = forNew ? {flex : 1 } : {flex : 6};
 
+  //function to send invites to selected users and tries to send notification on successful invite
   const sendInvites = () => {
       let workout_id = workout.id
       let newInvites = checkNewInvites();
@@ -67,6 +74,7 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
       setSelected([])
   }
 
+  //styling to show a check when an item is selected in the dropdown multi select
     const renderItem = item => {
       return (
         <View style={styles.item}>
@@ -98,37 +106,38 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
       <View style ={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 10}}>
 
         <View style={[selectBoxFlex]}>
-        <MultiSelect
-          style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
-          placeholderStyle={styles.placeholderStyle}
-          selectedTextStyle={styles.selectedTextStyle}
-          inputSearchStyle={styles.inputSearchStyle}
-          iconStyle={styles.iconStyle}
-          data={dropdownData}
-          search
-          maxHeight={300}
-          labelField="label"
-          valueField="value"
-          placeholder={!isFocus ? 'Select Buddies' : '...'}
-          searchPlaceholder="Search..."
-          value= {selected}
-          onFocus={() => setIsFocus(true)}
-          onBlur={() => setIsFocus(false)}
-          onChange={item => {
-            setSelected(item);
-            setIsFocus(false);
-          }}
-          selectedStyle={styles.selectedStyle}
-          renderItem={renderItem}
-          
-        />
-        </View>
+          <MultiSelect
+            style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            inputSearchStyle={styles.inputSearchStyle}
+            iconStyle={styles.iconStyle}
+            data={dropdownData}
+            search
+            maxHeight={300}
+            labelField="label"
+            valueField="value"
+            placeholder={!isFocus ? 'Select Buddies' : '...'}
+            searchPlaceholder="Search..."
+            value= {selected}
+            onFocus={() => setIsFocus(true)}
+            onBlur={() => setIsFocus(false)}
+            onChange={item => {
+              setSelected(item);
+              setIsFocus(false);
+            }}
+            selectedStyle={styles.selectedStyle}
+            renderItem={renderItem}
+            
+          />
+          </View>
 
 
-        {!forNew && 
-          <TouchableOpacity onPress={sendInvites} style={styles.button}>
-            <Text style={styles.buttonText}>Invite</Text> 
-          </TouchableOpacity>}
+          {!forNew && 
+            <TouchableOpacity onPress={sendInvites} style={styles.button}>
+              <Text style={styles.buttonText}>Invite</Text> 
+            </TouchableOpacity>
+          }
       </View>
 
        
@@ -143,12 +152,8 @@ export default function InternalWorkoutBuddiesList({buddies, forNew, OnAddBuddyT
           <InternalWorkoutBuddyListItem key={buddie.id} buddie={buddie} forNew={forNew} workout={workout}/>
         ))}
 
-
       </View>
 
-
-
-        
     </View>
     );
 }

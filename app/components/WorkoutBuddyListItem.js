@@ -1,4 +1,6 @@
-import { Text, StyleSheet, Pressable, Alert, TouchableOpacity, View} from 'react-native'
+
+//This code renders a single buddy on the buddies screen
+import { Text, StyleSheet, Pressable, Alert} from 'react-native'
 import { useRemoveBuddie } from '../api/buddies';
 import { useAuth } from '../providers/AuthProvider';
 import RemoteImage from './RemoteImage';
@@ -9,17 +11,18 @@ export default function WorkoutBuddyListItem({ buddie }) {
 
     const {session} = useAuth();
 
+    //get the database function to remove a buddy
     const { mutate: removeBuddie } = useRemoveBuddie(); 
 
     if (!buddie) {
-        console.error("buddie is undefined", buddie);
         return null;  
-      }
+    }
 
     const onRemove = () => {
         removeBuddie({user_id : session.user.id, buddy_id : buddie.id});
     };
 
+    //Add a confirmation message before deleting a buddy
     const confirmRemove = () => {
     Alert.alert('Confirm', 'Are you sure you want to remove this buddy?', [
         {text: 'Cancel',},
@@ -52,14 +55,12 @@ const styles = StyleSheet.create({
         padding: 15,
         borderRadius: 5,
         flexDirection: 'row',
-        //justifyContent: 'space-between',
         backgroundColor: '#818181'
     },
     text: {
         color: 'white',
         fontSize: 30,
         paddingHorizontal: 10,
-        //maxWidth: '50%',
        textAlign: 'center'
     },
     image: {

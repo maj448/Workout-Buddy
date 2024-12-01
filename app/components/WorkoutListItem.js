@@ -1,11 +1,13 @@
-import {View, Text, StyleSheet, Pressable, Alert, TouchableOpacity} from 'react-native'
+//This file containes the code for a single workout the user is a participant of 
+
+import {View, Text, StyleSheet, Alert, TouchableOpacity} from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import { useRemoveWorkout } from '../api/workouts';
 import { useAuth } from '../providers/AuthProvider';
 
 
 
-
+//change the color based on the workout status
   const workoutStatuses = {
     pending: { backgroundColor: 'blue', },
     past: { backgroundColor: 'gray', },
@@ -21,13 +23,15 @@ export default function WorkoutListItem({ workout }) {
 
     const {session} = useAuth();
 
+    //get the databse function to remove a workout
     const { mutate: removeWorkout } = useRemoveWorkout();
 
     const navigation = useNavigation()
 
+    //format the time to just get the time portion in a nice format in local time
     const formatTime = (date) => {
 
-      date = `${date}Z`
+      date = `${date}Z` // Z is needed for proper local time conversion
       date = new Date(date);
       return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: true});
 
@@ -46,12 +50,14 @@ export default function WorkoutListItem({ workout }) {
         removeWorkout({user_id : session.user.id, workout_id : workout.workouts.id});
     };
 
+    //add a confirmation message before deleting a workout
     const confirmRemove = () => {
     Alert.alert('Confirm', 'Are you sure you want to remove this workout?', [
         {text: 'Cancel',},{text: 'Delete', style: 'destructive',onPress: onRemove,},
     ]);
     };
 
+    //deal with coloring complete workouts seperatly
     let backgroundColorOnStatus
     if(workout.status == 'complete')
         backgroundColorOnStatus = workoutStatuses['complete']

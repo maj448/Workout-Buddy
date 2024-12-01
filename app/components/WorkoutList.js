@@ -1,3 +1,4 @@
+//This file renders the list of workouts for the selected day on the calander in the home screen (index file)
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native"
 import WorkoutListItem from "./WorkoutListItem";
 import React, {useState} from 'react';
@@ -10,8 +11,6 @@ import { format} from 'date-fns';
 
 export default function WorkoutList({workouts, invitedWorkouts, displayDate, selected}){
 
-
-
   const navigation = useNavigation();
   const today = format(new Date(), 'yyyy-MM-dd');
 
@@ -20,6 +19,8 @@ export default function WorkoutList({workouts, invitedWorkouts, displayDate, sel
 
   };
 
+  //If there are no workouts scheduled for that day print a different message
+  //also print a message for past dates
   if((workouts.length=== 0 ) && ( invitedWorkouts.length=== 0 )){
     return (
       <View style={{backgroundColor: '#6EEB92', padding: 10, gap: 10, flex: 1}} collapsable={false}>
@@ -40,9 +41,7 @@ export default function WorkoutList({workouts, invitedWorkouts, displayDate, sel
     )
   }
 
-
-
-
+  //show invited workouts first as a header of the workout list
   const showInvitedWorkouts = () => {
 
     return (

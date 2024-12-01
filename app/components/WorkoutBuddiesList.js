@@ -1,4 +1,5 @@
-import { View, Text, FlatList, TouchableOpacity, Pressable } from "react-native"
+//This code renders the container for the Buddies list on the Buddies screen
+import { View, Text, FlatList, TouchableOpacity } from "react-native"
 import WorkoutBuddyListItem from "./WorkoutBuddyListItem";
 import React, {useState} from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -33,8 +34,6 @@ export default function WorkoutBuddiesList({buddies}){
         )}
       />
 
-       
-        
     </View>
     );
 }

@@ -1,7 +1,6 @@
+//This file has the list area for buddies within a started workout
 import { View, Text, StyleSheet, FlatList} from "react-native"
 import InWorkoutBuddyListItem from "./InWorkoutBuddyListItem";
-
-
 
 
 

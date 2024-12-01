@@ -1,5 +1,4 @@
-
-//https://ghost.codersera.com/blog/first-react-native-app-stopwatch/ source
+//This code renders the stopwatch time in a started workout
 
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
