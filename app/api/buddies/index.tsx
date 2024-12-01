@@ -1,8 +1,9 @@
+//This file containes all the database queries related to buddies table
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/app/utils/supabase';
 
 
-
+//Get the profile of each account the user has a buddy relationship with
 export const userBuddies = (user_id : string) => {
 
     return useQuery({
@@ -33,7 +34,8 @@ export const userBuddies = (user_id : string) => {
 }
 
 
-
+//Add a new buddy relationship for the user and the buddy they are adding
+//first checks that the buddy relationship doesn't already exist
 export const useAddBuddy = () => {
 
   const queryClient = useQueryClient();
@@ -65,12 +67,6 @@ export const useAddBuddy = () => {
         .single()
 
 
-
-        // if (alreadyExistError) {
-        //   console.log(alreadyExistError)
-        //   throw alreadyExistError;
-        // }
-
         if(alreadyExist)
           return data.user_id
 
@@ -99,13 +95,12 @@ export const useAddBuddy = () => {
 
     },
     onError(error) {
-      //console.log(error);
     },
   });
 
 };
 
-
+//delete the buddie relationships between user and selected buddy
 export const useRemoveBuddie = () => {
   const queryClient = useQueryClient();
 
@@ -133,7 +128,6 @@ export const useRemoveBuddie = () => {
         throw new Error(buddyError.message);
         
       }
-
 
       return { user_id : data.user_id };
     },

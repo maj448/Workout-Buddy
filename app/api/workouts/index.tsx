@@ -1,8 +1,9 @@
+//This file containes all the database queries related to the workout table and queries used related to a workout in other tables
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/app/utils/supabase';
 
 
-
+//Get all workouts that the user is a particapant in 
 export const participantWorkouts = (user_id ) => {
     
   return useQuery({
@@ -23,6 +24,8 @@ export const participantWorkouts = (user_id ) => {
     }); 
 }
 
+
+//Get all workouts that the user has been invited to that has not been accepted or declined yet
 export const invitedWorkouts = (user_id ) => {
     
   return useQuery({
@@ -59,6 +62,7 @@ export const invitedWorkouts = (user_id ) => {
   
 }
 
+//Get the participant inforamtion for a user for a specific workout
 export const participantWorkoutInfo = (user_id, workout_id ) => {
 
   return useQuery({
@@ -79,6 +83,8 @@ export const participantWorkoutInfo = (user_id, workout_id ) => {
   
 };
 
+
+//Get all participants and their profiles for a specific workout
 export const allWorkoutParticipants = ( workout_id ) => {
 
   return useQuery({
@@ -98,6 +104,7 @@ export const allWorkoutParticipants = ( workout_id ) => {
   
 };
 
+//Get all invited users and their profiles for a specific workout
 export const allWorkoutInvitations = ( workout_id ) => {
 
   const status = ['pending', 'declined']
@@ -119,6 +126,11 @@ export const allWorkoutInvitations = ( workout_id ) => {
   
 };
 
+
+//Create a workout
+//first add the workout to the workout table
+//then add the user who created that workout as a participant to that workout
+//then add an invite to any buddies in the invitedBuddyList 
 export const useInsertWorkout = () => {
 
   const queryClient = useQueryClient();
@@ -185,6 +197,8 @@ export const useInsertWorkout = () => {
 
 };
 
+
+//Invite a buddy to a workout if they have not already been invited
 export const useInviteToWorkout = () => {
   const queryClient = useQueryClient();
 
@@ -216,6 +230,10 @@ export const useInviteToWorkout = () => {
   });
 };
 
+
+//Remove a participant from a workout
+//delete their participant record
+//then if there are no remaining participants for that workout delete the workout as well
 export const useRemoveWorkout = () => {
   const queryClient = useQueryClient();
 
@@ -257,7 +275,7 @@ export const useRemoveWorkout = () => {
   });
 };
 
-
+//Update the status, activity, and duration fields for a participant in a specific workout
 export const useUpdateParticipantStatus = () => {
   const queryClient = useQueryClient();
 
@@ -288,6 +306,10 @@ export const useUpdateParticipantStatus = () => {
   });
 };
 
+
+//Accept an invite to a workout
+//update the invitation to accepted 
+//and create a participant record
 export const useAcceptInvite = () => {
   const queryClient = useQueryClient();
 
@@ -327,6 +349,8 @@ export const useAcceptInvite = () => {
   });
 };
 
+
+//Decline a workout invite and set the invite status to declined
 export const useDeclineInvite = () => {
   const queryClient = useQueryClient();
 
@@ -355,7 +379,8 @@ export const useDeclineInvite = () => {
   });
 };
 
-
+//Update workouts that are for a date that has past to be of status 'past'
+//Any past workouts will also delete any invitations related to that workout
 export const updateOldWorkouts = () => {
 
   const currentTime = new Date().toISOString();

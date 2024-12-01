@@ -1,3 +1,8 @@
+//This code is from https://notjust.notion.site/React-Native-Supabase-Masterclass-47a69a60bc464c399b5a0df4d3c4a630
+// a tutorial made to connect a react native expo app to supabase
+
+//This code allows all code wrapped within the AuthProvider can access the session and profile without having to requery the database
+
 import { createContext, PropsWithChildren, useContext, useEffect, useState } from "react";
 import { supabase } from "../utils/supabase";
 import { Session } from "@supabase/supabase-js";

@@ -1,3 +1,4 @@
+//This code has the subscriptions to listen for certain database changes
 import {  useEffect} from 'react'
 import { supabase } from '../utils/supabase'
 import {  useQueryClient } from '@tanstack/react-query';

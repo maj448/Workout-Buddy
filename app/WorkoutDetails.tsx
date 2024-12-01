@@ -199,6 +199,10 @@ const WorkoutDetailsScreen = ({route}) => {
         workout= {workout} 
         participantState={participantState}/>
 
+        { timeNow.toISOString() < formatDate(workout.start_time) &&
+        <Text style={styles.textInfo}>*Check in opens 10 minutes to start time</Text>
+        }
+
       <View style={styles.buttonContainer}>
       {!completed && isParticipant?.length > 0 && participantState != 'in workout' && workout.workout_status != 'past' && timeNow.toISOString() >= formatDate(workout.start_time) &&
         
@@ -252,6 +256,12 @@ const styles = StyleSheet.create({
   text: {
     color: 'black',
     fontSize: 22,
+  },
+
+  textInfo: {
+    color: 'black',
+    fontSize: 18,
+    textAlign: 'center'
   },
 
   textCompleted: {
