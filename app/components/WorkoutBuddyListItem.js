@@ -32,7 +32,7 @@ export default function WorkoutBuddyListItem({ buddie }) {
 
     return(
 
-        <View style= {styles.container} onLongPress={confirmRemove}>
+        <Pressable style= {styles.container} onLongPress={confirmRemove}>
             <RemoteImage
                 path={buddie.avatar_url}
                 fallback='https://img.icons8.com/nolan/64/user-default.png'
@@ -42,7 +42,7 @@ export default function WorkoutBuddyListItem({ buddie }) {
             <Text style= {styles.text}>
                {buddie.username}
             </Text>
-        </View>
+        </Pressable>
 
     )
 }

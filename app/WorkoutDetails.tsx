@@ -26,8 +26,7 @@ const WorkoutDetailsScreen = ({route}) => {
       return null;  
     }
 
-    useParticipantSubscription( workout.id )
-    useInvitationsSubscription( workout.id )
+
 
     const displayDate = workout.workout_date.split('T')[0]
     const [participantState, setParticipantState] = useState('')
@@ -44,6 +43,9 @@ const WorkoutDetailsScreen = ({route}) => {
     const { data: allParticipants,  error: allParticipantsError } = allWorkoutParticipants(workout.id);
     const { data: allInvitations, error: allInvitationsError } = allWorkoutInvitations(workout.id);
     const {data: UserBuddies} = userBuddies(user_id);
+
+    useParticipantSubscription( workout.id )
+    useInvitationsSubscription( workout.id )
 
     const {mutate: updateParticipantStatus} = useUpdateParticipantStatus();
 
