@@ -1,4 +1,4 @@
-import { Text, StyleSheet, Pressable, Alert, TouchableOpacity} from 'react-native'
+import { Text, StyleSheet, Pressable, Alert, TouchableOpacity, View} from 'react-native'
 import { useRemoveBuddie } from '../api/buddies';
 import { useAuth } from '../providers/AuthProvider';
 import RemoteImage from './RemoteImage';
@@ -32,7 +32,7 @@ export default function WorkoutBuddyListItem({ buddie }) {
 
     return(
 
-        <TouchableOpacity style= {styles.container} onLongPress={confirmRemove}>
+        <View style= {styles.container} onLongPress={confirmRemove}>
             <RemoteImage
                 path={buddie.avatar_url}
                 fallback='https://img.icons8.com/nolan/64/user-default.png'
@@ -42,7 +42,7 @@ export default function WorkoutBuddyListItem({ buddie }) {
             <Text style= {styles.text}>
                {buddie.username}
             </Text>
-        </TouchableOpacity>
+        </View>
 
     )
 }
