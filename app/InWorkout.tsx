@@ -5,7 +5,7 @@ import { useUpdateParticipantStatus } from './api/workouts';
 import StopwatchContainer from './components/Stopwatch.container';
 import InWorkoutBuddiesList from './components/InWorkoutBuddiesList';
 import { useAuth } from './providers/AuthProvider';
-import { useParticipantSubscription } from './api/subscriptions';
+import { useParticipantUpdateSubscription } from './api/subscriptions';
 import { allWorkoutParticipants} from './api/workouts';
 import { useStopWatch } from './components/StopWatch';
 import { Pedometer } from 'expo-sensors';
@@ -27,7 +27,7 @@ export default function InWorkout({route}) {
 
   const { data: allParticipants, isLoading: allParticipantsLoading, error: allParticipantsError } = allWorkoutParticipants(workout_id);
 
-  useParticipantSubscription( workout_id )
+  useParticipantUpdateSubscription( workout_id )
 
   const {mutate: updateParticipantStatus} = useUpdateParticipantStatus();
 

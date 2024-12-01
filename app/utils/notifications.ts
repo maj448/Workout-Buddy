@@ -79,6 +79,6 @@ export const notifyUserAboutNewInvite = async (user_id) => {
 
   const token = await getUserToken(user_id);
   const title = `You have been invited to a new workout`;
-  const body = `check the app to view`;
+  const body = `Check the app to view details`;
   sendPushNotification(token, title, body);
 };

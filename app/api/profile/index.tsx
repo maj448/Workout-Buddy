@@ -1,6 +1,9 @@
+//This file containes all the database queries related to the profile table
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/app/utils/supabase';
 
+
+//get the profile details of the specified user
 export const userProfileDetails = (user_id ) => {
 
     return useQuery({
@@ -19,9 +22,8 @@ export const userProfileDetails = (user_id ) => {
 }
 
 
-
+//On the creation of an account, checks if the username added already exists in the database
 export const usernameUnique = () => {
-
 
   return useQuery({
     queryKey: ['profilesusername'],
@@ -38,7 +40,7 @@ export const usernameUnique = () => {
     });
 }
 
-
+//Updates the avatar_url with a supabase storage photo
 export const useUpdateProfilePic = () => {
   const queryClient = useQueryClient();
 

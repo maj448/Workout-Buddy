@@ -1,5 +1,5 @@
 import {SafeAreaView} from 'react-native-safe-area-context';
-import { View, Text, TextInput, Button, StyleSheet, Alert, Pressable, KeyboardAvoidingView, Platform, TouchableOpacity} from 'react-native';
+import { View, ScrollView, Text, TextInput, Button, StyleSheet, Alert, Pressable, KeyboardAvoidingView, Platform, TouchableOpacity} from 'react-native';
 import { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { supabase } from '../utils/supabase';
@@ -69,8 +69,7 @@ export default function SignUp() {
         });
         
         if (signUpError) {
-            console.error(signUpError);
-            Alert.alert(signUpError.message);
+            Alert.alert(signUpError.message, 'Email may already be registered');
             setLoading(false);
             return;
         }
@@ -107,6 +106,8 @@ export default function SignUp() {
     return(
         
         <SafeAreaView style={styles.container}>
+        <ScrollView contentContainerStyle={styles.scrollViewContent}>
+        <KeyboardAvoidingView >
             <View style={styles.inputArea}>
                 <Text style={styles.label}>Full name:</Text>
                 <TextInput
@@ -159,7 +160,7 @@ export default function SignUp() {
 
             </View>
 
-            <KeyboardAvoidingView style={{ flex:3}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+
             <View style={styles.buttonContainer}>
             <TouchableOpacity onPress={validation} disabled={loading} style={styles.button}>
                 <Text style={styles.buttonText}>{loading ? 'Creating account...' : 'Create Account'} </Text>
@@ -167,7 +168,7 @@ export default function SignUp() {
             </View>
             </KeyboardAvoidingView>
 
-
+            </ScrollView>
         </SafeAreaView>
         
     )
@@ -229,7 +230,12 @@ const styles = StyleSheet.create({
         flex:3, 
         alignItems: 'center',
         justifyContent: 'flex-start',
-      }
+      },
+
+      scrollViewContent: {
+        paddingBottom: 20,
+        flexGrow: 1,
+      },
 
     
 

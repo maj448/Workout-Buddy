@@ -26,8 +26,7 @@ const WorkoutDetailsScreen = ({route}) => {
       return null;  
     }
 
-    useParticipantSubscription( workout.id )
-    useInvitationsSubscription( workout.id )
+
 
     const displayDate = workout.workout_date.split('T')[0]
     const [participantState, setParticipantState] = useState('')
@@ -44,6 +43,9 @@ const WorkoutDetailsScreen = ({route}) => {
     const { data: allParticipants,  error: allParticipantsError } = allWorkoutParticipants(workout.id);
     const { data: allInvitations, error: allInvitationsError } = allWorkoutInvitations(workout.id);
     const {data: UserBuddies} = userBuddies(user_id);
+
+    useParticipantSubscription( workout.id )
+    useInvitationsSubscription( workout.id )
 
     const {mutate: updateParticipantStatus} = useUpdateParticipantStatus();
 
@@ -62,7 +64,7 @@ const WorkoutDetailsScreen = ({route}) => {
 
 
 
-    let isParticipant = allParticipants?.filter((participant) => {
+    const isParticipant = allParticipants?.filter((participant) => {
       if(session?.user.id == participant.profiles.id )
       return participant})
     
@@ -199,8 +201,12 @@ const WorkoutDetailsScreen = ({route}) => {
         workout= {workout} 
         participantState={participantState}/>
 
+        { timeNow.toISOString() < formatDate(workout.start_time) &&
+        <Text style={styles.textInfo}>*Check in opens 10 minutes to start time</Text>
+        }
+
       <View style={styles.buttonContainer}>
-      {!completed && participantState != 'in workout' && workout.workout_status != 'past' && timeNow.toISOString() >= formatDate(workout.start_time) &&
+      {!completed && isParticipant?.length > 0 && participantState != 'in workout' && workout.workout_status != 'past' && timeNow.toISOString() >= formatDate(workout.start_time) &&
         
         <TouchableOpacity onPress= {onCheckIn} style={styles.button}>
             <Text>{ canStart ? (!loading ? 'Leave' : 'Leaving...') : (!loading ? 'Check In' : 'Checking in...')}</Text>
@@ -252,6 +258,12 @@ const styles = StyleSheet.create({
   text: {
     color: 'black',
     fontSize: 22,
+  },
+
+  textInfo: {
+    color: 'black',
+    fontSize: 18,
+    textAlign: 'center'
   },
 
   textCompleted: {
