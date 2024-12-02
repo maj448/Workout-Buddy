@@ -1,3 +1,5 @@
+//This is the screen to create a new workout
+
 import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, TouchableOpacity, Pressable, ActivityIndicator, ScrollView, Alert} from 'react-native';
 import {useState} from 'react';
 import { useAuth } from './providers/AuthProvider';

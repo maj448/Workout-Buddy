@@ -84,13 +84,13 @@ export default function SignUp() {
             // Insert profile
             const { error: profileError } = await supabase
                 .from('profiles')
-                .insert(
+                .upsert([
                     {
                         id: data.user.id,
                         full_name: inputFullName,
                         username: inputUsername.trim(),
                     }
-                ); 
+                ], { onConflict: ['id'] }); 
         
             if (profileError) {
                 Alert.alert('Error creating profile', profileError.message);

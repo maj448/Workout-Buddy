@@ -1,3 +1,4 @@
+//This file contains the layout for the screens 
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer, NavigationIndependentTree } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -21,7 +22,7 @@ import NotificationProvider from './providers/NotificationProvider';
 
 const Tab = createBottomTabNavigator();
 
-
+//This function defines the screens for the bottom tab
 function MyTabs() {
   const { session } = useAuth();
   if (!session) {

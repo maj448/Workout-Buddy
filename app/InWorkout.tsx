@@ -1,4 +1,8 @@
-import { View, Text, StyleSheet, Pressable, TouchableOpacity } from 'react-native';
+//this screen is shown when a user has stated a WorkoutBuddiesList
+//it has the ability to start, pause and end the workout
+//it shows a stopwatch and the buddies also in the workout
+
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation} from '@react-navigation/native';
 import { useUpdateParticipantStatus } from './api/workouts';
@@ -9,9 +13,10 @@ import { useParticipantUpdateSubscription } from './api/subscriptions';
 import { allWorkoutParticipants} from './api/workouts';
 import { useStopWatch } from './components/StopWatch';
 import { Pedometer } from 'expo-sensors';
-import { useState, useEffect } from 'react';
+import { useState, useEffect} from 'react';
 import { PermissionsAndroid } from 'react-native';
 import { check, PERMISSIONS, RESULTS, request } from 'react-native-permissions';
+import WorkoutBuddiesList from './components/WorkoutBuddiesList'
 
 
 
@@ -25,7 +30,7 @@ export default function InWorkout({route}) {
   const [firstClick, setFirstClick] = useState(true)
 
 
-  const { data: allParticipants, isLoading: allParticipantsLoading, error: allParticipantsError } = allWorkoutParticipants(workout_id);
+  const { data: allParticipants } = allWorkoutParticipants(workout_id);
 
   useParticipantUpdateSubscription( workout_id )
 
@@ -45,6 +50,7 @@ export default function InWorkout({route}) {
     return null
   }
 
+  //get the phones pedometer inforamtion to count steps if given permission
   const subscribe = async () => {
     const isAvailable = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACTIVITY_RECOGNITION, {
         title: "Request pedometer permission",
@@ -65,12 +71,14 @@ export default function InWorkout({route}) {
 };
 
 
-  const handleToggle = () => {
 
+  const handleToggle = () => {
+    //reset the step count to 0 on the first start click of a workout
     if(firstClick)
     {
       setCurrentStepCount(0)
     }
+    //subscribe to watching the step count
     subscribe();
     isRunning ? stop() : start();
 
@@ -78,6 +86,8 @@ export default function InWorkout({route}) {
 
   };
 
+
+  //update the user status to completed for this workout
   const updateOnComplete = (activity) => {
 
     updateParticipantStatus({user_id : user_id, workout_id : workout_id, status : 'complete', duration : time , activity : activity},
@@ -89,10 +99,9 @@ export default function InWorkout({route}) {
     )
   }
 
+  //end the workout and update the acivity based on if any steps were counted
   const onEnd = () => {
-
     end();
-
     if(currentStepCount > 0)
     {
       updateOnComplete(currentStepCount.toString() + ' steps');
@@ -100,13 +109,11 @@ export default function InWorkout({route}) {
     else{
       updateOnComplete('N/A');
     }
-
-
   }
 
  
 
-
+  //do not get the current user in the list of all participants
   let buddyparticipants = allParticipants.filter((participant) => {
     if(session?.user.id != participant.profiles.id && participant.status != 'waiting')
     return participant});

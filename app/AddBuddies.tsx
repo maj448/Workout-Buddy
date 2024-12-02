@@ -1,6 +1,6 @@
+//This is the screen for adding buddies
 
-
-import { View, Text, TextInput, StyleSheet, Pressable, Alert, TouchableOpacity} from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 import { useAuth } from './providers/AuthProvider';
@@ -18,27 +18,28 @@ export default function Buddy() {
   const [loading, setLoading] = useState(false)
   const [inputUsername, setInputUsername] = useState('');
   
-
+  //get the database function to add a buddy
   const {mutate: insertBuddy} = useAddBuddy();
  
-    const navigation = useNavigation();
-    const onAddBuddy = () => {
-      setLoading(true);
-        insertBuddy({user_id : user_id, username : inputUsername},
-          {
-            onSuccess: () => {
-              setLoading(false);
-              navigation.goBack();
-            },
-            onError: (error) => {
-              //Alert.alert('Error', error.message );
-              Alert.alert('Error', 'Cannot find user with that username.' );
-              setLoading(false);
-            },
-      })
-        
-       
-      };
+  const navigation = useNavigation();
+
+  //this function will add a buddy or display and error alert
+  const onAddBuddy = () => {
+    setLoading(true);
+      insertBuddy({user_id : user_id, username : inputUsername},
+        {
+          onSuccess: () => {
+            setLoading(false);
+            navigation.goBack();
+          },
+          onError: (error) => {
+            Alert.alert('Error', 'Cannot find user with that username.' );
+            setLoading(false);
+          },
+    })
+      
+      
+  };
 
     return (
       <View style={styles.container}>
@@ -57,8 +58,6 @@ export default function Buddy() {
             </TouchableOpacity>
           </View>
         </View>
-
-        
       </View>
     );
   }
@@ -69,16 +68,12 @@ export default function Buddy() {
     fontSize: 20,
     color: '#3D3D3D',
     fontFamily: 'fantasy',
-    //flex: 1,
     margin: 10,
   
   },
 inputArea:{
-    //flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    //gap: 10,
-    //flex: 2
 
 },
 inputBox: {
@@ -89,7 +84,6 @@ inputBox: {
   justifyContent: 'flex-start',
   alignItems: 'flex-start',
   padding: 10,
-  //flex: 1,
   width: '90%'
 },
 button: {
@@ -113,14 +107,10 @@ button: {
     alignItems: 'center',
     justifyContent: 'flex-start',
     padding: 10
-    //flex: 1
   },
   container: {
     flex: 1,
     padding: 10,
     backgroundColor: '#6EEB92'
-    //backgroundColor: '#A4F39C', 
-    //justifyContent: 'center',
-    //alignItems: 'center',
   },
 });

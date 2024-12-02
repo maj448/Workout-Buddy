@@ -10,6 +10,7 @@ import { decode } from 'base64-arraybuffer';
 import { randomUUID } from 'expo-crypto';
 import RemoteImage from './components/RemoteImage';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import { ActivityIndicator } from 'react-native';
 
 const ProfileScreen = () => {
   const { session } = useAuth();
@@ -39,7 +40,7 @@ const ProfileScreen = () => {
   };
 
 
-  const { data: profile } =  userProfileDetails(session?.user.id)
+  const { data: profile , isLoading } =  userProfileDetails(session?.user.id)
 
   const updateProfilePic = async () => {
 
@@ -109,6 +110,11 @@ const ProfileScreen = () => {
     }
   }, [profile]);
   
+
+    //show an indication if the queries are loading
+    if ( isLoading) {
+      return <ActivityIndicator />;
+    }
 
   return (
     <View style={styles.container}>
