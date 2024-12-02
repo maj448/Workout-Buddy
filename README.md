@@ -1,15 +1,18 @@
 # Workout Buddy
 
-This is an [Expo](https://expo.dev) project that uses Supabase as a database
-It was only tested on Android devices and within Expo Go and Expo Development build
+This is an [Expo](https://expo.dev) project that uses Supabase as a database.
+
+It was only tested on Android devices and within Expo Go and Expo Development build.
 
 ## To run
-Download the project and build with 'npx expo run:android' or 'eas build --platform android' 
-Install the application on a physical device or android device
-Then run 'npx expo start' and run the build on the installed app
+Download the project and build with 'npx expo run:android' or 'eas build --platform android'.
 
-*Notifications do not work consistently but to even have a chance too work it needs to be run on a physical device
-The Pedometer also requires a physical device to work
+Install the application on a physical device or android device.
+
+Then run 'npx expo start' and run the build on the installed app.
+
+*Notifications do not work consistently but to even have a chance to work it needs to be run on a physical device.
+The Pedometer also requires a physical device to work.
 
 ## Description
 
@@ -32,10 +35,10 @@ It allows users to invite buddies to workouts and then during the workout see wh
 - View a buddies completed workout duration and activity
 
 ## Quick Actions
-A workout can quickly be created on a date by long pressing on the date on the calendar if the date is not already selected (selected dates must use the + button)
-Swipe left and right on the calendar to change months
-Swipe left and right on the area under the calendar to change the day 
-Swipe down on the Home, Buddies, and Workout Details pages to refresh the information from the database
+- A workout can quickly be created on a date by long pressing on the date on the calendar if the date is not already selected (selected dates must use the + button)
+- Swipe left and right on the calendar to change months
+- Swipe left and right on the area under the calendar to change the day 
+- Swipe down on the Home, Buddies, and Workout Details pages to refresh the information from the database
 
 ## Resources Used 
 
