@@ -1,6 +1,5 @@
-//code from https://medium.com/react-native-school/build-a-custom-react-hook-stopwatch-8359cd1f5e6f
-
-//and https://www.reactnativeschool.com/build-a-stop-watch-hook-that-works-even-when-the-app-is-quit
+// this code is adapted from the code at https://www.reactnativeschool.com/build-a-stop-watch-hook-that-works-even-when-the-app-is-quit
+//it is a stopwatch that uses async storage to continue counting when not on the In workout page
 import { useState, useRef, useEffect } from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 

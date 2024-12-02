@@ -1,4 +1,6 @@
-import {View, Text, StyleSheet, Pressable, TouchableOpacity} from 'react-native'
+//This code renders a single item in WorkoutList.
+//these are for workouts the user has just been invited to
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import { useAcceptInvite, useDeclineInvite } from '../api/workouts';
 import { useAuth } from '../providers/AuthProvider';
@@ -13,20 +15,21 @@ export default function InvitedWorkoutListItem({ workout }) {
 
     const {session} = useAuth();
 
+    //get the accept and decline update supabase functions 
     const { mutate: Accept } = useAcceptInvite();
     const { mutate: Decline } = useDeclineInvite();
 
     const navigation = useNavigation()
 
+    //format the time to local time
     const formatTime = (date) => {
-
-      date = `${date}Z`
-      date = new Date(date);
-      return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: true});
-
-
+        //need to add a Z to the end of the datetime string to properly convert to local time
+        date = `${date}Z`
+        date = new Date(date);
+        return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: true});
     };
 
+    //function to navigate to the details screen
     const gotoDetailsScreen = () => {
         if (workout) {
             navigation.navigate('Workout Details', {workout: workout });

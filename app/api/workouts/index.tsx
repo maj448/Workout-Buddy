@@ -137,10 +137,6 @@ export const useInsertWorkout = () => {
 
   return useMutation({
     async mutationFn(data : any) {
-      // console.log('f',data)
-      // console.log('d',data.inputDate.toISOString())
-      // console.log('s',data.inputStartTime.toISOString())
-      // console.log('e',data.inputEndTime.toISOString())
 
       const { data: workoutData, error: workoutError } = await supabase.from('workouts').insert({
         title: data.inputTitle,

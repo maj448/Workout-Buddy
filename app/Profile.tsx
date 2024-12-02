@@ -1,3 +1,4 @@
+//This is the screen to view and edit the signed in users Profile
 import { View, Text, StyleSheet, Pressable, TouchableOpacity, TextInput } from 'react-native';
 import { supabase } from './utils/supabase';
 import { useNavigation } from '@react-navigation/native';
@@ -10,6 +11,7 @@ import { decode } from 'base64-arraybuffer';
 import { randomUUID } from 'expo-crypto';
 import RemoteImage from './components/RemoteImage';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import { ActivityIndicator } from 'react-native';
 
 const ProfileScreen = () => {
   const { session } = useAuth();
@@ -20,13 +22,13 @@ const ProfileScreen = () => {
   const [loading, setLoading] = useState(false)
   const [image, setImage] = useState("https://img.icons8.com/nolan/64/user-default.png");
   const [editView, setEditView] = useState(false)
-
   const [loadingUpdate, setLoadingUdate] = useState(false)
 
   if(!session){
     navigation.navigate("Login");
   }
 
+  //get the database function to update the profile picture
   const {mutate: updatePic} = useUpdateProfilePic();
 
 
@@ -38,12 +40,13 @@ const ProfileScreen = () => {
     
   };
 
-
-  const { data: profile } =  userProfileDetails(session?.user.id)
+  // get the user's profile details from the database
+  const { data: profile , isLoading } =  userProfileDetails(session?.user.id)
 
   const updateProfilePic = async () => {
 
     setLoadingUdate(true)
+    //update the picture after it has successfuly been added in database storsge
     const imagePath = await uploadImage();
     updatePic({user_id: session?.user.id, image : imagePath},{
       onSuccess: () => {
@@ -53,6 +56,8 @@ const ProfileScreen = () => {
     setEditView(false)
   }
 
+  //upload the image to database storage
+  // code from https://notjust.notion.site/React-Native-Supabase-Masterclass-47a69a60bc464c399b5a0df4d3c4a630
   const uploadImage = async () => {
     if (!image?.startsWith('file://')) {
       return;
@@ -72,6 +77,7 @@ const ProfileScreen = () => {
     }
   };
 
+  //allow the picking of image from a persons camera roll
   const pickImage = async () => {
 
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -110,6 +116,11 @@ const ProfileScreen = () => {
   }, [profile]);
   
 
+    //show an indication if the queries are loading
+    if ( isLoading) {
+      return <ActivityIndicator />;
+    }
+
   return (
     <View style={styles.container}>
       <View style ={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 10}}>
@@ -121,39 +132,33 @@ const ProfileScreen = () => {
       <View style={styles.infoContainer}>
 
         <TouchableOpacity  onPress= {pickImage}  disabled={!editView} style={styles.imageButton}>
-        <RemoteImage
-        path={userProfileAvatar}
-        fallback='https://img.icons8.com/nolan/64/user-default.png'
-        style={styles.image}
-        resizeMode="contain"
-          />
-      </TouchableOpacity>
-      { editView &&
-        // <TouchableOpacity  onPress= {pickImage} style={styles.imageButton}>
+          <RemoteImage
+          path={userProfileAvatar}
+          fallback='https://img.icons8.com/nolan/64/user-default.png'
+          style={styles.image}
+          resizeMode="contain"
+            />
+        </TouchableOpacity>
+        { editView &&
           <Text style={styles.label}>Change Profile Picture</Text>
-          // {/* </TouchableOpacity> */}
-      }
+        }
 
-  { !editView &&
-      <View>
-        <Text style={styles.label}>Full name: {userProfileFullName}</Text>
-        <Text style={styles.label}>Username: {userProfileUserame}</Text>
+        { !editView &&
+          <View>
+            <Text style={styles.label}>Full name: {userProfileFullName}</Text>
+            <Text style={styles.label}>Username: {userProfileUserame}</Text>
+          </View>
+        }
 
-      </View>
-}
-
-
-
-
-      { editView &&
-        <View style={styles.buttonContainer}>
-          
-          <TouchableOpacity onPress={updateProfilePic}  style={styles.button}>
-            <Text style={styles.buttonText}>{loadingUpdate ? 'Updating...' : 'Update Profile'}</Text>
-          </TouchableOpacity>
-          <Text>*To see and save the changed profile picture you must Update profile</Text>
-        </View>
-      }
+        { editView &&
+          <View style={styles.buttonContainer}>
+            
+            <TouchableOpacity onPress={updateProfilePic}  style={styles.button}>
+              <Text style={styles.buttonText}>{loadingUpdate ? 'Updating...' : 'Update Profile'}</Text>
+            </TouchableOpacity>
+            <Text>*To see and save the changed profile picture you must Update profile</Text>
+          </View>
+        }
       </View>
 
       <View style={styles.buttonContainer}>

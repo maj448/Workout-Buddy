@@ -1,6 +1,7 @@
+//This file contains the code for the sign up page
 import {SafeAreaView} from 'react-native-safe-area-context';
-import { View, ScrollView, Text, TextInput, Button, StyleSheet, Alert, Pressable, KeyboardAvoidingView, Platform, TouchableOpacity} from 'react-native';
-import { useEffect, useState } from 'react';
+import { View, ScrollView, Text, TextInput, Button, StyleSheet, Alert, KeyboardAvoidingView, TouchableOpacity} from 'react-native';
+import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { supabase } from '../utils/supabase';
 import { usernameUnique } from '../api/profile';
@@ -17,37 +18,39 @@ export default function SignUp() {
     const [loading, setLoading] = useState(false);
 
 
-    const {data : allUsernames, isLoading, error} = usernameUnique();
+    //get all usernames from the database
+    const {data : allUsernames} = usernameUnique();
 
 
     const validation = async() => {
 
-        if (!inputFullName.trim()) {
+        //Make sure the full name is not blank
+        if (!inputFullName || inputFullName.trim() === '') {
             Alert.alert("Full Name is required.");
-            setLoading(false);
             return;
         }
     
-        // Validate username input
+        // make sure username is not blank
         if (!inputUsername || inputUsername.trim() === '') {
             Alert.alert("Username is required.");
-            setLoading(false);
             return;
         }
 
+        //make sure password is not blank
         if (!inputPassword || inputPassword.trim() === '') {
             Alert.alert("Password cannot be blank");
             return;
         }
 
+        //make sure password and confirm password match
         if (inputPassword !== inputConfPassword) {
             Alert.alert("Passwords don't match");
             return;
         }
 
+        //check if username has already been used
         if (allUsernames?.find(user => user.username == inputUsername)) {
             Alert.alert("Username is already taken.");
-            setLoading(false);
             return;
         }
     
@@ -62,7 +65,7 @@ export default function SignUp() {
     {
 
 
-        
+        //Sign up
         const { data, error: signUpError } = await supabase.auth.signUp({
             email: inputEmail.trim(),
             password: inputPassword.trim()
@@ -74,6 +77,7 @@ export default function SignUp() {
             return;
         }
         
+        //if successfully signed up insert a profile
         if (data.user) {
            
         
@@ -89,7 +93,6 @@ export default function SignUp() {
                 ], { onConflict: ['id'] }); 
         
             if (profileError) {
-                console.error('Error creating profile:', profileError);
                 Alert.alert('Error creating profile', profileError.message);
                 setLoading(false);
                 return;
@@ -106,67 +109,67 @@ export default function SignUp() {
     return(
         
         <SafeAreaView style={styles.container}>
-        <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        <KeyboardAvoidingView >
-            <View style={styles.inputArea}>
-                <Text style={styles.label}>Full name:</Text>
-                <TextInput
-                style={styles.inputBox}
-                keyboardType="default"
-                value={inputFullName}
-                placeholder="John Smith"
-                onChangeText={setInputFullName}/>
+            <ScrollView contentContainerStyle={styles.scrollViewContent}>
+                <KeyboardAvoidingView >
+                    <View style={styles.inputArea}>
+                        <Text style={styles.label}>Full name:</Text>
+                        <TextInput
+                        style={styles.inputBox}
+                        keyboardType="default"
+                        value={inputFullName}
+                        placeholder="John Smith"
+                        onChangeText={setInputFullName}/>
 
-            </View>
-            <View style={styles.inputArea}>
-                <Text style={styles.label}>Username:</Text>
-                <TextInput
-                style={styles.inputBox}
-                keyboardType="default"
-                value={inputUsername}
-                placeholder="John123 (must be unique)"
-                onChangeText={setInputUsername}/>
+                    </View>
+                    <View style={styles.inputArea}>
+                        <Text style={styles.label}>Username:</Text>
+                        <TextInput
+                        style={styles.inputBox}
+                        keyboardType="default"
+                        value={inputUsername}
+                        placeholder="John123 (must be unique)"
+                        onChangeText={setInputUsername}/>
 
-            </View>
-            <View style={styles.inputArea}>
-                <Text style={styles.label}>Email:</Text>
-                <TextInput
-                style={styles.inputBox}
-                keyboardType="email-address"
-                value={inputEmail}
-                placeholder="abc123@email.com"
-                onChangeText={setInputEmail}/>
+                    </View>
+                    <View style={styles.inputArea}>
+                        <Text style={styles.label}>Email:</Text>
+                        <TextInput
+                        style={styles.inputBox}
+                        keyboardType="email-address"
+                        value={inputEmail}
+                        placeholder="abc123@email.com"
+                        onChangeText={setInputEmail}/>
 
-            </View>
-            <View style={styles.inputArea}>
-                <Text style={styles.label}>Password:</Text>
-                <TextInput
-                style={styles.inputBox}
-                secureTextEntry
-                keyboardType="default"
-                value={inputPassword}
-                onChangeText={setInputPassword}/>
-                
+                    </View>
+                    <View style={styles.inputArea}>
+                        <Text style={styles.label}>Password:</Text>
+                        <TextInput
+                        style={styles.inputBox}
+                        secureTextEntry
+                        keyboardType="default"
+                        value={inputPassword}
+                        onChangeText={setInputPassword}/>
+                        
 
-            </View>
-            <View style={styles.inputArea}>
-                <Text style={styles.label}>Confirm Password:</Text>
-                <TextInput
-                style={styles.inputBox}
-                secureTextEntry
-                keyboardType="default"
-                value={inputConfPassword}
-                onChangeText={setInputConfPassword}/>
+                    </View>
+                    <View style={styles.inputArea}>
+                        <Text style={styles.label}>Confirm Password:</Text>
+                        <TextInput
+                        style={styles.inputBox}
+                        secureTextEntry
+                        keyboardType="default"
+                        value={inputConfPassword}
+                        onChangeText={setInputConfPassword}/>
 
-            </View>
+                    </View>
 
 
-            <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={validation} disabled={loading} style={styles.button}>
-                <Text style={styles.buttonText}>{loading ? 'Creating account...' : 'Create Account'} </Text>
-            </TouchableOpacity>
-            </View>
-            </KeyboardAvoidingView>
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity onPress={validation} disabled={loading} style={styles.button}>
+                            <Text style={styles.buttonText}>{loading ? 'Creating account...' : 'Create Account'} </Text>
+                        </TouchableOpacity>
+                    </View>
+                </KeyboardAvoidingView>
 
             </ScrollView>
         </SafeAreaView>

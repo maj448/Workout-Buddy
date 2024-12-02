@@ -1,5 +1,7 @@
+//This code is from https://notjust.notion.site/React-Native-Supabase-Masterclass-47a69a60bc464c399b5a0df4d3c4a630
+//this code allows images to be stored and returned from the supabase storage
 import { Image } from 'react-native';
-import React, { ComponentProps, useEffect, useMemo, useState } from 'react';
+import React, { ComponentProps, useEffect, useState } from 'react';
 import { supabase } from '../utils/supabase';
 
 type RemoteImageProps = {

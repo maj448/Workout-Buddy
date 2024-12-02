@@ -1,3 +1,5 @@
+//This code was adapted from https://notjust.notion.site/React-Native-Supabase-Masterclass-47a69a60bc464c399b5a0df4d3c4a630
+// this code sends a notification when the user gets invited to a new workout
 import { Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';

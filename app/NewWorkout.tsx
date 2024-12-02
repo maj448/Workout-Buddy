@@ -1,3 +1,5 @@
+//This is the screen to create a new workout
+
 import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, TouchableOpacity, Pressable, ActivityIndicator, ScrollView, Alert} from 'react-native';
 import {useState} from 'react';
 import { useAuth } from './providers/AuthProvider';
@@ -18,7 +20,7 @@ const NewWorkoutScreen = ({route}) => {
   const [inputTitle, setInputTitle] = useState('');
   const [inputNotes, setInputNotes] = useState('');
   const today = new Date();
-  const [inputDate, setInputDate] = useState(new Date(parseISO(selected)));
+  const [inputDate, setInputDate] = useState(new Date(parseISO(selected))); //use the parse for the date to appear correctly
   const [inputStartTime, setInputStartTime] = useState(new Date(parseISO(selected)));
   const [inputEndTime, setInputEndTime] = useState(new Date(parseISO(selected)));
   const [open, setOpen] = useState(false)
@@ -29,8 +31,10 @@ const NewWorkoutScreen = ({route}) => {
   const [textHeight,setTextHeight] = useState(40);
   const [noteHeight,setNoteHeight] = useState(40);
 
+  //get all user buddies from the database
   const {data: buddies, isLoading : isLoadingBuddies} = userBuddies(session?.user.id);
 
+  //get function to insert a workout
   const {mutate: insertWorkout} = useInsertWorkout();
 
   const resetFields = () => {
@@ -42,10 +46,12 @@ const NewWorkoutScreen = ({route}) => {
 
   };
 
+  //if loading show activity is happening
   if(isLoadingBuddies){
     return <ActivityIndicator/>
   }
 
+  //when changing the date make sure the start and end time match the new date
   const onChangeDate = (event, selectedDate) => {
     const currentDate = selectedDate || inputDate; 
     const date = new Date(currentDate); 
@@ -57,6 +63,7 @@ const NewWorkoutScreen = ({route}) => {
     setOpen(false);
   };
 
+  //Set just the time portion of the date 
   const onChangeStart = (event, selectedStart) => {
     const start = new Date(inputDate); 
     start.setHours(selectedStart.getHours(), selectedStart.getMinutes()); 
@@ -65,7 +72,7 @@ const NewWorkoutScreen = ({route}) => {
     setOpenStart(false); 
   };
   
-
+  //Set just the time portion of the date 
   const onChangeEnd = (event, selectedEnd) => {
     const end = new Date(inputDate); 
     end.setHours(selectedEnd.getHours(), selectedEnd.getMinutes()); 
@@ -96,8 +103,10 @@ const NewWorkoutScreen = ({route}) => {
 
   };
 
+
   const validateFields = async() => {
 
+    //make sure there is a title
     if (!inputTitle.trim() || inputTitle.length === 0) {
         Alert.alert("Title is required");
         setLoading(false);
@@ -105,7 +114,7 @@ const NewWorkoutScreen = ({route}) => {
     }
 
 
-
+    // make sure the end time is after the start time
     if (inputStartTime >= inputEndTime) {
         Alert.alert("End time must be later than start time");
         setLoading(false);
@@ -118,6 +127,7 @@ const NewWorkoutScreen = ({route}) => {
 
 }
 
+//create a new workout 
   const onSubmitHandler = () => {
     insertWorkout({inputTitle, inputNotes, inputDate, inputStartTime, inputEndTime, user_id, inviteBuddyList},
       {
@@ -125,6 +135,7 @@ const NewWorkoutScreen = ({route}) => {
           resetFields();
           for (let buddy of inviteBuddyList)
           {
+            //try to send a notification to all buddies invited
             await notifyUserAboutNewInvite(buddy.id)
           }
 
@@ -138,7 +149,7 @@ const NewWorkoutScreen = ({route}) => {
       });  
   };
 
-
+  //get the selected buddies
   const handleBuddyInviteList = (buddy) => {
       setInviteBuddyList(buddy)
       
@@ -147,8 +158,7 @@ const NewWorkoutScreen = ({route}) => {
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
-    <KeyboardAvoidingView style={styles.container}>
-
+      <KeyboardAvoidingView style={styles.container}>
         <View style={styles.inputArea}>
           <Text style={styles.label}>Title:</Text>
           <TextInput
@@ -163,78 +173,77 @@ const NewWorkoutScreen = ({route}) => {
         </View>
         <View style={styles.inputArea}>
           <Text style={styles.label}>Date:</Text>
-        <TouchableOpacity onPress={showDatepicker} style={styles.inputBox}>
-          <Text >{inputDate.toLocaleDateString()}</Text>
-        </TouchableOpacity>
+          <TouchableOpacity onPress={showDatepicker} style={styles.inputBox}>
+            <Text >{inputDate.toLocaleDateString()}</Text>
+          </TouchableOpacity>
 
-        {open && (
-          <DateTimePicker
-            testID="dateTimePicker"
-            value={inputDate}
-            mode="date"
-            display="default"
-            onChange={onChangeDate}
-            minimumDate={today}
-          />
-        )}
+          {open && (
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={inputDate}
+              mode="date"
+              display="default"
+              onChange={onChangeDate}
+              minimumDate={today}
+            />
+          )}
         </View>
  
         <View style={styles.inputArea}>
           <Text style={styles.labelSmall}>Start:</Text>
-        <TouchableOpacity onPress={showStartpicker} style={styles.inputBoxSmall}>
-          <Text >{formatTime(inputStartTime)}</Text>
+          <TouchableOpacity onPress={showStartpicker} style={styles.inputBoxSmall}>
+            <Text >{formatTime(inputStartTime)}</Text>
+          </TouchableOpacity>
 
-        </TouchableOpacity>
+          {openStart && (
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={inputStartTime}
+              mode="time"
+              display="spinner"
+              onChange={onChangeStart}
+            />
+          )}
 
-        {openStart && (
-          <DateTimePicker
-            testID="dateTimePicker"
-            value={inputStartTime}
-            mode="time"
-            display="spinner"
-            // minuteInterval={15}
-            onChange={onChangeStart}
-          />
-        )}
+          <Text style={styles.labelSmall}>End:</Text>
+          <TouchableOpacity onPress={showEndpicker} style={styles.inputBoxSmall}>
+            <Text >{formatTime(inputEndTime)}</Text>
+          </TouchableOpacity>
 
-        <Text style={styles.labelSmall}>End:</Text>
-        <TouchableOpacity onPress={showEndpicker} style={styles.inputBoxSmall}>
-          <Text >{formatTime(inputEndTime)}</Text>
-
-        </TouchableOpacity>
-        {openEnd && (
-          <DateTimePicker
-            testID="dateTimePicker"
-            value={inputEndTime}
-            mode="time"
-            display="spinner"
-            // minuteInterval={15}
-            onChange={onChangeEnd}
-          />
-        )}
+          {openEnd && (
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={inputEndTime}
+              mode="time"
+              display="spinner"
+              onChange={onChangeEnd}
+            />
+          )}
 
         </View>
 
         <View style={styles.inputArea}>
-        <Text style={styles.label}>Notes:</Text>
-        <TextInput 
-        style={[styles.inputBox, {height:noteHeight}]} 
-        placeholder={'(Optional) Add Notes'}
-        keyboardType="default"
-        value={inputNotes}
-        multiline
-        onContentSizeChange={e => setNoteHeight(e.nativeEvent.contentSize.height)}
-        onChangeText={setInputNotes}
-         />
+          <Text style={styles.label}>Notes:</Text>
+          <TextInput 
+          style={[styles.inputBox, {height:noteHeight}]} 
+          placeholder={'(Optional) Add Notes'}
+          keyboardType="default"
+          value={inputNotes}
+          multiline
+          onContentSizeChange={e => setNoteHeight(e.nativeEvent.contentSize.height)}
+          onChangeText={setInputNotes}
+          />
 
         </View>
       </KeyboardAvoidingView>
+
       <InternalWorkoutBuddiesList buddies={buddies} forNew={true} OnAddBuddyToInvites ={handleBuddyInviteList} allParticipants={[]} allInvitations={[]} workout={null} participantState={'new'}/>
+      
       <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={validateFields} disabled={loading} style={styles.button}>
-                <Text style={styles.buttonText}>{loading ? 'Creating Workout...' : 'Create Workout'} </Text>
-            </TouchableOpacity>
-            </View>
+        <TouchableOpacity onPress={validateFields} disabled={loading} style={styles.button}>
+          <Text style={styles.buttonText}>{loading ? 'Creating Workout...' : 'Create Workout'} </Text>
+        </TouchableOpacity>
+      </View>
   
   </ScrollView>
   );

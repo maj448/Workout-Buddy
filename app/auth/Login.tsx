@@ -1,9 +1,11 @@
+
+//This file contains the code for the login screen
+
 import {SafeAreaView} from 'react-native-safe-area-context';
-import { View, Text, TextInput, StyleSheet, Alert, Pressable, KeyboardAvoidingView, Platform, TouchableOpacity} from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert, KeyboardAvoidingView, Platform, TouchableOpacity} from 'react-native';
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { supabase } from '../utils/supabase';
-import { useAuth } from '../providers/AuthProvider';
 
 
 
@@ -16,13 +18,15 @@ export default function Login() {
 
 
   
-
+    //Handle navigating to the Sign up screen
     const gotoSignUpScreen = () => {
 		navigation.navigate('Sign Up');
 	};
 
 
 
+    //check the database for login info, either display an error message or 
+    //havigate to the home page on success
     async function signInWithEmail()
     {
         setLoading(true);
@@ -43,49 +47,44 @@ export default function Login() {
         
         <SafeAreaView style={styles.container}>
             <View style={{flex: 4 }}>
-            <Text style={styles.header}>Workout Buddy</Text>
+                <Text style={styles.header}>Workout Buddy</Text>
             </View>
-
-            
+ 
             <View style={{flex: 3}}>
-            <View style={styles.inputArea}>
-                <Text style={styles.label}>Email:</Text>
-                <TextInput
-                style={styles.inputBox}
-                keyboardType="email-address"
-                value={inputEmail}
-                onChangeText={setInputEmail}/>
+                <View style={styles.inputArea}>
+                    <Text style={styles.label}>Email:</Text>
+                    <TextInput
+                    style={styles.inputBox}
+                    keyboardType="email-address"
+                    value={inputEmail}
+                    onChangeText={setInputEmail}/>
 
-            </View>
+                </View>
 
-            <View style={styles.inputArea}>
-                <Text style={styles.label}>Password:</Text>
-                <TextInput
-                style={styles.inputBox}
-                secureTextEntry
-                keyboardType="default"
-                value={inputPassword}
-                onChangeText={setInputPassword}/>
+                <View style={styles.inputArea}>
+                    <Text style={styles.label}>Password:</Text>
+                    <TextInput
+                    style={styles.inputBox}
+                    secureTextEntry
+                    keyboardType="default"
+                    value={inputPassword}
+                    onChangeText={setInputPassword}/>
 
-            </View>
+                </View>
             </View>
 
             <KeyboardAvoidingView style={{ flex: 3 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-            <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={signInWithEmail} disabled={loading} style={styles.button}>
-                <Text style={styles.buttonText}>{loading ? 'Logging in...' : 'Login'} </Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={gotoSignUpScreen} style={styles.button}>
-                <Text style={styles.buttonText}>Sign Up</Text> 
-            </TouchableOpacity>
-            </View>
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity onPress={signInWithEmail} disabled={loading} style={styles.button}>
+                        <Text style={styles.buttonText}>{loading ? 'Logging in...' : 'Login'} </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={gotoSignUpScreen} style={styles.button}>
+                        <Text style={styles.buttonText}>Sign Up</Text> 
+                    </TouchableOpacity>
+                </View>
             </KeyboardAvoidingView>
-            
-
 
         </SafeAreaView>
-        
-
     );
 
 };

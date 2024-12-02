@@ -2,7 +2,7 @@
 // a tutorial made to connect a react native expo app to supabase
 
 
-//This code is supposed to added the expo push token to supabase to allow notifications but I could not get it to work
+//This code is supposed to added the expo push token to supabase to allow notifications but I could not get it to work consistently
 
 import { PropsWithChildren, useEffect, useRef, useState } from 'react';
 import { registerForPushNotificationsAsync } from '../utils/notifications';

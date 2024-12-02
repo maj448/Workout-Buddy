@@ -1,3 +1,4 @@
+//This file renders a single workout buddy in a started workout
 import {View, Text, StyleSheet} from 'react-native';
 import RemoteImage from './RemoteImage';
 
@@ -8,7 +9,7 @@ export default function InternalWorkoutBuddyListItem({buddie}) {
         return null;  
       }
 
-
+    //change the color based on the status
     let colorOnStatus
     if(buddie.status == 'checked in')
         colorOnStatus = { borderColor: 'blue', color: 'blue'}
@@ -77,6 +78,6 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(0, 255, 0, 0.4)',  
+        backgroundColor: 'rgba(0, 255, 0, 0.4)',  //add a transparent green 
     },
 })
