@@ -1,3 +1,8 @@
+//This is the screen to view workout details
+//certain details are show based on if the user is a participant or just invited, 
+//if the workout time has past or if it is at least 10 to start time,
+// and if the workout has been completed or not
+
 import { View, Text, StyleSheet, Button, Alert, Pressable, TouchableOpacity} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import InternalWorkoutBuddiesList from './components/InternalWorkoutBuddiesList'
@@ -38,18 +43,23 @@ const WorkoutDetailsScreen = ({route}) => {
     const [loading, setLoading] = useState(false)
     const [loadingStart, setLoadingStart] = useState(false)
   
-
+    //get the participant info for the signed in user
     const { data: participationInfo,  error: participationError } = participantWorkoutInfo(user_id, workout.id);
+    // get all participants in the workout
     const { data: allParticipants,  error: allParticipantsError } = allWorkoutParticipants(workout.id);
+    //get all invitations to the workout
     const { data: allInvitations, error: allInvitationsError } = allWorkoutInvitations(workout.id);
+    // get all of the users buddies
     const {data: UserBuddies} = userBuddies(user_id);
 
+    //subcribe for database changes to participants and invitations
     useParticipantSubscription( workout.id )
     useInvitationsSubscription( workout.id )
 
+    //get the database function to update a participant
     const {mutate: updateParticipantStatus} = useUpdateParticipantStatus();
 
-    
+    //reload the queries on a filck down gesture
     const refresh = () => {
 
       queryClient.invalidateQueries(['participants', workout.id])
@@ -63,12 +73,12 @@ const WorkoutDetailsScreen = ({route}) => {
     ;
 
 
-
+    // check if the user is a participant or just invited
     const isParticipant = allParticipants?.filter((participant) => {
       if(session?.user.id == participant.profiles.id )
       return participant})
     
-
+    //update status and navigate to the in workout screen when Start button is hit
     const onStart = () => {
       setLoadingStart(true)
       updateParticipantStatus({user_id : session?.user.id, workout_id : workout.id, status : 'in workout'},
@@ -82,15 +92,16 @@ const WorkoutDetailsScreen = ({route}) => {
       
     }
 
+    //format the time to correctly convert to the local time and display only the time
     const formatTime = (date) => {
 
       date = `${date}Z`
       date = new Date(date);
       return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: true});
-
-
     };
 
+
+    //get the date + time for 10 minutes prior to the start time
     const formatDate = (date) => {
 
       date = `${date}Z`
@@ -98,10 +109,10 @@ const WorkoutDetailsScreen = ({route}) => {
       date = new Date(date.getTime() - 10 * 60 * 1000); 
       return date.toISOString();
 
-
     };
 
 
+    //update the participant status when checking in or leaving
     const onCheckIn = () => {
 
       setLoading(true)
@@ -139,6 +150,7 @@ const WorkoutDetailsScreen = ({route}) => {
   };
 
     useEffect(() => {
+      //update visibility of items based on status
       if (participationInfo)
         setParticipantState(participationInfo.status)
       if(participantState == 'checked in')
@@ -161,6 +173,7 @@ const WorkoutDetailsScreen = ({route}) => {
 
   }, [participantState, participationInfo ]);
 
+  //get all participants in the workout excluding the signed in user
   let buddyparticipants = []
   if(allParticipants){
     buddyparticipants = allParticipants.filter((participant) => {
@@ -169,62 +182,58 @@ const WorkoutDetailsScreen = ({route}) => {
 
   return (
     <GestureDetector gesture={flingGestureDown}>
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <View style ={styles.staticInfo}>
-        <Text style= {styles.title}>{workout.title}</Text>
-        <Text style= {styles.text}>Date: {displayDate}</Text>
-        <View style={styles.timeContainer}>
-          <Text style= {styles.text}>Time : {formatTime(workout.start_time)}</Text>
-          <Text style= {styles.text}> to {formatTime(workout.end_time)}</Text>
-        </View>
-        { participantState == 'complete' &&
-          <Text style= {styles.textCompleted}>Completed duration: {participationInfo.duration}</Text>
-        }
-        { participantState == 'complete' &&
-          <Text style= {styles.textCompleted}>Activity: {participationInfo.activity}</Text>
-        }
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style ={styles.staticInfo}>
+          <Text style= {styles.title}>{workout.title}</Text>
+          <Text style= {styles.text}>Date: {displayDate}</Text>
+          <View style={styles.timeContainer}>
+            <Text style= {styles.text}>Time : {formatTime(workout.start_time)}</Text>
+            <Text style= {styles.text}> to {formatTime(workout.end_time)}</Text>
+          </View>
+          { participantState == 'complete' &&
+            <Text style= {styles.textCompleted}>Completed duration: {participationInfo.duration}</Text>
+          }
+          { participantState == 'complete' &&
+            <Text style= {styles.textCompleted}>Activity: {participationInfo.activity}</Text>
+          }
 
-        
-        <View style= {styles.noteArea}>
-        <Text style= {styles.text}>Notes: </Text>
-          <Text style= {styles.text}>{workout.notes ? workout.notes : 'N/A' }</Text>
-        </View>
+          <View style= {styles.noteArea}>
+          <Text style= {styles.text}>Notes: </Text>
+            <Text style= {styles.text}>{workout.notes ? workout.notes : 'N/A' }</Text>
+          </View>
 
-      </View>
-
-      <InternalWorkoutBuddiesList 
-        buddies={UserBuddies} 
-        forNew={false} 
-        OnAddBuddyToInvites={handleBuddyInviteList} 
-        allParticipants={buddyparticipants} 
-        allInvitations={allInvitations} 
-        workout= {workout} 
-        participantState={participantState}/>
-
-        { timeNow.toISOString() < formatDate(workout.start_time) &&
-        <Text style={styles.textInfo}>*Check in opens 10 minutes to start time</Text>
-        }
-
-      <View style={styles.buttonContainer}>
-      {!completed && isParticipant?.length > 0 && participantState != 'in workout' && workout.workout_status != 'past' && timeNow.toISOString() >= formatDate(workout.start_time) &&
-        
-        <TouchableOpacity onPress= {onCheckIn} style={styles.button}>
-            <Text>{ canStart ? (!loading ? 'Leave' : 'Leaving...') : (!loading ? 'Check In' : 'Checking in...')}</Text>
-        </TouchableOpacity>
-       
-
-
-      }
-        
-        { canStart && !completed && isParticipant &&
-
-          <TouchableOpacity onPress={onStart}  style={styles.startButton}>
-              <Text style={styles.startButtonText}>{participantState == 'in workout' ? (!loadingStart ? 'Resume' : 'Resuming...')  : (!loadingStart ? 'Start!' : 'Starting...')} </Text>
-          </TouchableOpacity>
-        }
         </View>
 
-      </ScrollView>
+        <InternalWorkoutBuddiesList 
+          buddies={UserBuddies} 
+          forNew={false} 
+          OnAddBuddyToInvites={handleBuddyInviteList} 
+          allParticipants={buddyparticipants} 
+          allInvitations={allInvitations} 
+          workout= {workout} 
+          participantState={participantState}/>
+
+          { timeNow.toISOString() < formatDate(workout.start_time) &&
+          <Text style={styles.textInfo}>*Check in opens 10 minutes to start time</Text>
+          }
+
+        <View style={styles.buttonContainer}>
+          {!completed && isParticipant?.length > 0 && participantState != 'in workout' && workout.workout_status != 'past' && timeNow.toISOString() >= formatDate(workout.start_time) &&
+
+            <TouchableOpacity onPress= {onCheckIn} style={styles.button}>
+                <Text>{ canStart ? (!loading ? 'Leave' : 'Leaving...') : (!loading ? 'Check In' : 'Checking in...')}</Text>
+            </TouchableOpacity>
+          }
+          
+          { canStart && !completed && isParticipant &&
+
+            <TouchableOpacity onPress={onStart}  style={styles.startButton}>
+                <Text style={styles.startButtonText}>{participantState == 'in workout' ? (!loadingStart ? 'Resume' : 'Resuming...')  : (!loadingStart ? 'Start!' : 'Starting...')} </Text>
+            </TouchableOpacity>
+          }
+          </View>
+
+        </ScrollView>
       </GestureDetector>
   );
 };

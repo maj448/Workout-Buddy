@@ -1,50 +1,55 @@
-# Welcome to your Expo app 👋
+# Workout Buddy
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+This is an [Expo](https://expo.dev) project that uses Supabase as a database
+It was only tested on Android devices and within Expo Go and Expo Development build
 
-## Get started
+## To run
+Download the project and build with 'npx expo run:android' or 'eas build --platform android' 
+Install the application on a physical device or android device
+Then run 'npx expo start' and run the build on the installed app
 
-1. Install dependencies
+*Notifications do not work consistently but to even have a chance too work it needs to be run on a physical device
+The Pedometer also requires a physical device to work
 
-   ```bash
-   npm install
-   ```
+## Description
 
-2. Start the app
+Workout Buddy is a workout scheduling application that allows users to schedule workouts with buddies they will not be able to perform the workout with in person.
+It allows users to invite buddies to workouts and then during the workout see which buddies are also present for the workout
 
-   ```bash
-    npx expo start
-   ```
+## Functionalities
 
-In the output, you'll find options to open the app in a
+- Sign Up 
+- Login
+- Add or update a profile picture 
+- Add buddies
+- Create a workout 
+- View a past, present, upcoming, or invited workout
+- Accept or decline invites to workouts 
+- Invite buddies to workouts
+- Delete a workout or Buddy
+- Check in or leave being checked in
+- Start a workout and start and pause the stopwatch (a started stopwatch will continue counting with the page left and/ or phone turned off until the workout is ended)
+- View a buddies completed workout duration and activity
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Quick Actions
+A workout can quickly be created on a date by long pressing on the date on the calendar if the date is not already selected (selected dates must use the + button)
+Swipe left and right on the calendar to change months
+Swipe left and right on the area under the calendar to change the day 
+Swipe down on the Home, Buddies, and Workout Details pages to refresh the information from the database
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Resources Used 
 
-## Get a fresh project
+- react-native-element-dropdown
+- expo-notifications
+- react-native-gesture-handler
+- react-native-safe-area-context
+- react-native-calendars
+- @tanstack/react-query
+- @react-navigation/native
+- @expo/vector-icons/AntDesign
+- @expo/vector-icons/Ionicons
+- @supabase/supabase-js
+- @react-native-community/datetimepicker
+- https://www.reactnativeschool.com/build-a-stop-watch-hook-that-works-even-when-the-app-is-quit
+- https://notjust.notion.site/React-Native-Supabase-Masterclass-47a69a60bc464c399b5a0df4d3c4a630
 
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
